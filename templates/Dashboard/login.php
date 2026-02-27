@@ -40,6 +40,9 @@
         <!-- Login Form -->
         <form method="post" action="<?= $this->Url->build(['controller'=>'Dashboard','action'=>'login']) ?>">
 
+            <!-- CSRF Token -->
+            <?= $this->Form->hidden('_csrfToken', ['value' => $this->request->getAttribute('csrfToken')]) ?>
+
             <input type="text"
                 name="username"
                 placeholder="Username"

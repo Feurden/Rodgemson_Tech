@@ -16,7 +16,9 @@
             $username = $this->request->getData('username');
             $password = $this->request->getData('password');
 
-            $user = $this->Users->find('all')
+            $usersTable = $this->fetchTable('Users');
+
+            $user = $usersTable->find('all')
                 ->where(['username' => $username, 'role' => 'technician'])
                 ->first();
 
