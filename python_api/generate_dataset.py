@@ -30,6 +30,9 @@ import pandas as pd
 
 random.seed(42)
 
+# Get the directory where this script is located
+SCRIPT_DIR = Path(__file__).parent
+
 SYMPTOMS = [
     # Original 9
     "not_charging",
@@ -69,7 +72,7 @@ CLASS_CORES = [
 ]
 
 TARGET_PER_CLASS = 50
-OUTPUT_PATH = Path("dataset.csv")
+OUTPUT_PATH = SCRIPT_DIR / "dataset.csv"
 
 
 def assign_all_vectors() -> dict:

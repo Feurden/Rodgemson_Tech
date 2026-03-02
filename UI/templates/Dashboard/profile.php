@@ -15,14 +15,14 @@
                 display:flex; align-items:center; justify-content:center;
                 font-size:1.8rem; font-weight:700; color:white;
                 box-shadow:0 4px 14px rgba(56,189,248,0.35);
-            ">JD</div>
+            "><?= strtoupper(substr($profile['username'] ?? 'User', 0, 2)) ?></div>
             <div style="flex:1;">
-                <p style="font-size:1.2rem; font-weight:700; color:#1e293b; margin:0 0 2px;">John Doe</p>
-                <p style="font-size:13px; color:#64748b; margin:0 0 10px;">john.doe@example.com</p>
-                <span class="status-badge badge-completed" style="font-size:11px;">🔧 Laptop & Mobile Repairs</span>
+                <p style="font-size:1.2rem; font-weight:700; color:#1e293b; margin:0 0 2px;"><?= htmlspecialchars($profile['username'] ?? 'Technician') ?></p>
+                <p style="font-size:13px; color:#64748b; margin:0 0 10px;"><?= htmlspecialchars($profile['role'] ?? 'Tech') ?></p>
+                <span class="status-badge badge-completed" style="font-size:11px;">🔧 Cellphone Repairs</span>
             </div>
             <div style="text-align:center; padding:14px 20px; background:#f1f5f9; border-radius:10px;">
-                <p style="font-size:2rem; font-weight:700; color:#0284c7; margin:0; line-height:1;">85</p>
+                <p style="font-size:2rem; font-weight:700; color:#0284c7; margin:0; line-height:1;"><?= $profile['completedJobs'] ?? 0 ?></p>
                 <p style="font-size:11px; color:#94a3b8; margin:4px 0 0; text-transform:uppercase; letter-spacing:0.5px;">Jobs Done</p>
             </div>
         </div>
@@ -31,29 +31,29 @@
         <div class="profile-card" style="margin-bottom:20px;">
 
             <p style="font-size:12px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px;">
-                Account Details
+                Account Statistics
             </p>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
 
                 <div style="padding:14px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0;">
-                    <p style="font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.4px; margin:0 0 4px;">Full Name</p>
-                    <p style="font-size:15px; font-weight:600; color:#1e293b; margin:0;">John Doe</p>
+                    <p style="font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.4px; margin:0 0 4px;">Username</p>
+                    <p style="font-size:15px; font-weight:600; color:#1e293b; margin:0;"><?= htmlspecialchars($profile['username'] ?? 'User') ?></p>
                 </div>
 
                 <div style="padding:14px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0;">
-                    <p style="font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.4px; margin:0 0 4px;">Email</p>
-                    <p style="font-size:15px; font-weight:600; color:#1e293b; margin:0;">john.doe@example.com</p>
-                </div>
-
-                <div style="padding:14px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0;">
-                    <p style="font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.4px; margin:0 0 4px;">Specialty</p>
-                    <p style="font-size:15px; font-weight:600; color:#1e293b; margin:0;">Laptop & Mobile Repairs</p>
+                    <p style="font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.4px; margin:0 0 4px;">Role</p>
+                    <p style="font-size:15px; font-weight:600; color:#1e293b; margin:0;"><?= htmlspecialchars($profile['role'] ?? 'Technician') ?></p>
                 </div>
 
                 <div style="padding:14px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0;">
                     <p style="font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.4px; margin:0 0 4px;">Completed Jobs</p>
-                    <p style="font-size:15px; font-weight:600; color:#1e293b; margin:0;">85 jobs</p>
+                    <p style="font-size:15px; font-weight:600; color:#1e293b; margin:0;"><?= $profile['completedJobs'] ?? 0 ?> jobs</p>
+                </div>
+
+                <div style="padding:14px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0;">
+                    <p style="font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.4px; margin:0 0 4px;">In Progress</p>
+                    <p style="font-size:15px; font-weight:600; color:#1e293b; margin:0;"><?= $profile['inProgressJobs'] ?? 0 ?> jobs</p>
                 </div>
 
             </div>

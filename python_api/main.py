@@ -52,7 +52,7 @@ SYMPTOMS: list[str] = [
     "water_damage",
 ]
 
-# ── Replacement parts map ──────────────────────────────────────────────────────
+# ── Replacement parts map (diagnosis-based) ────────────────────────────────────
 REPLACEMENT_MAP: dict[str, list[str]] = {
     "Mainboard Issue":        ["Mainboard/Motherboard", "Power IC", "CPU", "RAM", "Baseband IC"],
     "Charging Port Issue":    ["Charging Port", "USB Connector", "Flex Cable"],
@@ -67,6 +67,24 @@ REPLACEMENT_MAP: dict[str, list[str]] = {
     "Baseband Issue":         ["Baseband IC", "RF IC", "Antenna Module"],
     "Power IC Issue":         ["Power IC", "Battery Connector", "Mainboard"],
     "Software/OS Issue":      ["Reflash Firmware", "Update OS", "Mainboard Check"],
+}
+
+# ── Symptom-specific parts map (for direct symptom guidance) ──────────────────
+SYMPTOM_PARTS_MAP: dict[str, list[str]] = {
+    "not_charging":           ["Charging Port", "USB Connector", "Charging IC", "Battery Connector"],
+    "overheating":            ["Battery", "Thermal Sensor IC", "Heatsink", "Power IC"],
+    "no_signal":              ["Antenna Module", "Baseband IC", "RF IC", "SIM Card Slot"],
+    "battery_drains_fast":    ["Battery", "Power IC", "LCD Backlight"],
+    "stuck_on_logo":          ["Mainboard (Reflash)", "CPU", "Flash Memory"],
+    "screen_black":           ["Display Driver IC", "Backlight IC", "LCD Connector", "Power Supply"],
+    "touch_not_working":      ["Touch Controller IC", "Digitizer", "Touch Panel Flex"],
+    "speaker_no_sound":       ["Speaker Module", "Audio Codec IC", "Amplifier IC"],
+    "mic_not_work":           ["Microphone Module", "Audio Codec IC", "Mic Flex Connector"],
+    "screen_flickering":      ["Display Driver IC", "Backlight IC", "LCD Flex Cable"],
+    "wifi_not_working":       ["WiFi Module", "Antenna", "RF IC"],
+    "bluetooth_issue":        ["Bluetooth Module", "Baseband IC", "Antenna"],
+    "phone_freezing":         ["RAM", "CPU", "Storage IC", "Power Management"],
+    "water_damage":           ["Mainboard (Full Inspection)", "Battery", "Flex Cables", "All Connectors"],
 }
 
 # ── Single-symptom direct diagnosis ───────────────────────────────────────────
@@ -169,8 +187,18 @@ def text_to_features(user_text: str) -> tuple[pd.DataFrame, int, list[str]]:
 
 
 def get_replacement_parts(diagnosis: str) -> list[str]:
+    """Get parts for the diagnosis (main issue)."""
     clean_key = re.sub(r"\s*\(.*?\)", "", diagnosis).strip()
     return REPLACEMENT_MAP.get(clean_key, [])
+
+
+def get_symptom_specific_parts(symptoms: list[str]) -> dict[str, list[str]]:
+    """Get parts for each detected symptom."""
+    symptom_parts = {}
+    for symptom in symptoms:
+        if symptom in SYMPTOM_PARTS_MAP:
+            symptom_parts[symptom] = SYMPTOM_PARTS_MAP[symptom]
+    return symptom_parts
 
 
 def rule_based_override(
@@ -179,21 +207,59 @@ def rule_based_override(
     top_classes: Optional[list[str]] = None,
 ) -> Optional[str]:
     f = features_df.iloc[0]
+    
+    # Count major failure symptoms
     major_failures = int(
         f["touch_not_working"] + f["mic_not_work"] +
         f["speaker_no_sound"]  + f["no_signal"]    + f["screen_black"]
     )
-    if major_failures >= 3:              return "Mainboard Issue"
-    if f["battery_drains_fast"] == 1 and f["overheating"] == 1:  return "Battery Issue"
-    if f["not_charging"] == 1 and f["screen_black"] == 1:        return "Charging IC Issue"
-    if f["touch_not_working"] == 1 and f["overheating"] == 1:    return "Touch Controller Issue"
-    if f["no_signal"] == 1 and f["mic_not_work"] == 1:           return "Baseband Issue"
-    if f["no_signal"] == 1 and f["wifi_not_working"] == 1:       return "Antenna Issue"
-    if f["no_signal"] == 1 and major_failures == 1:              return "SIM IC or Antenna Issue"
-    if f["mic_not_work"] == 1 and f["speaker_no_sound"] == 1:    return "Mainboard Issue"
-    if f["screen_flickering"] == 1 and f["screen_black"] == 1:   return "Display IC Issue"
-    if f["phone_freezing"] == 1 and f["stuck_on_logo"] == 1:     return "Software/OS Issue"
-    if f["water_damage"] == 1:                                    return "Water Damage - Inspect All Components"
+    
+    # === MAINBOARD ISSUES (highest priority) ===
+    if major_failures >= 3:
+        return "Mainboard Issue"
+    if f["touch_not_working"] == 1 and f["mic_not_work"] == 1:
+        return "Mainboard Issue"
+    if f["mic_not_work"] == 1 and f["speaker_no_sound"] == 1:
+        return "Mainboard Issue"
+    
+    # === POWER/THERMAL ISSUES (highest priority after mainboard) ===
+    if f["overheating"] == 1 and f["battery_drains_fast"] == 1:
+        return "Battery Issue"
+    if f["overheating"] == 1 and f["not_charging"] == 1:
+        return "Power IC Issue"
+    if f["overheating"] == 1 and f["touch_not_working"] == 1:
+        return "Power IC Issue"
+    if f["overheating"] == 1 and f["screen_black"] == 1:
+        return "Power IC Issue"
+    
+    # === DISPLAY ISSUES ===
+    if f["screen_flickering"] == 1 and f["screen_black"] == 1:
+        return "Display IC Issue"
+    if f["screen_black"] == 1 and f["touch_not_working"] == 1:
+        return "Display IC Issue"
+    
+    # === CHARGING ISSUES ===
+    if f["not_charging"] == 1 and f["screen_black"] == 1:
+        return "Charging IC Issue"
+    if f["not_charging"] == 1 and f["battery_drains_fast"] == 1:
+        return "Charging Port Issue"
+    
+    # === SIGNAL ISSUES ===
+    if f["no_signal"] == 1 and f["mic_not_work"] == 1:
+        return "Baseband Issue"
+    if f["no_signal"] == 1 and f["wifi_not_working"] == 1:
+        return "Antenna Issue"
+    if f["no_signal"] == 1 and major_failures == 1:
+        return "SIM IC Issue"
+    
+    # === SOFTWARE ISSUES ===
+    if f["phone_freezing"] == 1 and f["stuck_on_logo"] == 1:
+        return "Software/OS Issue"
+    
+    # === WATER DAMAGE (always highest priority) ===
+    if f["water_damage"] == 1:
+        return "Water Damage - Inspect All Components"
+    
     return None
 
 
@@ -243,6 +309,7 @@ class DiagnoseResponse(BaseModel):
     diagnosis: str
     confidence: Optional[float]     # None for single-symptom mode
     replacement_parts: list[str]
+    symptom_parts: dict[str, list[str]]  # {symptom: [parts...]}
     top2: list[dict]                # [{"diagnosis": ..., "confidence": ...}]
     rule_suggestion: Optional[str]  # None if no rule fired
 
@@ -288,6 +355,7 @@ def diagnose(request: DiagnoseRequest):
         diagnosis        = SINGLE_SYMPTOM_MAP.get(active_symptom, "Unknown Issue")
         replacement_parts = get_replacement_parts(diagnosis)
 
+        symptom_parts = get_symptom_specific_parts(detected_symptoms)
         return DiagnoseResponse(
             success=True,
             mode="single_symptom",
@@ -295,8 +363,9 @@ def diagnose(request: DiagnoseRequest):
             diagnosis=diagnosis,
             confidence=None,
             replacement_parts=replacement_parts,
+            symptom_parts=symptom_parts,
             top2=[],
-            rule_suggestion=None,
+            rule_suggestion=diagnosis,  # Mark as rule-based (direct mapping, not ML)
         )
 
     # ── Multi-symptom: run ML model ────────────────────────────────────────────
@@ -304,13 +373,22 @@ def diagnose(request: DiagnoseRequest):
     probabilities = model.predict_proba(features_df)[0]
 
     primary_diagnosis = label_encoder.inverse_transform(prediction)[0]
-    confidence        = round(float(max(probabilities)) * 100, 2)
+    
+    # Calculate confidence, ensuring it's in the 0-100 range
+    max_prob = float(max(probabilities))
+    if max_prob > 1:
+        confidence = round(max_prob, 2)  # already in percentage form
+    else:
+        confidence = round(max_prob * 100, 2)  # convert to percentage
+    
+    # Cap confidence at 100
+    confidence = min(confidence, 100.0)
 
     top2_idx = np.argsort(probabilities)[-2:][::-1]
     top2 = [
         {
             "diagnosis":  label_encoder.inverse_transform([i])[0],
-            "confidence": round(float(probabilities[i]) * 100, 2),
+            "confidence": min(round(float(probabilities[i]) * 100 if float(probabilities[i]) <= 1 else float(probabilities[i]), 2), 100.0),
         }
         for i in top2_idx
     ]
@@ -321,6 +399,7 @@ def diagnose(request: DiagnoseRequest):
     # If a rule fired with high confidence, use it as the final diagnosis
     final_diagnosis = rule_result if rule_result else primary_diagnosis
     replacement_parts = get_replacement_parts(final_diagnosis)
+    symptom_parts = get_symptom_specific_parts(detected_symptoms)
 
     return DiagnoseResponse(
         success=True,
@@ -329,6 +408,7 @@ def diagnose(request: DiagnoseRequest):
         diagnosis=final_diagnosis,
         confidence=confidence,
         replacement_parts=replacement_parts,
+        symptom_parts=symptom_parts,
         top2=top2,
         rule_suggestion=rule_result,
     )

@@ -16,22 +16,22 @@
 
         <div class="repair-stat-card" style="border-left:4px solid #38bdf8;">
             <span class="repair-stat-label">Total Items</span>
-            <span class="repair-stat-value">6</span>
+            <span class="repair-stat-value"><?= count($stocks ?? []) ?></span>
         </div>
 
         <div class="repair-stat-card" style="border-left:4px solid #16a34a;">
             <span class="repair-stat-label">Well Stocked</span>
-            <span class="repair-stat-value" style="color:#16a34a;">3</span>
+            <span class="repair-stat-value" style="color:#16a34a;"><?= count(array_filter($stocks ?? [], fn($s) => $s['status'] === 'normal')) ?></span>
         </div>
 
         <div class="repair-stat-card" style="border-left:4px solid #f59e0b;">
             <span class="repair-stat-label">Low Stock</span>
-            <span class="repair-stat-value" style="color:#f59e0b;">2</span>
+            <span class="repair-stat-value" style="color:#f59e0b;"><?= count(array_filter($stocks ?? [], fn($s) => $s['status'] === 'warning')) ?></span>
         </div>
 
         <div class="repair-stat-card" style="border-left:4px solid #ef4444;">
-            <span class="repair-stat-label">Critical</span>
-            <span class="repair-stat-value" style="color:#ef4444;">1</span>
+            <span class="repair-stat-label">Out of Stock</span>
+            <span class="repair-stat-value" style="color:#ef4444;">0</span>
         </div>
 
     </div>
@@ -69,24 +69,15 @@
             <tbody id="stockBody">
 
                 <?php
-                $stocks = [
-                    ['name'=>'Hard Drive',        'spec'=>'1TB HDD, SATA III',       'cat'=>'Storage',   'qty'=>12, 'max'=>50,  'icon'=>'💾'],
-                    ['name'=>'RAM Module',         'spec'=>'8GB DDR4 3200MHz',        'cat'=>'Memory',    'qty'=>25, 'max'=>60,  'icon'=>'🧠'],
-                    ['name'=>'Screen Replacement', 'spec'=>'15" FHD IPS Display',     'cat'=>'Display',   'qty'=>8,  'max'=>30,  'icon'=>'🖥️'],
-                    ['name'=>'Laptop Battery',     'spec'=>'65Wh Li-ion',             'cat'=>'Power',     'qty'=>3,  'max'=>20,  'icon'=>'🔋'],
-                    ['name'=>'Charging Port',      'spec'=>'USB-C / DC Jack',         'cat'=>'Connector', 'qty'=>15, 'max'=>40,  'icon'=>'🔌'],
-                    ['name'=>'Thermal Paste',      'spec'=>'MX-4 / Arctic Silver 5',  'cat'=>'Cooling',   'qty'=>2,  'max'=>25,  'icon'=>'🌡️'],
-                ];
-
+                $stocks = $stocks ?? [];
+                $totalItems = count($stocks);
+                $wellStocked = count(array_filter($stocks, fn($s) => $s['status'] === 'normal'));
+                $lowStock = count(array_filter($stocks, fn($s) => $s['status'] === 'warning'));
+                
                 foreach ($stocks as $item):
-                    $pct = round(($item['qty'] / $item['max']) * 100);
+                    $pct = $item['quantity'] > 0 ? round(($item['quantity'] / ($item['quantity'] + $item['minimum'])) * 100) : 0;
 
-                    if ($pct <= 20) {
-                        $level      = 'critical';
-                        $barColor   = '#ef4444';
-                        $badgeClass = 'badge-critical';
-                        $badgeText  = 'Critical';
-                    } elseif ($pct <= 50) {
+                    if ($item['status'] === 'warning') {
                         $level      = 'low';
                         $barColor   = '#f59e0b';
                         $badgeClass = 'badge-low';
@@ -100,12 +91,11 @@
                 ?>
                 <tr data-level="<?= $level ?>">
                     <td>
-                        <span style="margin-right:6px;"><?= $item['icon'] ?></span>
-                        <strong style="color:#1e293b;"><?= $item['name'] ?></strong>
+                        <strong style="color:#1e293b;"><?= htmlspecialchars($item['part'] ?? '') ?></strong>
                     </td>
-                    <td style="color:#64748b; font-size:13px;"><?= $item['spec'] ?></td>
+                    <td style="color:#64748b; font-size:13px;">Part ID: <?= $item['id'] ?></td>
                     <td>
-                        <span class="job-id"><?= $item['cat'] ?></span>
+                        <span class="job-id"><?= htmlspecialchars($item['category'] ?? 'Uncategorized') ?></span>
                     </td>
                     <td style="min-width:180px;">
                         <div style="display:flex; align-items:center; gap:8px;">
@@ -116,13 +106,13 @@
                         </div>
                     </td>
                     <td>
-                        <span style="font-size:15px; font-weight:700; color:#1e293b;"><?= $item['qty'] ?></span>
-                        <span style="font-size:12px; color:#94a3b8;"> / <?= $item['max'] ?> units</span>
+                        <span style="font-size:15px; font-weight:700; color:#1e293b;"><?= $item['quantity'] ?></span>
+                        <span style="font-size:12px; color:#94a3b8;"> units</span>
                     </td>
                     <td><span class="status-badge <?= $badgeClass ?>"><?= $badgeText ?></span></td>
                     <td style="text-align:center;">
-                        <button class="tbl-btn tbl-btn-view">View</button>
-                        <button class="tbl-btn tbl-btn-edit">Restock</button>
+                        <button class="tbl-btn tbl-btn-view" onclick="openStockView(<?= htmlspecialchars(json_encode($item)) ?>)">View</button>
+                        <button class="tbl-btn tbl-btn-edit" onclick="openRestockModal(<?= htmlspecialchars(json_encode($item)) ?>)">Restock</button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -149,34 +139,34 @@
                 style="background:none; border:none; font-size:1.4rem; color:#94a3b8; cursor:pointer;">✕</button>
         </div>
 
-        <form method="post">
+        <form onsubmit="saveAddStock(event);">
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
 
                 <div>
                     <label class="modal-label">Item Name</label>
-                    <input type="text" placeholder="e.g. Hard Drive" class="modal-input">
+                    <input type="text" id="add-part-name" placeholder="e.g. Hard Drive" class="modal-input" required>
                 </div>
 
                 <div>
                     <label class="modal-label">Category</label>
-                    <input type="text" placeholder="e.g. Storage" class="modal-input">
+                    <input type="text" id="add-part-category" placeholder="e.g. Storage" class="modal-input" required>
                 </div>
 
                 <div>
                     <label class="modal-label">Quantity</label>
-                    <input type="number" placeholder="0" min="0" class="modal-input">
+                    <input type="number" id="add-part-qty" placeholder="0" min="0" class="modal-input" required>
                 </div>
 
                 <div>
-                    <label class="modal-label">Max Capacity</label>
-                    <input type="number" placeholder="0" min="0" class="modal-input">
+                    <label class="modal-label">Minimum Stock</label>
+                    <input type="number" id="add-part-min" placeholder="0" min="0" class="modal-input" required>
                 </div>
 
             </div>
 
             <div style="margin-bottom:20px;">
-                <label class="modal-label">Specification</label>
-                <input type="text" placeholder="e.g. 1TB HDD, SATA III" class="modal-input">
+                <label class="modal-label">Unit Price ($)</label>
+                <input type="number" id="add-part-price" placeholder="0.00" step="0.01" min="0" class="modal-input" required>
             </div>
 
             <div style="display:flex; gap:10px;">
@@ -194,7 +184,115 @@
     </div>
 </div>
 
+<!-- Stock View Modal -->
+<div class="modal-overlay" id="stockViewModal" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-box" style="width:480px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:1.1rem; color:#1e293b;">📦 Stock Details</h2>
+            <button onclick="this.closest('.modal-overlay').style.display='none'" style="background:none; border:none; font-size:1.4rem; color:#94a3b8; cursor:pointer;">✕</button>
+        </div>
+        <div id="stockViewContent"></div>
+        <div style="margin-top:20px;">
+            <button onclick="this.closest('.modal-overlay').style.display='none'" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:white; color:#64748b; font-weight:600; cursor:pointer;">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Restock Modal -->
+<div class="modal-overlay" id="restockModal" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-box" style="width:480px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:1.1rem; color:#1e293b;">🔄 Restock Item</h2>
+            <button onclick="this.closest('.modal-overlay').style.display='none'" style="background:none; border:none; font-size:1.4rem; color:#94a3b8; cursor:pointer;">✕</button>
+        </div>
+        <input type="hidden" id="restock-id">
+        <div>
+            <label class="modal-label">Current Quantity</label>
+            <input type="number" id="restock-current" class="modal-input" disabled>
+        </div>
+        <div style="margin-bottom:14px;">
+            <label class="modal-label">Units to Add</label>
+            <input type="number" id="restock-qty" class="modal-input" placeholder="0" min="0" value="0">
+        </div>
+        <div style="margin-bottom:20px; padding:10px; background:#f0fdf4; border-radius:6px;">
+            <p style="margin:0; font-size:13px; color:#15803d;"><strong>New Total:</strong> <span id="restock-total">0</span> units</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button type="button" onclick="this.closest('.modal-overlay').style.display='none'" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:white; color:#64748b; font-weight:600; cursor:pointer;">Cancel</button>
+            <button type="button" onclick="saveRestock()" style="flex:1; padding:10px; background:linear-gradient(135deg,#38bdf8,#0284c7); border:none; border-radius:8px; color:white; font-weight:600; cursor:pointer;">Save Stock</button>
+        </div>
+    </div>
+</div>
+
 <script>
+let currentStockItem = {};
+
+function openStockView(item) {
+    const row = (k, v) => `<div style="margin-bottom:12px; padding:10px; background:#f8fafc; border-radius:6px;"><span style="font-size:12px; color:#64748b; display:block; margin-bottom:4px;">${k}</span><span style="font-size:14px; color:#1e293b; font-weight:600;">${v}</span></div>`;
+    document.getElementById('stockViewContent').innerHTML = `
+        ${row('Part Name', item.part)}
+        ${row('Part ID', item.id)}
+        ${row('Category', item.category)}
+        ${row('Current Stock', item.quantity + ' units')}
+        ${row('Minimum Stock', item.minimum + ' units')}
+        ${row('Unit Price', '$' + (item.price ?? '0.00'))}
+        ${row('Status', item.status === 'warning' ? '⚠️ Low Stock' : '✓ Well Stocked')}
+        ${row('Last Updated', new Date().toLocaleDateString())}`;
+    document.getElementById('stockViewModal').style.display = 'flex';
+}
+
+function openRestockModal(item) {
+    currentStockItem = item;
+    document.getElementById('restock-id').value = item.id;
+    document.getElementById('restock-current').value = item.quantity;
+    document.getElementById('restock-qty').value = 0;
+    document.getElementById('restock-total').textContent = item.quantity;
+    
+    // Update total when user changes quantity
+    document.getElementById('restock-qty').oninput = function() {
+        document.getElementById('restock-total').textContent = item.quantity + parseInt(this.value || 0);
+    };
+    
+    document.getElementById('restockModal').style.display = 'flex';
+}
+
+async function saveRestock() {
+    const partId = document.getElementById('restock-id').value;
+    const qtyToAdd = parseInt(document.getElementById('restock-qty').value || 0);
+    
+    if (qtyToAdd <= 0) {
+        alert('Please enter a quantity to add.');
+        return;
+    }
+    
+    const csrfToken = document.querySelector('meta[name="csrfToken"]')?.getAttribute('content');
+    if (!csrfToken) {
+        alert('Security error: CSRF token not found');
+        return;
+    }
+    
+    const response = await fetch("<?= $this->Url->build('/parts/restock') ?>", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+            part_id: partId,
+            quantity_added: qtyToAdd
+        })
+    });
+    
+    const data = await response.json();
+    if (data.success) {
+        alert('✓ Stock updated successfully!');
+        document.getElementById('restockModal').style.display = 'none';
+        location.reload();
+    } else {
+        alert('Error: ' + (data.error || 'Failed to update stock'));
+    }
+}
+
 function filterStock(val) {
     const rows = document.querySelectorAll('#stockBody tr');
     const q = val.toLowerCase();
@@ -212,5 +310,50 @@ function filterStockStatus(val) {
     rows.forEach(r => {
         r.style.display = (val === 'all' || r.dataset.level === val) ? '' : 'none';
     });
+}
+
+async function saveAddStock(e) {
+    e.preventDefault();
+    
+    const partName = document.getElementById('add-part-name').value.trim();
+    const category = document.getElementById('add-part-category').value.trim();
+    const qty = parseInt(document.getElementById('add-part-qty').value || 0);
+    const minQty = parseInt(document.getElementById('add-part-min').value || 0);
+    const price = parseFloat(document.getElementById('add-part-price').value || 0);
+    
+    if (!partName || !category || qty < 0 || minQty < 0 || price < 0) {
+        alert('Please fill in all fields with valid values.');
+        return;
+    }
+    
+    const csrfToken = document.querySelector('meta[name="csrfToken"]')?.getAttribute('content');
+    if (!csrfToken) {
+        alert('Security error: CSRF token not found');
+        return;
+    }
+    
+    const response = await fetch("<?= $this->Url->build('/parts/add') ?>", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+            part_name: partName,
+            category: category,
+            stock_quantity: qty,
+            minimum_stock: minQty,
+            unit_price: price
+        })
+    });
+    
+    const data = await response.json();
+    if (data.success) {
+        alert('✓ Stock item added successfully!');
+        document.getElementById('addStockModal').style.display = 'none';
+        location.reload();
+    } else {
+        alert('Error: ' + (data.error || 'Failed to add stock item'));
+    }
 }
 </script>

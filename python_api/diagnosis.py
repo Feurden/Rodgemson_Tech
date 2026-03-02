@@ -224,6 +224,25 @@ REPLACEMENT_MAP: dict[str, list[str]] = {
 }
 
 
+# ── Symptom-specific parts map (for direct symptom guidance) ─────────────────
+SYMPTOM_PARTS_MAP: dict[str, list[str]] = {
+    "not_charging":           ["Charging Port", "USB Connector", "Charging IC", "Battery Connector"],
+    "overheating":            ["Battery", "Thermal Sensor IC", "Heatsink", "Power IC"],
+    "no_signal":              ["Antenna Module", "Baseband IC", "RF IC", "SIM Card Slot"],
+    "battery_drains_fast":    ["Battery", "Power IC", "LCD Backlight"],
+    "stuck_on_logo":          ["Mainboard (Reflash)", "CPU", "Flash Memory"],
+    "screen_black":           ["Display Driver IC", "Backlight IC", "LCD Connector", "Power Supply"],
+    "touch_not_working":      ["Touch Controller IC", "Digitizer", "Touch Panel Flex"],
+    "speaker_no_sound":       ["Speaker Module", "Audio Codec IC", "Amplifier IC"],
+    "mic_not_work":           ["Microphone Module", "Audio Codec IC", "Mic Flex Connector"],
+    "screen_flickering":      ["Display Driver IC", "Backlight IC", "LCD Flex Cable"],
+    "wifi_not_working":       ["WiFi Module", "Antenna", "RF IC"],
+    "bluetooth_issue":        ["Bluetooth Module", "Baseband IC", "Antenna"],
+    "phone_freezing":         ["RAM", "CPU", "Storage IC", "Power Management"],
+    "water_damage":           ["Mainboard (Full Inspection)", "Battery", "Flex Cables", "All Connectors"],
+}
+
+
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
 def clean_text(text: str) -> str:
@@ -270,37 +289,60 @@ def rule_based_override(
     Returns a diagnosis string if fired, None to defer to ML.
     """
     f = features_df.iloc[0]
-
+    
+    # Count major failure symptoms
     major_failures = int(
         f["touch_not_working"] + f["mic_not_work"] +
         f["speaker_no_sound"]  + f["no_signal"]    + f["screen_black"]
     )
-
+    
+    # === MAINBOARD ISSUES (highest priority) ===
     if major_failures >= 3:
         return "Mainboard Issue (Rule-Based)"
-    if f["battery_drains_fast"] == 1 and f["overheating"] == 1:
+    if f["touch_not_working"] == 1 and f["mic_not_work"] == 1:
+        return "Mainboard Issue (Rule-Based)"
+    if f["mic_not_work"] == 1 and f["speaker_no_sound"] == 1:
+        return "Mainboard Issue (Rule-Based)"
+    
+    # === POWER/THERMAL ISSUES ===
+    if f["overheating"] == 1 and f["battery_drains_fast"] == 1:
         return "Battery Issue (Rule-Based)"
+    if f["overheating"] == 1 and f["not_charging"] == 1:
+        return "Power IC Issue (Rule-Based)"
+    if f["overheating"] == 1 and f["touch_not_working"] == 1:
+        return "Power IC Issue (Rule-Based)"
+    if f["overheating"] == 1 and f["screen_black"] == 1:
+        return "Power IC Issue (Rule-Based)"
+    
+    # === DISPLAY ISSUES ===
+    if f["screen_flickering"] == 1 and f["screen_black"] == 1:
+        return "Display IC Issue (Rule-Based)"
+    if f["screen_black"] == 1 and f["touch_not_working"] == 1:
+        return "Display IC Issue (Rule-Based)"
+    
+    # === CHARGING ISSUES ===
     if f["not_charging"] == 1 and f["screen_black"] == 1:
         return "Charging IC Issue (Rule-Based)"
-    if f["touch_not_working"] == 1 and f["overheating"] == 1:
-        return "Touch Controller Issue (Rule-Based)"
+    if f["not_charging"] == 1 and f["battery_drains_fast"] == 1:
+        return "Charging Port Issue (Rule-Based)"
+    
+    # === SIGNAL ISSUES ===
     if f["no_signal"] == 1 and f["mic_not_work"] == 1:
         return "Baseband Issue (Rule-Based)"
     if f["no_signal"] == 1 and f["wifi_not_working"] == 1:
         return "Antenna Issue (Rule-Based)"
     if f["no_signal"] == 1 and major_failures == 1:
-        return "SIM IC or Antenna Issue (Rule-Based)"
-    if f["mic_not_work"] == 1 and f["speaker_no_sound"] == 1:
-        return "Mainboard Issue (Rule-Based)"
-    if f["screen_flickering"] == 1 and f["screen_black"] == 1:
-        return "Display IC Issue (Rule-Based)"
+        return "SIM IC Issue (Rule-Based)"
+    
+    # === SOFTWARE ISSUES ===
     if f["phone_freezing"] == 1 and f["stuck_on_logo"] == 1:
         return "Software/OS Issue (Rule-Based)"
+    
+    # === WATER DAMAGE (always highest priority) ===
     if f["water_damage"] == 1:
         return "Water Damage - Inspect All Components (Rule-Based)"
-
+    
     # Low confidence: symptom is too generic to distinguish classes on its own.
-    # Name the competing classes so the user knows to provide more detail.
     if confidence is not None and confidence < 50:
         competing = f" (tied between: {', '.join(top_classes)})" if top_classes else ""
         return f"Low Confidence - Need More Symptoms{competing}"
@@ -397,9 +439,18 @@ def main() -> None:
     print(f"Confidence        : {confidence}%")
 
     parts = get_replacement_parts(primary_diagnosis)
-    print("\nSuggested Replacement Parts:")
+    print("\nMain Diagnosis Parts:")
     for part in parts:
         print(f"  - {part}")
+
+    # Show symptom-specific parts
+    detected_symptom_names = [s for s in SYMPTOMS if features_df.iloc[0][s] == 1]
+    print("\nSymptom-Specific Parts to Check:")
+    for symptom in detected_symptom_names:
+        if symptom in SYMPTOM_PARTS_MAP:
+            print(f"\n  {symptom.replace('_', ' ').title()}:")
+            for part in SYMPTOM_PARTS_MAP[symptom]:
+                print(f"    - {part}")
 
     # 7. Top 2
     print("\nTop 2 Possible Issues:")

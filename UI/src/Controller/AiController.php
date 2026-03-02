@@ -67,4 +67,58 @@ class AiController extends AppController
                 ]));
         }
     }
+
+    public function saveFeedback(): Response
+    {
+        $this->request->allowMethod(['post']);
+
+        $data = $this->request->getData();
+        $jobId = $data['job_id'] ?? null;
+        $isCorrect = $data['diagnosis_correct'] ?? null;
+
+        if (!$jobId || $isCorrect === null) {
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'error' => 'Missing required fields'
+                ]));
+        }
+
+        try {
+            $table = $this->getTableLocator()->get('RepairDiagnoses');
+
+            $entity = $table->newEntity([
+                'job_id' => $jobId,
+                'ai_diagnosis' => $data['ai_diagnosis'] ?? null,
+                'actual_diagnosis' => $data['actual_diagnosis'] ?? null,
+                'actual_root_cause' => $data['root_cause'] ?? null,
+                'parts_replaced' => $data['parts_replaced'] ?? null,
+                'diagnosis_correct' => $isCorrect,
+                'technician_notes' => $data['notes'] ?? null,
+                'completed_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($table->save($entity)) {
+                return $this->response
+                    ->withType('application/json')
+                    ->withStringBody(json_encode(['success' => true]));
+            }
+
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'error' => 'Failed to save feedback'
+                ]));
+
+        } catch (\Exception $e) {
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ]));
+        }
+    }
 }

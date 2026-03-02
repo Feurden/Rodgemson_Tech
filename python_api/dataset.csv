@@ -1,0 +1,651 @@
+not_charging,overheating,no_signal,battery_drains_fast,stuck_on_logo,screen_black,touch_not_working,speaker_no_sound,mic_not_work,screen_flickering,wifi_not_working,bluetooth_issue,phone_freezing,water_damage,diagnosis
+0,1,0,0,1,0,0,0,0,1,1,0,1,0,Software/OS Issue
+0,0,1,1,1,1,0,1,0,1,1,0,1,0,Display IC Issue
+0,0,1,1,0,1,1,1,0,0,0,1,0,1,SIM IC Issue
+0,1,0,1,0,0,0,1,0,1,0,0,1,0,Battery Issue
+1,1,1,1,1,1,0,0,0,1,1,1,0,1,Power IC Issue
+0,1,0,0,1,0,0,1,0,1,1,1,1,0,Speaker Issue
+1,0,0,0,0,1,1,0,1,0,0,1,0,0,Charging IC Issue
+1,0,1,1,1,1,0,0,1,0,1,1,0,1,Baseband Issue
+0,0,1,0,0,1,0,0,0,1,0,1,0,1,Display IC Issue
+0,0,1,0,0,0,1,0,0,0,1,0,1,1,Antenna Issue
+0,0,0,0,1,0,0,0,0,1,0,1,1,0,Software/OS Issue
+0,1,1,0,1,0,1,0,0,0,1,1,0,0,Antenna Issue
+0,1,0,0,0,1,0,1,0,1,0,1,1,0,Display IC Issue
+1,1,0,1,0,1,1,0,1,0,1,1,0,0,Power IC Issue
+0,0,0,0,1,0,0,0,0,1,1,0,1,1,Software/OS Issue
+0,0,1,1,1,1,0,0,0,1,1,1,1,1,Display IC Issue
+1,1,0,0,0,0,0,1,1,1,1,0,0,0,Charging Port Issue
+0,0,0,1,1,0,0,0,0,1,0,0,1,0,Software/OS Issue
+1,1,0,1,1,1,1,0,0,0,0,0,0,1,Power IC Issue
+0,0,0,1,1,0,1,1,1,0,0,1,1,1,Mainboard Issue
+0,1,0,1,0,0,0,1,1,0,1,0,1,0,Battery Issue
+1,1,1,1,0,1,0,0,1,1,0,0,0,0,Power IC Issue
+0,1,0,0,1,1,1,0,1,0,0,0,1,0,Touch Controller Issue
+1,1,0,1,0,1,1,0,1,1,0,1,0,0,Power IC Issue
+0,1,0,0,0,0,0,1,0,1,1,1,1,0,Speaker Issue
+0,0,0,0,0,1,0,1,0,0,0,1,1,0,Speaker Issue
+1,0,0,0,1,1,0,1,0,1,1,0,0,1,Charging IC Issue
+0,0,1,1,1,0,1,0,0,1,1,0,1,1,Antenna Issue
+0,1,0,0,0,1,0,0,1,0,0,1,1,0,Microphone Issue
+0,1,0,0,0,0,1,1,1,0,0,0,0,0,Mainboard Issue
+0,0,0,1,0,1,1,0,0,0,1,1,1,1,Touch Controller Issue
+1,1,1,1,0,1,0,0,0,0,0,0,0,1,Power IC Issue
+1,1,1,0,0,1,1,0,0,0,0,0,1,1,Charging IC Issue
+0,0,0,0,0,0,1,0,1,1,0,1,1,0,Touch Controller Issue
+0,1,0,0,0,0,0,0,1,1,1,1,0,0,Microphone Issue
+0,0,1,1,1,1,1,0,0,1,0,1,0,1,Display IC Issue
+1,1,1,0,1,0,0,1,1,0,0,0,0,0,Baseband Issue
+0,0,0,1,1,0,0,1,0,0,1,0,0,1,Speaker Issue
+0,0,0,0,1,1,0,1,1,1,0,0,1,1,Display IC Issue
+1,0,0,1,0,1,0,1,0,1,0,1,0,0,Charging IC Issue
+1,1,1,0,1,1,1,1,0,0,1,1,1,0,Charging IC Issue
+1,0,0,1,1,0,1,0,1,0,0,1,1,0,Charging Port Issue
+0,1,0,0,0,0,0,1,1,0,1,0,0,1,Speaker Issue
+1,1,1,1,1,0,0,1,0,1,0,1,0,0,Power IC Issue
+0,1,1,0,1,0,1,0,0,1,0,0,1,0,SIM IC Issue
+0,1,1,0,0,1,1,1,1,0,0,0,1,1,Mainboard Issue
+1,0,0,1,0,0,1,0,0,0,1,0,1,0,Charging Port Issue
+1,0,1,0,1,0,0,0,0,1,1,1,0,1,Antenna Issue
+1,0,1,0,1,0,0,1,0,0,1,1,0,0,Antenna Issue
+0,1,1,0,1,0,0,1,0,0,0,0,0,1,SIM IC Issue
+0,0,0,1,1,0,0,0,0,1,0,0,1,1,Software/OS Issue
+1,1,0,1,1,0,0,0,1,1,0,0,0,1,Power IC Issue
+0,1,0,0,0,0,1,1,0,0,1,1,0,0,Touch Controller Issue
+0,1,0,1,0,0,0,1,1,0,0,1,0,0,Battery Issue
+1,0,1,0,1,1,1,1,1,1,1,1,0,0,Mainboard Issue
+0,1,0,1,1,0,1,1,0,0,1,0,0,1,Battery Issue
+1,1,1,0,1,1,0,0,0,1,1,0,1,0,Charging IC Issue
+0,1,1,0,0,0,0,0,0,1,0,1,0,1,SIM IC Issue
+0,1,0,0,1,1,1,1,1,1,0,1,0,0,Mainboard Issue
+1,0,1,1,0,0,0,1,0,1,1,0,0,1,Antenna Issue
+1,1,0,1,0,1,0,0,1,1,1,0,1,1,Power IC Issue
+0,0,1,0,0,0,1,0,0,0,0,0,1,1,SIM IC Issue
+1,1,1,0,0,0,0,0,1,1,0,1,1,0,Baseband Issue
+0,1,0,1,1,0,1,1,0,1,1,1,1,1,Battery Issue
+0,0,1,1,0,0,0,1,0,1,0,0,1,1,SIM IC Issue
+0,0,0,0,1,1,1,0,1,0,0,0,1,1,Touch Controller Issue
+0,1,1,0,1,0,1,1,0,0,0,1,1,0,SIM IC Issue
+0,0,0,1,1,0,0,0,1,1,1,1,1,0,Microphone Issue
+1,0,0,0,0,1,0,0,0,0,1,0,0,1,Charging IC Issue
+0,0,0,1,1,1,1,0,0,0,1,1,0,0,Touch Controller Issue
+1,1,1,1,0,1,0,1,1,0,1,0,0,1,Power IC Issue
+0,1,0,1,1,1,1,0,1,0,1,1,1,1,Battery Issue
+0,1,0,1,1,1,1,1,1,1,0,1,0,1,Mainboard Issue
+0,0,1,0,0,0,1,1,0,0,0,0,1,0,SIM IC Issue
+0,0,1,0,0,1,1,0,0,1,0,1,1,0,Display IC Issue
+0,1,1,0,1,0,1,1,1,0,0,0,1,1,Mainboard Issue
+0,1,0,1,1,1,0,1,0,1,0,1,1,1,Display IC Issue
+0,1,1,1,0,1,1,1,0,0,0,0,1,1,Battery Issue
+1,1,1,1,0,1,1,1,1,0,1,0,0,1,Mainboard Issue
+0,0,0,1,0,1,0,0,1,0,0,1,1,1,Microphone Issue
+0,0,0,1,1,1,0,1,1,0,0,0,0,0,Speaker Issue
+0,1,0,0,1,0,0,0,0,0,0,1,1,1,Software/OS Issue
+0,0,1,0,0,1,0,1,0,0,0,1,1,0,SIM IC Issue
+0,0,0,1,1,0,0,0,1,0,1,1,1,1,Microphone Issue
+0,1,0,1,1,0,1,1,0,1,0,0,0,0,Battery Issue
+0,0,1,1,1,1,1,0,0,0,0,1,0,1,SIM IC Issue
+1,1,0,1,1,1,0,0,1,1,1,1,0,1,Power IC Issue
+1,1,1,0,0,0,1,1,0,0,1,1,0,0,Antenna Issue
+1,1,1,0,0,0,0,0,0,1,1,1,0,0,Antenna Issue
+0,1,0,0,1,0,0,0,0,0,0,0,1,0,Software/OS Issue
+0,0,1,0,0,0,0,1,1,1,1,1,0,0,Baseband Issue
+0,1,1,1,1,1,0,1,1,0,1,1,0,0,Baseband Issue
+0,1,1,1,0,1,1,1,1,1,0,1,0,0,Mainboard Issue
+1,1,0,0,1,0,1,0,0,1,1,0,1,1,Charging Port Issue
+0,1,1,0,1,0,0,1,0,1,0,0,1,0,SIM IC Issue
+1,1,1,1,1,1,0,1,1,1,1,1,0,1,Power IC Issue
+0,0,0,0,1,0,0,0,0,0,0,1,1,1,Software/OS Issue
+0,1,0,1,1,1,0,1,1,0,1,0,0,1,Battery Issue
+0,0,1,0,1,0,1,0,0,0,1,1,1,1,Antenna Issue
+1,1,1,0,1,0,1,0,1,1,0,1,0,0,Baseband Issue
+0,1,0,0,1,0,0,1,1,0,0,0,1,1,Speaker Issue
+1,0,1,0,1,1,0,1,1,0,1,0,1,1,Baseband Issue
+0,1,0,0,0,0,1,1,1,1,1,0,0,1,Mainboard Issue
+0,0,1,1,1,0,1,0,1,1,0,1,1,0,Baseband Issue
+1,1,1,0,1,0,0,0,1,0,0,0,1,1,Baseband Issue
+0,1,0,1,0,0,1,1,0,0,1,0,1,1,Battery Issue
+0,0,0,0,1,0,0,0,0,0,1,0,1,0,Software/OS Issue
+1,1,0,1,1,0,1,1,0,0,1,0,0,0,Power IC Issue
+0,0,0,1,0,0,1,0,1,1,1,0,0,0,Touch Controller Issue
+1,0,0,0,0,1,1,0,1,1,1,1,1,1,Charging IC Issue
+1,1,0,1,1,0,0,0,1,0,1,0,1,1,Power IC Issue
+0,0,0,0,0,0,0,1,1,0,0,0,1,0,Speaker Issue
+1,1,0,1,0,0,0,0,1,1,1,0,0,0,Power IC Issue
+1,0,0,1,0,0,1,1,0,1,0,0,1,0,Charging Port Issue
+0,1,1,1,1,1,0,0,0,0,0,1,1,0,Battery Issue
+1,1,1,0,1,0,0,0,0,0,0,1,0,1,Charging Port Issue
+1,1,1,0,0,0,1,0,1,1,1,1,0,1,Baseband Issue
+1,1,1,1,0,1,1,0,0,1,0,1,1,1,Power IC Issue
+0,0,0,0,1,1,0,0,0,1,1,1,1,1,Display IC Issue
+0,0,0,0,0,0,0,0,1,0,1,0,1,1,Microphone Issue
+0,1,1,1,0,1,1,0,0,0,0,1,1,1,Battery Issue
+0,1,0,1,1,0,1,0,1,0,1,1,0,0,Battery Issue
+0,0,0,1,1,0,0,0,0,0,1,0,1,0,Software/OS Issue
+0,0,1,0,1,0,1,0,1,0,1,1,1,0,Baseband Issue
+0,1,1,1,0,1,1,1,0,1,0,1,0,1,Display IC Issue
+0,0,0,1,0,1,0,1,0,0,0,0,1,0,Speaker Issue
+1,0,0,0,0,0,1,0,1,1,1,0,1,1,Charging Port Issue
+1,0,0,1,0,0,0,0,0,1,1,0,0,1,Charging Port Issue
+0,1,1,1,1,1,1,0,0,1,1,0,1,0,Display IC Issue
+0,0,0,1,1,0,0,0,0,0,1,1,1,0,Software/OS Issue
+0,1,1,1,1,0,1,1,0,0,0,1,0,0,Battery Issue
+0,1,0,1,1,0,1,1,1,0,0,1,0,0,Mainboard Issue
+0,1,0,0,1,0,0,0,1,1,1,1,1,1,Microphone Issue
+1,0,1,1,1,0,0,0,0,1,1,1,1,0,Antenna Issue
+0,1,1,0,1,0,1,0,0,0,0,1,1,1,SIM IC Issue
+1,1,1,0,1,0,0,1,0,0,1,1,1,1,Antenna Issue
+1,0,1,0,1,0,1,0,0,1,0,0,0,1,Charging Port Issue
+0,0,0,0,1,1,0,0,1,0,1,1,0,1,Microphone Issue
+0,0,1,1,1,0,0,1,0,0,0,1,0,1,SIM IC Issue
+0,0,0,0,1,1,0,0,1,1,1,1,1,0,Display IC Issue
+1,0,1,0,1,0,1,0,0,0,1,0,0,0,Antenna Issue
+0,1,0,1,1,1,0,0,0,0,0,1,0,0,Battery Issue
+0,1,0,1,1,0,1,1,0,0,0,0,0,0,Battery Issue
+1,1,1,0,1,1,1,1,0,0,0,1,0,0,Charging IC Issue
+0,0,0,0,1,1,0,0,0,0,1,1,1,0,Software/OS Issue
+0,0,1,0,0,1,1,0,0,0,0,1,1,1,SIM IC Issue
+1,0,0,1,0,0,1,0,1,1,0,0,0,1,Charging Port Issue
+0,1,0,1,0,0,1,0,1,0,1,0,0,1,Battery Issue
+0,1,0,0,0,1,0,0,0,1,1,0,0,1,Display IC Issue
+0,0,0,1,1,1,0,0,0,0,0,1,1,0,Software/OS Issue
+0,0,1,1,1,0,0,1,1,0,1,1,0,1,Baseband Issue
+0,0,1,0,0,1,0,0,1,0,1,0,1,1,Baseband Issue
+1,1,1,0,0,1,1,0,0,1,0,0,1,0,Charging IC Issue
+0,0,1,1,0,1,1,0,0,1,1,1,0,1,Display IC Issue
+1,0,1,0,0,0,1,1,1,1,0,0,0,1,Mainboard Issue
+0,0,0,0,0,1,0,0,0,1,1,0,0,1,Display IC Issue
+0,0,0,0,0,1,1,0,1,0,1,1,0,0,Touch Controller Issue
+0,1,0,1,1,0,1,0,0,0,1,1,0,0,Battery Issue
+0,0,0,0,1,0,0,0,0,0,0,1,1,0,Software/OS Issue
+0,1,0,1,1,0,0,1,0,1,1,0,1,0,Battery Issue
+0,1,1,1,0,0,0,0,0,1,0,0,1,1,Battery Issue
+0,1,1,1,1,0,1,0,0,1,1,1,1,1,Antenna Issue
+0,0,1,1,0,1,0,0,1,0,1,0,1,0,Baseband Issue
+0,0,0,1,0,1,0,1,1,1,1,0,0,0,Display IC Issue
+1,0,1,1,0,0,1,1,1,0,0,0,0,0,Mainboard Issue
+1,0,1,0,1,1,1,1,1,0,1,1,0,0,Mainboard Issue
+1,1,0,1,0,0,0,1,1,0,1,1,1,0,Power IC Issue
+0,0,0,1,0,0,0,0,1,0,1,1,1,1,Microphone Issue
+0,0,0,0,1,1,0,0,0,0,0,1,1,1,Software/OS Issue
+1,1,0,1,0,0,1,0,0,0,0,0,1,1,Power IC Issue
+0,1,1,0,1,0,1,1,1,0,0,1,1,1,Mainboard Issue
+1,0,1,1,1,1,0,0,0,0,1,0,1,0,Charging IC Issue
+0,0,0,1,0,0,0,1,1,0,0,0,0,0,Speaker Issue
+0,0,0,0,1,0,0,0,0,1,0,1,1,1,Software/OS Issue
+0,0,1,1,1,0,0,1,0,0,0,0,0,0,SIM IC Issue
+0,0,1,0,1,0,1,1,0,0,1,0,0,0,Antenna Issue
+1,1,1,0,1,0,0,1,0,0,0,0,1,1,Charging Port Issue
+0,0,0,1,1,0,0,1,1,1,0,1,1,0,Speaker Issue
+0,0,0,1,0,0,0,0,1,1,0,1,1,1,Microphone Issue
+1,1,0,1,0,1,1,0,0,1,0,0,1,1,Power IC Issue
+0,0,1,1,1,0,0,1,0,1,0,1,0,0,SIM IC Issue
+0,0,0,1,1,1,0,0,0,0,1,0,1,0,Software/OS Issue
+0,0,0,1,0,0,0,1,1,1,0,1,0,1,Speaker Issue
+1,1,1,1,0,0,0,0,0,0,1,1,1,0,Power IC Issue
+0,0,1,1,0,1,1,1,1,0,0,1,1,0,Mainboard Issue
+0,1,0,0,1,1,0,0,1,1,0,0,1,1,Display IC Issue
+1,1,0,0,1,0,0,0,1,0,0,0,0,0,Charging Port Issue
+0,1,0,0,0,0,0,0,1,1,0,1,1,1,Microphone Issue
+0,0,0,0,0,1,1,0,1,1,1,1,0,1,Display IC Issue
+0,1,0,1,0,1,0,0,0,1,1,0,1,0,Display IC Issue
+0,1,1,1,0,1,0,0,0,0,0,0,0,1,Battery Issue
+1,0,1,0,1,0,0,1,0,0,1,1,1,0,Antenna Issue
+0,0,1,0,0,0,0,1,1,0,1,1,1,1,Baseband Issue
+0,1,1,1,1,1,1,0,0,0,1,0,1,0,Antenna Issue
+0,1,0,0,1,1,1,0,0,1,1,0,1,0,Display IC Issue
+0,0,0,1,0,0,0,0,1,1,1,1,0,1,Microphone Issue
+0,1,1,1,1,1,1,1,0,1,0,1,0,1,Display IC Issue
+0,0,0,1,0,1,1,1,1,1,0,1,1,1,Mainboard Issue
+0,0,0,1,1,0,0,0,0,1,0,1,1,1,Software/OS Issue
+0,1,0,1,0,0,0,0,0,1,0,0,1,1,Battery Issue
+1,0,0,1,1,0,0,0,1,1,1,1,1,1,Charging Port Issue
+0,0,0,1,1,0,0,0,0,1,0,1,1,0,Software/OS Issue
+0,0,0,0,1,1,0,0,1,0,0,0,1,0,Microphone Issue
+1,1,1,1,1,0,0,0,1,0,0,0,1,1,Power IC Issue
+0,1,1,1,0,0,1,1,0,1,1,1,0,1,Antenna Issue
+0,1,1,0,1,0,0,0,0,1,0,1,0,0,SIM IC Issue
+0,1,0,1,1,1,0,1,1,1,1,1,0,1,Display IC Issue
+1,0,0,1,1,1,0,1,1,0,0,1,0,0,Charging IC Issue
+0,0,1,1,1,1,1,0,0,0,1,1,1,0,Antenna Issue
+1,1,1,1,0,1,0,0,0,1,0,1,0,1,Power IC Issue
+0,0,1,0,0,0,0,0,0,0,0,0,1,1,SIM IC Issue
+0,1,0,0,1,1,1,0,0,0,1,1,1,0,Touch Controller Issue
+0,0,0,1,0,0,0,0,1,0,0,1,1,0,Microphone Issue
+0,0,0,1,1,0,1,1,1,0,0,1,0,0,Mainboard Issue
+1,0,0,1,1,1,1,0,0,1,0,0,1,1,Charging IC Issue
+0,0,0,1,1,1,0,1,0,0,1,1,1,1,Speaker Issue
+1,0,0,1,1,1,1,0,1,0,0,1,1,0,Charging IC Issue
+1,0,1,1,0,0,1,0,0,1,1,1,0,0,Antenna Issue
+1,1,0,0,0,1,1,0,1,1,0,1,1,0,Charging IC Issue
+1,1,0,1,0,0,0,1,1,0,0,0,0,0,Power IC Issue
+0,0,0,0,1,1,0,1,1,0,0,0,1,0,Speaker Issue
+1,1,0,1,0,0,0,1,0,0,1,0,0,1,Power IC Issue
+1,1,0,0,0,0,1,0,0,0,1,1,0,1,Charging Port Issue
+1,1,0,1,0,0,0,1,1,1,0,1,1,1,Power IC Issue
+0,0,0,0,0,0,1,0,1,0,0,0,0,0,Touch Controller Issue
+0,1,0,1,0,1,0,1,1,0,1,1,0,1,Battery Issue
+1,0,1,1,1,1,1,1,0,0,1,0,1,1,Charging IC Issue
+1,1,0,0,1,0,1,1,1,1,1,0,1,1,Mainboard Issue
+0,1,1,0,0,0,0,1,0,1,0,1,1,0,SIM IC Issue
+0,0,1,0,1,0,1,0,0,1,0,0,1,1,SIM IC Issue
+1,1,1,1,0,1,0,1,0,1,0,1,0,1,Power IC Issue
+0,1,0,0,0,0,0,1,0,1,0,0,0,0,Speaker Issue
+1,1,1,0,1,1,1,0,1,0,0,0,0,0,Baseband Issue
+0,0,0,1,1,0,0,0,0,0,0,0,1,0,Software/OS Issue
+0,0,0,1,1,1,1,1,0,0,1,1,1,0,Touch Controller Issue
+1,0,1,1,0,0,1,1,1,1,1,0,1,0,Mainboard Issue
+0,1,1,1,0,0,1,1,1,0,1,1,0,0,Mainboard Issue
+0,1,0,0,1,1,0,0,0,0,1,0,1,0,Software/OS Issue
+0,0,1,0,1,1,0,1,0,0,1,1,0,1,Antenna Issue
+0,0,1,1,0,1,0,1,0,0,0,0,1,1,SIM IC Issue
+1,0,1,1,0,0,1,1,0,0,0,0,0,1,Charging Port Issue
+0,0,0,1,1,1,1,1,0,0,1,1,0,1,Touch Controller Issue
+0,1,1,1,1,0,0,1,0,1,0,1,1,0,Battery Issue
+1,0,1,0,0,0,1,1,1,0,1,0,0,0,Mainboard Issue
+1,1,0,1,1,1,0,0,1,1,1,1,1,1,Power IC Issue
+0,0,1,1,0,1,0,1,1,0,0,1,1,1,Baseband Issue
+0,1,0,0,0,1,0,1,0,0,0,0,1,1,Speaker Issue
+0,1,0,1,0,1,0,1,0,1,1,0,1,1,Display IC Issue
+1,1,1,1,1,1,0,0,0,1,0,1,0,0,Power IC Issue
+1,1,1,0,1,1,1,1,0,1,1,1,0,0,Charging IC Issue
+0,0,1,0,1,0,0,1,0,0,1,0,1,1,Antenna Issue
+0,0,1,1,0,1,1,1,0,0,1,1,0,0,Antenna Issue
+0,0,0,0,1,1,1,1,1,0,0,0,0,1,Mainboard Issue
+0,1,0,0,0,0,1,0,1,0,1,1,1,0,Touch Controller Issue
+1,0,0,0,1,0,0,0,0,0,0,1,0,0,Charging Port Issue
+0,0,1,1,1,1,0,1,1,1,0,1,0,0,Baseband Issue
+0,1,0,1,0,0,0,0,1,1,0,1,0,0,Battery Issue
+0,0,0,0,1,0,0,1,0,1,1,1,0,1,Speaker Issue
+0,0,0,1,1,0,0,0,1,1,1,1,0,1,Microphone Issue
+0,1,1,0,1,1,1,0,0,0,0,0,0,0,SIM IC Issue
+0,0,1,1,1,0,0,0,0,1,0,0,0,1,SIM IC Issue
+1,1,0,1,1,1,1,1,1,0,0,1,1,0,Mainboard Issue
+0,1,1,0,0,0,1,0,0,0,1,1,1,0,Antenna Issue
+1,1,0,0,0,1,1,0,0,1,0,1,1,0,Charging IC Issue
+0,1,0,0,1,1,0,0,0,0,1,0,1,1,Software/OS Issue
+0,0,0,1,1,1,0,1,0,0,1,0,0,1,Speaker Issue
+0,0,1,0,0,1,0,1,1,0,1,1,1,1,Baseband Issue
+0,1,1,0,0,0,0,1,0,0,0,1,1,0,SIM IC Issue
+0,0,0,1,0,0,1,0,1,1,0,0,0,0,Touch Controller Issue
+0,1,1,1,0,0,1,1,0,0,0,1,1,0,Battery Issue
+0,0,0,1,1,0,0,0,0,1,1,1,1,1,Software/OS Issue
+0,0,0,0,1,1,0,0,1,0,1,1,1,0,Microphone Issue
+0,1,0,0,1,0,0,0,1,0,1,1,0,0,Microphone Issue
+0,1,0,0,0,0,1,0,1,0,0,0,0,1,Touch Controller Issue
+0,1,0,0,0,0,0,1,1,0,0,0,0,1,Speaker Issue
+0,0,0,0,1,1,0,0,0,0,0,1,1,0,Software/OS Issue
+1,1,1,0,0,1,0,1,1,0,1,1,0,0,Baseband Issue
+1,0,1,1,0,1,0,0,1,0,1,1,0,0,Baseband Issue
+0,0,0,0,1,0,0,1,0,1,1,0,1,1,Speaker Issue
+0,0,0,0,1,1,0,0,1,0,1,0,1,1,Microphone Issue
+1,0,0,1,0,1,1,0,1,1,1,0,1,0,Charging IC Issue
+0,1,0,0,0,1,0,0,1,0,0,1,0,0,Microphone Issue
+0,1,0,1,1,0,0,1,1,0,1,0,1,0,Battery Issue
+0,0,0,1,1,0,0,0,0,1,1,0,1,0,Software/OS Issue
+0,1,0,0,0,1,0,0,1,0,1,0,0,0,Microphone Issue
+0,0,1,0,0,1,0,1,1,0,0,0,1,0,Baseband Issue
+1,1,1,0,0,0,1,0,1,0,1,1,0,1,Baseband Issue
+0,0,0,0,1,1,0,0,0,0,1,0,1,0,Software/OS Issue
+0,1,1,1,1,0,1,1,1,1,0,1,1,1,Mainboard Issue
+1,0,1,1,0,1,0,0,0,0,0,1,1,1,Charging IC Issue
+0,0,0,1,1,0,0,1,0,0,1,1,0,0,Speaker Issue
+0,1,0,0,0,1,1,1,1,0,0,0,1,1,Mainboard Issue
+0,1,1,1,1,1,1,1,1,1,0,0,0,1,Mainboard Issue
+0,0,0,0,1,0,1,0,0,0,1,0,0,1,Touch Controller Issue
+1,0,0,1,1,1,1,1,0,1,0,1,0,1,Charging IC Issue
+0,0,0,1,1,1,1,0,0,0,1,0,1,0,Touch Controller Issue
+1,1,0,0,1,0,0,0,0,0,1,0,0,0,Charging Port Issue
+0,1,0,1,1,1,1,0,0,1,1,0,0,0,Display IC Issue
+0,0,1,1,1,0,1,0,0,1,1,0,1,0,Antenna Issue
+0,0,0,0,0,1,0,0,1,0,0,1,0,0,Microphone Issue
+1,0,1,0,0,0,0,0,0,0,1,1,0,1,Antenna Issue
+1,0,1,1,1,1,1,1,0,1,0,1,1,1,Charging IC Issue
+0,0,1,1,1,0,1,0,1,0,0,1,1,0,Baseband Issue
+0,1,0,0,1,1,0,1,0,0,0,0,0,1,Speaker Issue
+1,0,1,1,0,0,0,1,0,1,1,0,1,1,Antenna Issue
+0,1,1,1,0,1,1,0,1,0,1,0,0,0,Baseband Issue
+0,1,0,0,0,0,1,0,0,1,0,0,1,1,Touch Controller Issue
+1,0,0,1,1,1,0,0,1,0,0,0,1,1,Charging IC Issue
+1,1,1,1,0,0,1,1,0,0,1,0,0,0,Power IC Issue
+0,1,0,0,1,1,1,1,0,0,0,1,1,0,Touch Controller Issue
+0,1,1,1,0,1,1,1,0,1,0,0,0,0,Display IC Issue
+1,0,1,1,0,0,0,0,0,0,1,1,0,0,Antenna Issue
+1,1,0,0,1,1,1,1,1,1,1,0,1,0,Mainboard Issue
+1,0,0,0,0,0,1,1,0,1,0,0,1,1,Charging Port Issue
+0,0,1,0,0,0,1,1,0,1,1,0,1,1,Antenna Issue
+1,0,0,1,1,0,0,1,1,1,1,0,0,0,Charging Port Issue
+0,0,0,0,1,0,0,0,0,0,1,0,1,1,Software/OS Issue
+1,0,0,1,1,1,1,0,0,0,1,1,0,1,Charging IC Issue
+1,0,0,1,0,0,0,1,0,0,1,0,1,0,Charging Port Issue
+0,0,0,0,1,0,0,0,1,0,1,0,0,0,Microphone Issue
+0,1,0,1,0,0,0,0,0,1,1,0,0,1,Battery Issue
+1,1,1,1,1,1,0,1,0,0,0,0,0,1,Power IC Issue
+1,0,0,0,0,1,1,0,0,0,1,0,0,1,Charging IC Issue
+0,1,0,1,1,0,0,0,0,0,0,1,1,0,Battery Issue
+0,0,1,1,1,1,0,0,0,0,0,0,1,0,SIM IC Issue
+1,1,0,0,1,0,0,0,0,0,0,1,0,0,Charging Port Issue
+0,0,0,0,0,0,0,1,0,1,1,1,1,0,Speaker Issue
+1,1,0,0,1,0,0,1,0,0,0,1,1,1,Charging Port Issue
+0,1,1,1,1,0,1,1,1,0,1,0,1,0,Mainboard Issue
+1,1,0,0,1,0,1,1,1,0,1,0,0,0,Mainboard Issue
+1,1,0,0,0,0,1,0,1,0,0,0,0,0,Charging Port Issue
+0,1,0,0,1,0,0,0,0,0,1,1,1,0,Software/OS Issue
+0,0,0,0,1,0,1,0,1,1,1,0,1,0,Touch Controller Issue
+0,0,0,1,1,0,1,1,1,1,0,1,1,1,Mainboard Issue
+0,1,0,1,1,0,1,1,1,1,1,1,1,0,Mainboard Issue
+0,1,0,0,1,1,0,0,0,0,0,1,1,0,Software/OS Issue
+0,0,0,1,0,0,0,0,1,0,0,1,0,1,Microphone Issue
+1,0,0,1,0,0,1,1,1,1,0,1,0,1,Mainboard Issue
+1,0,0,1,0,0,0,0,1,0,0,0,1,0,Charging Port Issue
+1,0,0,0,1,0,0,0,0,0,0,0,1,0,Charging Port Issue
+0,1,0,1,0,1,0,1,0,0,1,0,1,1,Battery Issue
+0,1,1,1,1,1,0,0,0,0,1,0,0,1,Antenna Issue
+0,0,1,0,1,1,1,1,0,0,0,0,0,0,SIM IC Issue
+1,0,1,1,1,0,0,0,0,1,1,1,0,0,Antenna Issue
+1,1,0,0,1,0,0,1,0,1,1,1,0,1,Charging Port Issue
+0,0,0,1,1,1,0,0,1,1,0,0,1,0,Display IC Issue
+0,0,0,1,1,1,1,1,1,1,1,1,0,1,Mainboard Issue
+0,0,0,0,1,0,0,0,0,1,1,1,1,0,Software/OS Issue
+0,1,1,1,0,1,1,0,0,0,1,0,0,0,Antenna Issue
+1,1,0,1,0,0,0,1,0,1,0,0,1,1,Power IC Issue
+0,1,1,1,0,1,1,0,0,1,0,0,1,0,Display IC Issue
+0,0,1,0,0,0,1,1,1,0,1,0,0,1,Mainboard Issue
+1,0,1,1,0,1,1,0,0,1,0,0,1,0,Charging IC Issue
+0,1,0,1,1,1,1,0,0,1,0,1,1,1,Display IC Issue
+0,1,0,0,1,0,0,0,0,0,0,1,1,0,Software/OS Issue
+1,1,0,0,1,1,0,1,1,1,1,0,0,1,Charging IC Issue
+0,1,0,0,1,1,0,1,0,0,1,0,0,1,Speaker Issue
+0,0,1,1,0,1,0,0,0,0,0,0,0,0,SIM IC Issue
+1,1,0,0,0,1,1,1,0,1,0,1,1,1,Charging IC Issue
+0,1,0,0,0,0,0,1,1,0,0,0,1,1,Speaker Issue
+0,0,0,0,0,1,0,0,1,0,1,1,0,0,Microphone Issue
+0,1,0,0,1,1,0,0,0,0,0,0,1,1,Software/OS Issue
+0,1,0,0,0,0,0,0,1,1,0,1,1,0,Microphone Issue
+1,1,1,1,0,0,0,1,0,1,1,1,1,0,Power IC Issue
+1,1,0,0,1,0,0,0,1,1,0,1,0,1,Charging Port Issue
+1,0,0,1,0,1,0,0,0,1,0,1,1,1,Charging IC Issue
+1,1,0,0,1,0,1,1,0,0,0,0,1,1,Charging Port Issue
+1,1,0,0,1,1,1,0,1,1,0,1,1,1,Charging IC Issue
+0,1,1,1,1,1,1,0,0,0,0,1,1,1,Battery Issue
+1,0,0,1,1,1,0,1,1,1,0,1,1,0,Charging IC Issue
+0,0,1,1,0,0,0,0,0,1,0,1,0,0,SIM IC Issue
+1,0,0,0,0,0,0,1,1,0,1,0,1,0,Charging Port Issue
+0,1,1,0,1,0,1,1,0,0,0,1,1,1,SIM IC Issue
+1,0,0,1,0,1,0,1,0,1,0,0,0,1,Charging IC Issue
+0,0,0,0,1,0,0,0,1,1,1,0,1,0,Microphone Issue
+0,0,1,1,1,0,1,1,0,0,0,1,1,1,SIM IC Issue
+0,1,1,1,0,1,0,1,0,1,1,0,0,1,Display IC Issue
+0,0,0,1,1,0,0,1,1,1,1,0,1,0,Speaker Issue
+0,0,0,1,1,1,0,0,1,0,0,0,0,1,Microphone Issue
+0,0,1,0,0,0,0,1,1,0,0,1,0,1,Baseband Issue
+0,0,0,0,1,1,1,0,0,0,0,1,0,0,Touch Controller Issue
+1,1,1,1,0,0,0,0,0,1,1,1,0,0,Power IC Issue
+0,0,0,1,1,0,0,1,0,0,0,1,1,1,Speaker Issue
+0,0,0,0,1,1,0,0,0,0,0,0,1,1,Software/OS Issue
+0,1,1,0,1,1,0,0,1,1,1,0,0,0,Baseband Issue
+0,0,0,1,0,0,1,1,0,0,0,0,1,0,Touch Controller Issue
+0,0,0,1,1,0,0,0,1,1,0,1,0,1,Microphone Issue
+0,1,0,0,1,0,0,0,0,1,1,0,1,1,Software/OS Issue
+0,1,1,0,0,1,1,0,0,1,0,0,1,0,Display IC Issue
+1,0,1,1,0,0,1,1,0,0,0,0,0,0,Charging Port Issue
+0,0,1,0,0,0,1,1,0,0,0,0,0,0,SIM IC Issue
+0,0,1,1,0,0,0,0,0,0,0,1,1,1,SIM IC Issue
+0,1,0,0,1,1,1,1,0,0,1,0,0,1,Touch Controller Issue
+1,0,0,1,0,1,1,1,1,1,1,0,1,1,Mainboard Issue
+0,0,0,1,1,0,0,0,1,1,0,0,0,0,Microphone Issue
+1,0,0,1,0,0,1,1,1,1,0,0,0,0,Mainboard Issue
+1,0,1,1,0,1,1,0,1,0,0,1,1,1,Baseband Issue
+0,1,1,1,1,0,0,0,0,0,1,1,0,1,Antenna Issue
+0,1,0,1,1,1,0,0,0,0,0,0,1,1,Battery Issue
+0,0,0,0,0,0,0,1,1,0,1,1,1,1,Speaker Issue
+0,0,0,0,1,0,1,0,1,0,0,1,1,1,Touch Controller Issue
+1,1,0,0,0,0,1,0,1,1,0,1,1,0,Charging Port Issue
+1,1,1,1,1,1,1,0,1,0,1,0,0,1,Power IC Issue
+0,1,1,0,1,0,0,0,1,0,0,1,0,0,Baseband Issue
+0,0,1,0,1,1,1,1,0,0,0,0,1,0,SIM IC Issue
+0,0,0,1,1,0,0,0,0,0,0,0,1,1,Software/OS Issue
+0,1,1,0,1,1,0,1,0,0,0,0,0,1,SIM IC Issue
+1,0,1,0,1,0,1,1,0,1,1,1,1,0,Antenna Issue
+0,0,0,0,1,1,0,1,1,0,0,0,1,1,Speaker Issue
+0,0,1,0,0,0,0,1,0,1,1,1,0,0,Antenna Issue
+1,1,0,0,0,1,0,1,0,1,0,0,1,0,Charging IC Issue
+0,1,1,0,1,0,0,1,0,1,1,0,0,0,Antenna Issue
+0,0,0,0,0,0,0,0,1,1,1,1,1,1,Microphone Issue
+1,0,0,1,0,0,1,1,0,0,1,1,1,0,Charging Port Issue
+0,1,0,0,0,1,0,0,1,0,0,0,1,1,Microphone Issue
+0,0,1,1,0,0,1,1,1,0,0,0,0,1,Mainboard Issue
+0,0,1,1,0,1,0,1,1,1,1,1,1,1,Baseband Issue
+0,0,1,0,1,0,0,1,0,0,0,1,0,1,SIM IC Issue
+0,1,0,1,1,1,1,1,0,0,0,0,0,0,Battery Issue
+1,0,0,0,1,1,0,1,1,0,0,1,1,0,Charging IC Issue
+1,0,0,0,0,0,1,0,0,1,0,0,1,0,Charging Port Issue
+0,0,0,0,0,0,0,0,1,1,1,1,1,0,Microphone Issue
+0,0,1,0,0,0,1,0,1,1,0,1,0,0,Baseband Issue
+0,1,0,0,1,0,0,0,0,0,1,0,1,1,Software/OS Issue
+0,1,0,0,1,0,0,1,1,1,1,1,1,0,Speaker Issue
+0,0,1,0,1,0,1,1,0,0,0,1,1,0,SIM IC Issue
+0,0,0,1,1,1,0,0,1,0,1,1,1,1,Microphone Issue
+0,1,1,0,1,1,0,1,1,1,1,1,0,0,Baseband Issue
+0,1,0,0,1,0,0,0,0,0,1,0,1,0,Software/OS Issue
+0,1,0,1,0,1,1,0,0,0,1,0,0,0,Battery Issue
+0,1,0,1,0,0,0,1,1,0,1,1,1,0,Battery Issue
+0,1,0,0,1,0,1,0,0,0,0,1,1,1,Touch Controller Issue
+1,0,1,0,0,0,1,0,1,0,1,1,0,0,Baseband Issue
+0,1,0,0,0,0,0,1,1,1,0,1,0,1,Speaker Issue
+1,1,0,1,1,1,1,1,0,1,1,0,1,1,Power IC Issue
+0,0,1,0,0,1,1,0,1,0,1,1,0,0,Baseband Issue
+0,1,0,1,1,1,0,1,0,1,0,1,0,1,Display IC Issue
+1,0,0,1,1,0,1,0,0,1,0,0,0,0,Charging Port Issue
+0,0,0,1,0,0,1,0,0,1,0,1,1,1,Touch Controller Issue
+1,1,0,1,1,1,1,0,0,0,0,0,1,1,Power IC Issue
+1,0,1,0,0,0,0,0,0,1,0,1,1,1,Charging Port Issue
+0,1,0,1,0,0,1,0,0,1,1,1,1,1,Battery Issue
+0,0,1,0,1,0,1,0,0,1,1,0,0,0,Antenna Issue
+0,0,1,1,1,0,0,1,0,0,1,0,0,1,Antenna Issue
+0,1,1,0,0,1,0,0,0,0,1,1,1,0,Antenna Issue
+0,1,1,0,1,1,1,1,0,0,0,0,1,1,SIM IC Issue
+1,0,1,1,0,1,0,0,1,1,1,1,1,0,Baseband Issue
+1,1,0,0,1,1,0,1,1,0,1,0,1,1,Charging IC Issue
+0,0,0,0,0,1,1,0,1,1,1,0,1,0,Display IC Issue
+0,0,1,0,1,0,1,1,0,1,0,0,0,0,SIM IC Issue
+0,1,1,1,0,0,1,0,0,1,0,1,1,1,Battery Issue
+0,0,1,0,1,1,1,0,0,1,0,0,0,0,Display IC Issue
+0,1,1,0,1,0,0,0,0,0,0,0,1,1,SIM IC Issue
+0,0,0,1,1,1,0,1,1,0,1,1,0,0,Speaker Issue
+0,0,0,0,0,1,1,0,1,0,0,0,1,0,Touch Controller Issue
+0,0,0,0,0,0,0,1,0,0,1,0,1,0,Speaker Issue
+0,0,0,0,1,0,1,1,0,0,0,0,1,0,Touch Controller Issue
+0,1,0,0,1,1,0,0,1,0,1,0,1,0,Microphone Issue
+0,0,0,1,0,1,1,0,0,0,1,0,0,0,Touch Controller Issue
+1,0,1,1,0,1,0,1,1,1,1,1,1,0,Baseband Issue
+0,1,1,0,0,0,0,0,0,0,0,1,0,1,SIM IC Issue
+0,0,0,1,0,0,0,1,1,1,1,1,0,1,Speaker Issue
+0,1,0,0,1,0,1,0,0,1,1,0,0,1,Touch Controller Issue
+0,1,1,0,1,1,1,0,0,1,1,0,1,0,Display IC Issue
+0,1,1,1,0,0,0,1,0,0,0,0,1,1,Battery Issue
+1,1,0,1,1,0,0,0,1,1,1,1,1,0,Power IC Issue
+0,0,0,0,0,1,0,0,0,1,0,0,0,1,Display IC Issue
+0,1,1,1,0,0,0,1,1,0,0,1,1,1,Baseband Issue
+0,0,0,1,0,1,0,0,1,0,1,1,0,0,Microphone Issue
+0,0,0,1,1,1,1,0,1,0,1,0,1,1,Touch Controller Issue
+1,1,1,0,0,1,1,1,0,1,1,1,1,1,Charging IC Issue
+0,1,0,0,1,1,0,0,1,0,0,1,0,0,Microphone Issue
+0,1,1,0,0,1,1,0,0,0,0,1,1,1,SIM IC Issue
+0,0,0,0,1,0,0,0,0,0,1,1,1,0,Software/OS Issue
+0,1,1,0,0,1,0,0,1,1,0,0,1,0,Baseband Issue
+0,1,0,0,1,0,1,0,1,0,0,1,0,0,Touch Controller Issue
+1,1,0,0,0,0,1,1,0,0,0,1,0,1,Charging Port Issue
+0,1,0,0,1,0,0,0,0,1,0,0,1,0,Software/OS Issue
+0,1,1,1,1,0,1,0,0,0,1,0,0,1,Antenna Issue
+0,0,1,0,0,0,0,1,0,1,1,1,0,1,Antenna Issue
+1,1,0,1,1,0,0,1,0,0,0,1,0,0,Power IC Issue
+0,1,1,0,0,1,1,1,0,0,0,1,1,0,SIM IC Issue
+0,0,0,1,0,0,0,0,1,0,0,0,0,0,Microphone Issue
+1,1,1,0,0,1,0,1,1,1,0,1,1,0,Baseband Issue
+1,0,1,1,0,1,0,0,0,1,0,1,1,0,Charging IC Issue
+0,0,0,0,1,0,0,1,0,1,0,1,1,1,Speaker Issue
+0,1,0,0,1,1,0,0,0,0,1,1,1,0,Software/OS Issue
+0,0,0,0,0,1,0,1,1,0,1,1,0,1,Speaker Issue
+0,0,0,1,1,0,0,1,1,0,1,1,0,0,Speaker Issue
+1,0,0,1,1,0,0,0,0,1,1,0,1,0,Charging Port Issue
+0,1,0,1,0,0,0,1,1,0,1,0,0,1,Battery Issue
+0,0,0,1,1,0,1,1,0,0,0,0,1,1,Touch Controller Issue
+1,1,0,0,1,1,0,1,1,0,0,0,0,1,Charging IC Issue
+1,0,1,0,0,1,1,0,0,0,0,0,1,0,Charging IC Issue
+0,0,0,0,0,1,1,0,0,1,0,1,0,0,Display IC Issue
+0,1,0,1,0,0,1,0,1,1,0,0,0,1,Battery Issue
+0,0,0,0,0,1,0,1,1,0,1,0,0,0,Speaker Issue
+1,0,0,1,1,1,1,1,0,0,0,0,1,0,Charging IC Issue
+0,1,0,1,0,0,1,0,1,1,1,1,0,0,Battery Issue
+0,0,1,1,1,0,0,1,1,0,0,0,0,1,Baseband Issue
+0,1,1,0,0,1,0,1,0,0,0,0,0,1,SIM IC Issue
+0,0,0,0,0,0,0,0,1,0,1,0,0,1,Microphone Issue
+1,0,0,1,1,1,1,1,0,0,0,1,1,0,Charging IC Issue
+1,0,1,1,0,0,0,1,0,1,0,0,1,1,Charging Port Issue
+0,1,1,0,1,0,1,1,0,0,1,1,0,1,Antenna Issue
+0,0,1,0,0,1,1,0,0,1,1,1,0,1,Display IC Issue
+0,0,0,1,0,1,0,1,0,0,1,0,1,0,Speaker Issue
+0,1,1,0,0,1,0,0,1,1,0,0,0,1,Baseband Issue
+1,0,1,1,0,1,1,0,1,0,1,1,1,1,Baseband Issue
+0,0,1,0,1,0,0,0,0,1,0,1,0,0,SIM IC Issue
+1,1,1,0,0,0,0,1,0,1,1,0,0,1,Antenna Issue
+1,0,0,0,0,0,1,1,0,1,0,1,1,0,Charging Port Issue
+1,1,0,0,1,0,0,1,1,1,1,0,0,1,Charging Port Issue
+0,0,1,1,0,1,0,1,0,1,0,1,1,0,Display IC Issue
+0,0,0,1,1,1,0,0,0,0,0,0,1,0,Software/OS Issue
+0,0,0,1,0,0,0,1,0,1,1,0,1,1,Speaker Issue
+0,0,0,1,1,0,1,0,0,1,0,0,1,0,Touch Controller Issue
+0,1,0,1,1,1,0,1,1,0,0,1,0,0,Battery Issue
+0,0,0,1,1,0,0,1,1,1,0,0,0,0,Speaker Issue
+0,1,0,0,1,0,0,0,0,0,0,0,1,1,Software/OS Issue
+0,1,0,0,0,0,0,0,1,1,1,0,1,0,Microphone Issue
+0,0,0,0,0,1,0,1,0,0,0,1,0,1,Speaker Issue
+1,1,1,1,1,1,1,0,1,0,0,0,1,0,Power IC Issue
+0,0,1,1,0,1,1,0,0,1,1,0,1,1,Display IC Issue
+1,0,0,1,1,1,1,1,0,1,0,0,0,1,Charging IC Issue
+0,0,0,0,1,0,0,1,0,0,1,1,0,0,Speaker Issue
+0,0,0,0,0,0,1,1,1,1,1,0,1,1,Mainboard Issue
+1,0,0,0,1,1,0,0,1,0,0,0,1,0,Charging IC Issue
+0,0,0,1,1,0,0,0,1,0,0,0,1,1,Microphone Issue
+0,0,0,1,0,1,0,1,1,0,1,1,1,0,Speaker Issue
+0,0,0,1,1,0,0,0,0,1,1,0,1,1,Software/OS Issue
+1,1,0,1,1,0,0,0,1,1,0,1,1,1,Power IC Issue
+0,1,1,1,0,1,1,0,0,1,1,1,1,0,Display IC Issue
+0,0,0,1,1,0,1,1,0,0,1,0,1,1,Touch Controller Issue
+0,1,0,0,1,1,0,0,1,0,1,0,1,1,Microphone Issue
+0,0,0,0,0,1,0,1,1,1,0,0,1,1,Display IC Issue
+1,1,0,0,0,0,0,1,0,1,1,0,1,1,Charging Port Issue
+1,0,0,0,1,0,1,0,1,1,1,1,1,1,Charging Port Issue
+0,1,0,0,0,0,0,1,0,0,0,1,1,1,Speaker Issue
+0,1,0,1,1,1,1,0,1,1,0,0,0,0,Display IC Issue
+1,1,1,1,1,1,1,1,1,0,1,0,1,0,Mainboard Issue
+0,0,0,0,1,1,0,0,1,0,1,1,1,1,Microphone Issue
+1,1,1,1,1,0,0,0,1,0,0,0,0,0,Power IC Issue
+0,0,1,0,1,0,1,1,0,0,0,0,0,1,SIM IC Issue
+0,1,0,0,1,0,0,1,0,0,0,1,0,1,Speaker Issue
+1,1,1,1,0,0,1,1,1,0,0,1,0,0,Mainboard Issue
+1,1,1,1,0,1,1,1,1,0,1,0,1,1,Mainboard Issue
+0,0,0,1,1,1,0,0,0,1,1,0,1,0,Display IC Issue
+1,0,1,0,1,1,0,0,1,0,0,0,0,0,Baseband Issue
+0,1,0,1,1,0,1,1,1,0,1,1,1,0,Mainboard Issue
+0,0,0,1,0,1,0,0,1,0,0,1,1,0,Microphone Issue
+0,0,1,0,1,1,1,1,0,1,0,0,1,1,Display IC Issue
+0,0,0,0,0,0,1,0,1,0,0,1,1,0,Touch Controller Issue
+1,0,0,1,0,0,0,0,1,1,0,1,0,0,Charging Port Issue
+1,0,1,0,0,0,0,0,0,1,1,0,0,0,Antenna Issue
+0,0,1,0,0,0,0,0,0,0,0,0,0,0,SIM IC Issue
+1,1,0,0,0,0,0,0,0,0,0,0,1,1,Charging Port Issue
+0,0,0,0,1,1,1,0,0,0,1,0,0,0,Touch Controller Issue
+1,0,1,0,0,1,0,1,1,0,0,1,0,0,Baseband Issue
+1,1,0,1,1,0,0,1,0,1,1,0,1,0,Power IC Issue
+0,0,0,0,1,0,1,0,0,0,0,1,0,1,Touch Controller Issue
+1,0,1,1,1,1,0,0,1,0,1,1,1,0,Baseband Issue
+0,1,0,0,1,0,0,0,0,1,1,1,1,0,Software/OS Issue
+0,0,0,0,0,0,0,1,0,1,1,1,0,1,Speaker Issue
+1,1,0,1,0,1,0,0,1,0,0,0,1,1,Power IC Issue
+1,1,1,1,1,0,1,1,1,0,1,1,0,1,Mainboard Issue
+1,0,1,0,1,1,1,1,0,0,0,0,0,1,Charging IC Issue
+1,0,0,1,0,1,1,1,1,0,0,1,1,0,Mainboard Issue
+0,0,0,1,0,0,1,0,1,1,1,1,0,1,Touch Controller Issue
+1,0,0,1,0,0,0,1,0,1,1,1,0,1,Charging Port Issue
+1,1,0,0,1,1,1,1,0,1,1,0,0,1,Charging IC Issue
+0,0,1,1,1,1,0,0,0,1,0,1,1,0,Display IC Issue
+1,1,1,1,0,1,1,0,1,1,1,0,0,0,Power IC Issue
+0,1,1,1,0,1,1,0,0,0,0,0,0,0,Battery Issue
+0,1,1,0,1,0,1,1,0,0,1,1,0,0,Antenna Issue
+1,0,1,0,1,0,0,1,0,1,1,0,0,0,Antenna Issue
+0,0,0,1,0,0,1,0,0,1,0,0,0,1,Touch Controller Issue
+0,0,0,0,0,0,1,1,0,1,0,0,1,1,Touch Controller Issue
+0,0,0,1,1,0,0,0,0,0,1,1,1,1,Software/OS Issue
+0,0,1,1,1,1,1,0,0,0,1,1,0,0,Antenna Issue
+0,1,1,1,1,1,1,1,0,1,1,0,1,1,Display IC Issue
+1,0,0,1,1,1,0,0,1,1,0,0,0,1,Charging IC Issue
+0,0,0,0,1,1,0,0,1,0,0,0,0,0,Microphone Issue
+0,1,1,0,0,0,0,1,0,0,0,1,0,1,SIM IC Issue
+0,0,0,0,0,0,1,0,0,1,0,0,1,0,Touch Controller Issue
+1,0,1,1,1,1,1,0,1,0,1,0,0,0,Baseband Issue
+0,0,0,0,0,0,0,0,1,1,0,1,1,0,Microphone Issue
+1,0,0,1,1,0,1,0,1,1,1,0,0,0,Charging Port Issue
+0,1,1,1,0,0,1,1,1,1,0,0,1,1,Mainboard Issue
+0,0,0,0,1,0,0,0,0,1,0,0,1,1,Software/OS Issue
+0,0,0,0,0,1,0,0,1,0,1,0,1,1,Microphone Issue
+1,1,1,1,1,0,1,1,0,1,0,0,1,1,Power IC Issue
+0,1,0,0,0,1,1,0,1,1,0,0,0,0,Display IC Issue
+1,1,0,0,0,0,1,1,1,0,1,0,0,1,Mainboard Issue
+0,0,0,0,0,1,0,1,0,0,1,1,1,0,Speaker Issue
+0,1,1,0,0,0,0,1,0,0,0,1,0,0,SIM IC Issue
+0,0,0,1,1,0,1,0,1,0,0,0,1,1,Touch Controller Issue
+1,0,0,1,1,0,0,0,0,1,0,0,1,1,Charging Port Issue
+1,1,0,1,0,0,1,0,0,1,0,0,0,1,Power IC Issue
+0,1,0,1,0,0,0,0,1,1,1,1,0,1,Battery Issue
+0,0,0,1,0,0,0,0,1,0,1,1,0,0,Microphone Issue
+0,1,0,1,1,0,0,1,0,0,0,1,1,1,Battery Issue
+0,0,1,1,1,1,0,1,0,1,0,0,0,1,Display IC Issue
+0,1,1,0,0,0,1,1,1,0,0,1,0,1,Mainboard Issue
+0,1,0,1,0,0,1,1,0,1,0,1,0,1,Battery Issue
+0,0,0,0,1,0,0,0,0,0,0,0,1,0,Software/OS Issue
+1,0,0,0,0,0,0,1,0,0,0,1,0,0,Charging Port Issue
+0,0,1,0,0,0,0,0,0,1,1,1,1,1,Antenna Issue
+1,1,0,0,0,1,1,0,0,0,1,0,0,1,Charging IC Issue
+0,1,0,0,1,0,0,0,0,1,1,1,1,1,Software/OS Issue
+0,0,0,0,1,0,1,0,1,1,1,1,0,1,Touch Controller Issue
+0,1,0,0,1,0,0,0,0,0,1,1,1,1,Software/OS Issue
+0,0,0,0,1,0,0,1,0,1,0,0,1,0,Speaker Issue
+0,0,0,1,0,1,1,0,0,1,1,0,1,0,Display IC Issue
+0,0,0,1,0,0,0,0,1,0,0,0,0,1,Microphone Issue
+0,0,0,0,0,0,0,0,1,0,0,1,0,1,Microphone Issue
+1,0,1,0,0,1,0,1,0,1,0,1,1,1,Charging IC Issue
+0,0,0,0,1,1,1,0,0,0,0,1,1,0,Touch Controller Issue
+0,0,0,0,0,0,0,1,0,1,0,1,1,0,Speaker Issue
+1,1,0,1,0,1,0,1,0,1,1,1,1,0,Power IC Issue
+0,0,0,0,1,1,1,1,0,0,1,0,0,1,Touch Controller Issue
+0,0,0,0,0,0,0,0,1,0,1,0,0,0,Microphone Issue
+0,0,1,0,1,0,1,1,0,1,1,0,0,1,Antenna Issue
+1,0,1,1,1,0,1,1,1,0,0,1,0,1,Mainboard Issue
+0,1,0,1,1,0,0,1,1,1,1,1,1,1,Battery Issue
+0,1,0,0,0,0,1,0,1,1,0,1,0,1,Touch Controller Issue
+1,0,0,0,1,1,1,0,1,1,0,0,0,1,Charging IC Issue
+1,0,1,1,1,0,1,0,0,0,1,1,1,0,Antenna Issue
+1,0,0,0,0,1,0,1,1,0,0,0,1,0,Charging IC Issue
+1,0,0,1,1,0,0,1,0,0,0,1,0,1,Charging Port Issue
+0,0,1,0,0,1,1,0,0,0,0,1,0,0,SIM IC Issue
+0,0,0,0,1,1,1,1,0,0,1,0,1,1,Touch Controller Issue
+0,1,0,1,0,0,0,1,1,1,0,1,0,0,Battery Issue
+0,1,0,1,0,0,1,0,1,1,1,0,1,0,Battery Issue
+0,0,1,0,0,0,1,0,1,0,0,0,1,1,Baseband Issue
+1,1,1,1,1,1,1,1,0,1,1,1,0,1,Power IC Issue
+1,0,0,0,1,0,1,0,1,1,0,0,1,1,Charging Port Issue
+1,1,0,1,0,1,0,0,1,0,1,1,0,0,Power IC Issue
+0,0,0,0,0,0,1,0,1,1,1,0,0,0,Touch Controller Issue
+0,1,0,1,0,0,0,1,0,1,0,0,0,0,Battery Issue
+0,0,0,0,0,1,0,1,1,1,1,0,1,0,Display IC Issue
+0,0,0,0,1,0,1,0,0,1,1,1,1,0,Touch Controller Issue
+0,0,1,1,0,1,1,0,1,0,0,0,0,1,Baseband Issue
+0,0,0,0,1,0,0,0,0,1,1,1,1,1,Software/OS Issue
+1,0,0,0,0,1,1,1,1,1,0,0,0,0,Mainboard Issue
+1,1,0,1,0,0,0,0,0,1,0,1,0,0,Power IC Issue
+1,1,1,0,1,0,1,0,1,0,0,0,0,1,Baseband Issue
+1,0,1,0,1,0,1,1,0,1,1,0,1,0,Antenna Issue
+0,0,1,0,0,0,1,1,0,0,0,0,1,1,SIM IC Issue
+1,1,1,0,1,1,1,0,1,0,1,1,0,1,Baseband Issue

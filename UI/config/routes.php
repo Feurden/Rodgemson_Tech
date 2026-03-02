@@ -79,6 +79,33 @@ return function (RouteBuilder $routes): void {
         $builder->fallbacks();
     });
 
+    // API Routes for device management
+    $routes->post('/devices/add', [
+        'controller' => 'Devices',
+        'action' => 'add'
+    ]);
+    
+    $routes->patch('/devices/update', [
+        'controller' => 'Devices',
+        'action' => 'update'
+    ]);
+    
+    $routes->post('/devices/update', [
+        'controller' => 'Devices',
+        'action' => 'update'
+    ]);
+
+    // API Routes for parts management
+    $routes->post('/parts/add', [
+        'controller' => 'Parts',
+        'action' => 'add'
+    ]);
+    
+    $routes->post('/parts/restock', [
+        'controller' => 'Parts',
+        'action' => 'restock'
+    ]);
+
     $routes->post('/ai/diagnose', [
     'controller' => 'Ai',
     'action' => 'diagnose'
