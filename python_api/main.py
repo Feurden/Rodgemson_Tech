@@ -310,6 +310,7 @@ class DiagnoseResponse(BaseModel):
     confidence: Optional[float]     # None for single-symptom mode
     replacement_parts: list[str]
     symptom_parts: dict[str, list[str]]  # {symptom: [parts...]}
+    symptom_diagnoses: dict[str, str]    # {symptom: individual_diagnosis}
     top2: list[dict]                # [{"diagnosis": ..., "confidence": ...}]
     rule_suggestion: Optional[str]  # None if no rule fired
 
@@ -356,6 +357,7 @@ def diagnose(request: DiagnoseRequest):
         replacement_parts = get_replacement_parts(diagnosis)
 
         symptom_parts = get_symptom_specific_parts(detected_symptoms)
+        symptom_diagnoses = {active_symptom: diagnosis}
         return DiagnoseResponse(
             success=True,
             mode="single_symptom",
@@ -364,6 +366,7 @@ def diagnose(request: DiagnoseRequest):
             confidence=None,
             replacement_parts=replacement_parts,
             symptom_parts=symptom_parts,
+            symptom_diagnoses=symptom_diagnoses,
             top2=[],
             rule_suggestion=diagnosis,  # Mark as rule-based (direct mapping, not ML)
         )
@@ -400,6 +403,11 @@ def diagnose(request: DiagnoseRequest):
     final_diagnosis = rule_result if rule_result else primary_diagnosis
     replacement_parts = get_replacement_parts(final_diagnosis)
     symptom_parts = get_symptom_specific_parts(detected_symptoms)
+    
+    # Build individual diagnoses for each detected symptom
+    symptom_diagnoses = {}
+    for symptom in detected_symptoms:
+        symptom_diagnoses[symptom] = SINGLE_SYMPTOM_MAP.get(symptom, "Unknown Issue")
 
     return DiagnoseResponse(
         success=True,
@@ -409,6 +417,7 @@ def diagnose(request: DiagnoseRequest):
         confidence=confidence,
         replacement_parts=replacement_parts,
         symptom_parts=symptom_parts,
+        symptom_diagnoses=symptom_diagnoses,
         top2=top2,
         rule_suggestion=rule_result,
     )

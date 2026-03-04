@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrfToken" content="<?= $this->request->getAttribute('csrfToken') ?>">
 <title>CellFix – Repair Dashboard</title>
+<style>
+  @media (max-width: 768px) {
+    .modal-box { width: 98% !important; max-width: 100% !important; max-height: 90vh !important; }
+  }
+  .modal-box { overflow-y: auto; max-height: 85vh; }
+</style>
 </head>
 <body>
 <div class="app-container">
@@ -86,7 +92,7 @@
 
 <!-- ── NEW REPAIR MODAL ── -->
 <div class="modal-overlay" id="newRepairModal">
-  <div class="modal-box">
+  <div class="modal-box" style="width:95%; max-width:1000px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
       <h2 style="font-size:1.1rem; color:#1e293b;">+ New Repair Job</h2>
       <button onclick="closeModal('newRepairModal')" style="background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;">✕</button>
@@ -132,20 +138,12 @@
     </button>
 
     <div id="aiResultBox"
-        style="display:none;margin-bottom:14px;padding:12px;background:linear-gradient(135deg,#f0f9ff 0%,#f8fafc 100%);border-radius:8px;font-size:13px;border:1px solid #e0f2fe;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+        style="display:none;margin:-16px -16px 14px -16px;padding:16px;background:#ffffff;border-radius:0;font-size:13px;border:none;border-bottom:1px solid #e2e8f0;box-shadow:none;">
     </div>
 
-    <!-- DIAGNOSTIC FINDINGS SECTION -->
-    <p style="font-size:12px; font-weight:600; color:#64748b; margin:12px 0 8px;">🔍 Diagnostic Findings</p>
-    <div style="margin-bottom:14px;">
-      <label class="modal-label">Diagnostic Notes</label>
-      <textarea id="new-diagnostic" placeholder="Initial diagnostic findings..." class="modal-input" rows="2" style="resize:vertical;"></textarea>
-    </div>
-
-    <div style="margin-bottom:14px;">
-      <label class="modal-label">Suggested Parts Replacement</label>
-      <input type="text" id="new-suggested-parts" placeholder="e.g. Battery, Charging Port, Screen" class="modal-input">
-    </div>
+    <!-- Hidden fields to store AI diagnosis data -->
+    <input type="hidden" id="aiDiagnosis" value="">
+    <input type="hidden" id="aiSuggestedParts" value="">
 
     <div style="display:flex; gap:10px;">
       <button onclick="closeModal('newRepairModal')" style="flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#64748b;font-weight:600;cursor:pointer;">Cancel</button>
@@ -156,7 +154,7 @@
 
 <!-- ── VIEW MODAL ── -->
 <div class="modal-overlay" id="viewModal" onclick="if(event.target===this) closeModal('viewModal')">
-  <div class="modal-box">
+  <div class="modal-box" style="width:95%; max-width:1000px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
       <h2 style="font-size:1.1rem; color:#1e293b;">🔍 Repair Details</h2>
       <button onclick="closeModal('viewModal')" style="background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;">✕</button>
@@ -170,7 +168,7 @@
 
 <!-- ── EDIT MODAL ── -->
 <div class="modal-overlay" id="editModal" onclick="if(event.target===this) closeModal('editModal')">
-  <div class="modal-box">
+  <div class="modal-box" style="width:95%; max-width:1000px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
       <h2 style="font-size:1.1rem; color:#1e293b;">✏️ Edit Repair Job</h2>
       <button onclick="closeModal('editModal')" style="background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;">✕</button>
@@ -215,7 +213,7 @@
 
 <!-- ── FEEDBACK MODAL ── -->
 <div class="modal-overlay" id="feedbackModal">
-  <div class="modal-box">
+  <div class="modal-box" style="width:95%; max-width:1000px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
       <h2 style="font-size:1.1rem; color:#1e293b;">📊 Diagnosis Feedback</h2>
       <button onclick="closeModal('feedbackModal')" style="background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;">✕</button>
@@ -324,7 +322,9 @@ function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
 /* NEW */
 function openNewModal() {
-  ['new-customer-name','new-contact-no','new-device','new-issue','new-diagnostic','new-suggested-parts'].forEach(id => document.getElementById(id).value = '');
+  ['new-customer-name','new-contact-no','new-device','new-issue'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('aiDiagnosis').value = '';
+  document.getElementById('aiSuggestedParts').value = '';
   document.getElementById('new-date').value = new Date().toISOString().split('T')[0];
   document.getElementById('aiResultBox').style.display = 'none';
   document.getElementById('newRepairModal').querySelector('button[onclick*="saveNewRepair"]').disabled = false;
@@ -340,8 +340,8 @@ async function saveNewRepair() {
   const contactNo = document.getElementById('new-contact-no').value.trim();
   const device = document.getElementById('new-device').value.trim();
   const issue = document.getElementById('new-issue').value.trim();
-  const diagnostic = document.getElementById('new-diagnostic').value.trim();
-  const suggestedParts = document.getElementById('new-suggested-parts').value.trim();
+  const diagnostic = document.getElementById('aiDiagnosis').value.trim();
+  const suggestedParts = document.getElementById('aiSuggestedParts').value.trim();
   
   if (!customerName || !device || !issue) { alert('Please fill in Customer Name, Device, and Issue.'); return; }
   
@@ -439,8 +439,10 @@ async function saveEdit() {
   const idx = parseInt(document.getElementById('edit-idx').value);
   const repair = repairs[idx];
   const deviceId = repair.device_id; // Use device_id directly
+  const technician = document.getElementById('edit-tech').value.trim();
   const status = document.getElementById('edit-status').value;
   const finished = document.getElementById('edit-finished').value;
+  const notes = document.getElementById('edit-notes').value.trim();
   
   // Map status values to match database enums
   const statusMap = {
@@ -460,8 +462,10 @@ async function saveEdit() {
     },
     body: JSON.stringify({
       id: deviceId,
+      technician: technician || null,
       status: statusMap[status] || 'Pending',
-      date_released: finished ? new Date(finished).toISOString().split('T')[0] : null
+      date_released: finished ? new Date(finished).toISOString().split('T')[0] : null,
+      notes: notes || null
     })
   });
   
@@ -562,17 +566,48 @@ async function runDiagnosis() {
     `;
     
     const borderColor = isRuleBased ? "#6366f1" : isUncertain ? "#f59e0b" : confidenceColor;
-    const uncertainBadge = isUncertain ? '<span style="font-size:11px; color:#d97706; background:#fef3c7; padding:2px 6px; border-radius:3px; margin-left:8px;">⚠ Uncertain</span>' : '';
+    const uncertainBadge = isUncertain ? '<span style="font-size:11px; color:#d97706; background:#fef3c7; padding:4px 10px; border-radius:4px; font-weight:600;">⚠ Uncertain</span>' : '';
+    
+    const uncertainWarning = isUncertain ? '<div style="background:#fef3c7; border:1px solid #fcd34d; padding:10px 12px; border-radius:6px; margin:14px 0; font-size:12px; color:#92400e; line-height:1.5;"><strong>⚠ Low Confidence:</strong> Confidence is below 50%. Verify with technician expertise or request more details from customer.</div>' : '';
+
+    // Build individual symptom diagnoses section (multi-symptom only)
+    let individualDiagnosesHtml = '';
+    if (data.detected_symptoms.length > 1 && data.symptom_diagnoses) {
+        individualDiagnosesHtml = '<div style="margin-bottom:16px; padding:14px; background:#f0fdf4; border-radius:8px; border-left:4px solid #16a34a;"><p style="font-size:11px; font-weight:700; color:#166534; margin:0 0 12px; text-transform:uppercase; letter-spacing:0.5px;">Individual Symptom Diagnoses</p>';
+        
+        for (const symptom of data.detected_symptoms) {
+            const symptomLabel = symptomLabels[symptom] || symptom.replace(/_/g, ' ').charAt(0).toUpperCase() + symptom.replace(/_/g, ' ').slice(1);
+            const individualDiagnosis = data.symptom_diagnoses[symptom] || 'Unknown';
+            const individualParts = data.symptom_parts[symptom] || [];
+            
+            individualDiagnosesHtml += `<div style="margin-bottom:10px;">`;
+            individualDiagnosesHtml += `<div style="display:flex; gap:8px; align-items:baseline; margin-bottom:6px;">`;
+            individualDiagnosesHtml += `<span style="color:#16a34a; font-size:16px;">→</span>`;
+            individualDiagnosesHtml += `<div><div style="font-size:13px; font-weight:600; color:#1e293b;">${symptomLabel}</div>`;
+            individualDiagnosesHtml += `<div style="font-size:12px; color:#16a34a; font-weight:600; margin-top:2px;">${individualDiagnosis}</div></div>`;
+            individualDiagnosesHtml += `</div>`;
+            
+            if (individualParts.length > 0) {
+                individualDiagnosesHtml += `<div style="font-size:12px; color:#475569; margin-left:24px; display:flex; flex-direction:column; gap:2px;">`;
+                individualParts.forEach(part => {
+                    individualDiagnosesHtml += `<div>◦ ${part}</div>`;
+                });
+                individualDiagnosesHtml += `</div>`;
+            }
+            individualDiagnosesHtml += `</div>`;
+        }
+        individualDiagnosesHtml += '</div>';
+    }
 
     // Build symptom-specific parts sections
     let symptomPartsHtml = '';
     if (data.symptom_parts && Object.keys(data.symptom_parts).length > 0) {
-        symptomPartsHtml = '<div style="margin-top:12px;"><p style="font-size:12px; font-weight:600; color:#475569; margin:0 0 6px;">Parts Related to Detected Symptoms:</p>';
+        symptomPartsHtml = '<div style="margin-top:16px; padding-top:16px; border-top:1px solid #e2e8f0;"><p style="font-size:11px; font-weight:700; color:#64748b; margin:0 0 12px; text-transform:uppercase; letter-spacing:0.5px;">Parts by Symptom</p>';
         for (const [symptom, parts] of Object.entries(data.symptom_parts)) {
             const symptomLabel = symptomLabels[symptom] || symptom.replace(/_/g, ' ').charAt(0).toUpperCase() + symptom.replace(/_/g, ' ').slice(1);
-            symptomPartsHtml += `<div style="margin-bottom:8px;"><span style="font-size:11px; color:#7c3aed; font-weight:600;">• ${symptomLabel}:</span><div style="margin-left:12px; font-size:12px; color:#475569;">`;
+            symptomPartsHtml += `<div style="margin-bottom:12px;"><span style="font-size:12px; color:#0f766e; font-weight:600; display:block; margin-bottom:6px;">→ ${symptomLabel}</span><div style="font-size:12px; color:#475569; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px; margin-left:0;">`;
             parts.forEach(part => {
-                symptomPartsHtml += `<div>◦ ${part}</div>`;
+                symptomPartsHtml += `<div style="background:#f8fafc; padding:6px 10px; border-radius:4px; border-left:2px solid #0f766e;">◦ ${part}</div>`;
             });
             symptomPartsHtml += '</div></div>';
         }
@@ -581,34 +616,51 @@ async function runDiagnosis() {
 
     box.style.display = "block";
     box.innerHTML = `
-        <div style="border-left:4px solid ${borderColor}; padding-left:12px;">
-            <div style="margin-bottom:12px;">
-                <strong style="color:#1e293b; font-size:15px;">✓ Diagnosis: <span style="color:${borderColor};">${data.diagnosis}</span></strong>
-                ${isRuleBased ? '<span style="font-size:11px; color:#6366f1; background:#eef2ff; padding:2px 6px; border-radius:3px; margin-left:8px;">Rule-Based</span>' : ''}
-                ${uncertainBadge}
-            </div>
+        <div style="border-left:6px solid ${borderColor}; padding:16px;">
             
-            ${isUncertain ? '<div style="background:#fef3c7; border:1px solid #fcd34d; padding:8px 10px; border-radius:5px; margin-bottom:12px; font-size:12px; color:#92400e;"><strong>⚠ Uncertain Diagnosis:</strong> Confidence is below 50%. Please verify with technician expertise or request customer to provide additional details.</div>' : ''}
-            
-            ${confidenceBar}
-            
-            <div style="margin-bottom:10px;">
-                <p style="font-size:12px; font-weight:600; color:#475569; margin:0 0 6px;">Symptoms Detected:</p>
-                <p style="font-size:13px; color:#1e293b; margin:0; line-height:1.5;">${detectedSymptoms}</p>
-            </div>
-            
-            <div style="margin-bottom:10px;">
-                <p style="font-size:12px; font-weight:600; color:#475569; margin:0 0 6px;">Main Diagnosis Parts:</p>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:12px;">
-                    ${data.replacement_parts.map(part => `<div style="background:rgba(34, 197, 94, 0.1); padding:6px 8px; border-radius:4px; color:#16a34a; border-left:3px solid #16a34a;">• ${part}</div>`).join('')}
+            <!-- Header -->
+            <div style="margin-bottom:16px;">
+                <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:8px;">
+                    <span style="font-size:28px;">✓</span>
+                    <div>
+                        <strong style="color:#1e293b; font-size:18px; display:block;">Combined Diagnosis</strong>
+                        <div style="font-size:16px; color:${borderColor}; font-weight:700; margin-top:4px;">${data.diagnosis}</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                    ${isRuleBased ? '<span style="font-size:11px; color:#6366f1; background:#eef2ff; padding:4px 10px; border-radius:4px; font-weight:600;">Rule-Based</span>' : ''}
+                    ${uncertainBadge}
                 </div>
             </div>
-            
+
+            ${uncertainWarning}
+
+            <!-- Confidence Bar -->
+            ${confidenceBar}
+
+            <!-- Symptoms -->
+            <div style="margin-bottom:16px;">
+                <p style="font-size:11px; font-weight:700; color:#64748b; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">Detected Symptoms</p>
+                <p style="font-size:14px; color:#1e293b; margin:0; line-height:1.6;">${detectedSymptoms}</p>
+            </div>
+
+            ${individualDiagnosesHtml}
+
+            <!-- Main Parts -->
+            <div style="margin-bottom:16px;">
+                <p style="font-size:11px; font-weight:700; color:#64748b; margin:0 0 10px; text-transform:uppercase; letter-spacing:0.5px;">Suggested Replacement Parts</p>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+                    ${data.replacement_parts.map(part => `<div style="background:#f8fafc; padding:10px 12px; border-radius:6px; color:#0f766e; border-left:3px solid #14b8a6; font-size:13px;">• ${part}</div>`).join('')}
+                </div>
+            </div>
+
             ${symptomPartsHtml}
         </div>
     `;
 
-    // Auto-fill issue field
+    // Auto-fill AI diagnostic fields and store for later
+    document.getElementById('aiDiagnosis').value = data.diagnosis;
+    document.getElementById('aiSuggestedParts').value = data.replacement_parts.join(', ');
     document.getElementById('new-issue').value = data.diagnosis;
 }
 

@@ -9,12 +9,10 @@ REM -----------------------------
 REM START XAMPP (Apache + MySQL)
 REM -----------------------------
 echo.
-echo Starting XAMPP Services...
+echo Opening XAMPP Control Panel...
+start "" "C:\xampp\xampp-control.exe"
 
-cd /d C:\xampp
-xampp_start.exe
-
-timeout /t 5 >nul
+timeout /t 8 >nul
 
 REM -----------------------------
 REM START FASTAPI
@@ -22,7 +20,7 @@ REM -----------------------------
 echo.
 echo Starting FastAPI Server...
 
-start cmd /k "cd /d C:\xampp\htdocs\Rodgemson Cellphone Repair Shop\python_api && py -m uvicorn main:app --reload"
+start /b cmd /c "cd /d "C:\xampp\htdocs\Rodgemson Repair Shop\python_api" && py -m uvicorn main:app --reload > "C:\xampp\htdocs\Rodgemson Repair Shop\python_api\fastapi.log" 2>&1"
 
 timeout /t 3 >nul
 
@@ -32,7 +30,7 @@ REM -----------------------------
 echo.
 echo Starting CakePHP Server...
 
-start cmd /k "cd /d C:\xampp\htdocs\Rodgemson Cellphone Repair Shop\UI && bin\cake server -p 8765"
+start /b cmd /c "cd /d "C:\xampp\htdocs\Rodgemson Repair Shop\UI" && php bin\cake.php server -p 8765 > "C:\xampp\htdocs\Rodgemson Repair Shop\UI\cakephp.log" 2>&1"
 
 timeout /t 5 >nul
 

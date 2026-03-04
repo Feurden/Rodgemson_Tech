@@ -420,6 +420,20 @@ def main() -> None:
         divider()
         return
 
+    # 4.5 Multi-symptom: Show individual symptom diagnoses
+    #     When multiple symptoms are detected, show what each symptom indicates
+    #     independently before showing the combined ML diagnosis.
+    divider()
+    print("Individual Symptom Diagnoses:")
+    detected_symptom_names = [s for s in SYMPTOMS if features_df.iloc[0][s] == 1]
+    for symptom in detected_symptom_names:
+        individual_diagnosis = SINGLE_SYMPTOM_MAP.get(symptom, "Unknown Issue")
+        print(f"\n  {symptom.replace('_', ' ').title()}:")
+        print(f"    → {individual_diagnosis}")
+        if symptom in SYMPTOM_PARTS_MAP:
+            for part in SYMPTOM_PARTS_MAP[symptom]:
+                print(f"      • {part}")
+
     # 5. Multi-symptom: run ML model
     prediction    = model.predict(features_df)
     probabilities = model.predict_proba(features_df)
@@ -433,24 +447,15 @@ def main() -> None:
     top3_classes = [label_encoder.inverse_transform([i])[0] for i in top3_idx]
     rule_result  = rule_based_override(features_df, confidence, top_classes=top3_classes)
 
-    # 6. Primary result
+    # 6. Primary result (Combined ML Diagnosis)
     divider()
-    print(f"Primary Diagnosis : {primary_diagnosis}")
-    print(f"Confidence        : {confidence}%")
+    print(f"Combined ML Diagnosis: {primary_diagnosis}")
+    print(f"Confidence          : {confidence}%")
 
     parts = get_replacement_parts(primary_diagnosis)
     print("\nMain Diagnosis Parts:")
     for part in parts:
         print(f"  - {part}")
-
-    # Show symptom-specific parts
-    detected_symptom_names = [s for s in SYMPTOMS if features_df.iloc[0][s] == 1]
-    print("\nSymptom-Specific Parts to Check:")
-    for symptom in detected_symptom_names:
-        if symptom in SYMPTOM_PARTS_MAP:
-            print(f"\n  {symptom.replace('_', ' ').title()}:")
-            for part in SYMPTOM_PARTS_MAP[symptom]:
-                print(f"    - {part}")
 
     # 7. Top 2
     print("\nTop 2 Possible Issues:")

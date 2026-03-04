@@ -53,6 +53,8 @@ class AiController extends AppController
                     'diagnosis' => $json['diagnosis'] ?? 'Unknown',
                     'confidence' => $json['confidence'],
                     'replacement_parts' => $json['replacement_parts'] ?? [],
+                    'symptom_parts' => $json['symptom_parts'] ?? (object)[],
+                    'symptom_diagnoses' => $json['symptom_diagnoses'] ?? (object)[],
                     'top2' => $json['top2'] ?? [],
                     'rule_suggestion' => $json['rule_suggestion'] ?? null
                 ]));
