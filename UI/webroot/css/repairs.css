@@ -1,0 +1,172 @@
+/* ── repairs.css ─────────────────────────────────────────────────────────────
+   Styles for the Repair Dashboard page (repairs.php)
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* Modal */
+.modal-box {
+  overflow-y: auto;
+  max-height: 85vh;
+}
+
+@media (max-width: 768px) {
+  .modal-box {
+    width: 98% !important;
+    max-width: 100% !important;
+    max-height: 90vh !important;
+  }
+}
+
+/* Modal shared inputs */
+.modal-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+  box-sizing: border-box;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.modal-input:focus {
+  border-color: #38bdf8;
+}
+
+/* New Repair button */
+.btn-new-repair {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-new-repair:hover {
+  opacity: 0.9;
+}
+
+/* Stat cards */
+.repair-stat-card {
+  flex: 1;
+  min-width: 120px;
+  background: white;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.repair-stat-label {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.repair-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Table */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.dashboard-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dashboard-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.dashboard-table tr:hover td {
+  background: #f8fafc;
+}
+
+/* Job ID badge */
+.job-id {
+  font-weight: 700;
+  color: #0284c7;
+  background: #e0f2fe;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-completed  { background: #dcfce7; color: #16a34a; }
+.badge-progress   { background: #dbeafe; color: #2563eb; }
+.badge-pending    { background: #fef9c3; color: #ca8a04; }
+.badge-warning    { background: #ffedd5; color: #ea580c; }
+.badge-released   { background: #f3e8ff; color: #7c3aed; }
+
+/* Table action buttons */
+.tbl-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 2px;
+  font-weight: 500;
+}
+
+.tbl-btn-view { background: #e0f2fe; color: #0284c7; }
+.tbl-btn-edit { background: #fef9c3; color: #ca8a04; }
+
+/* View modal notes box */
+.view-notes-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+  min-height: 48px;
+}

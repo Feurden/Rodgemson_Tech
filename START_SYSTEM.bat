@@ -20,7 +20,7 @@ REM -----------------------------
 echo.
 echo Starting FastAPI Server...
 
-start /b cmd /c "cd /d "C:\xampp\htdocs\Rodgemson Repair Shop\python_api" && py -m uvicorn main:app --reload > "C:\xampp\htdocs\Rodgemson Repair Shop\python_api\fastapi.log" 2>&1"
+start /b cmd /c "cd /d "C:\xampp\htdocs\Rodgemson_Tech\python_api" && py -m uvicorn main:app --reload > "C:\xampp\htdocs\Rodgemson_Tech\python_api\fastapi.log" 2>&1"
 
 timeout /t 3 >nul
 
@@ -30,7 +30,7 @@ REM -----------------------------
 echo.
 echo Starting CakePHP Server...
 
-start /b cmd /c "cd /d "C:\xampp\htdocs\Rodgemson Repair Shop\UI" && php bin\cake.php server -p 8765 > "C:\xampp\htdocs\Rodgemson Repair Shop\UI\cakephp.log" 2>&1"
+start /b cmd /c "cd /d "C:\xampp\htdocs\Rodgemson_Tech\UI" && php bin\cake.php server -p 8765 > "C:\xampp\htdocs\Rodgemson_Tech\UI\cakephp.log" 2>&1"
 
 timeout /t 5 >nul
 

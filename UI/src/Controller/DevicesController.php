@@ -97,28 +97,38 @@ class DevicesController extends Controller
             }
 
             $device = $devicesTable->get($deviceId);
-            
-            if (isset($data['status'])) {
-                $device->status = $data['status'];
-            }
+
+            // Update device table fields
+            if (isset($data['status']))           $device->status           = $data['status'];
+            if (isset($data['technician']))        $device->technician        = $data['technician'];
+            if (isset($data['issue_description'])) $device->issue_description = $data['issue_description'];
             if (isset($data['date_released'])) {
-                $device->date_released = $data['date_released'] ? new \DateTime($data['date_released']) : null;
+                $device->date_released = $data['date_released']
+                    ? new \DateTime($data['date_released']) : null;
             }
 
-            error_log('Updating device ' . $deviceId . ': ' . json_encode($data));
+            $devicesTable->save($device);
 
-            if ($devicesTable->save($device)) {
-                return $this->response
-                    ->withType('application/json')
-                    ->withStringBody(json_encode(['success' => true, 'message' => 'Device updated']));
-            } else {
-                $errors = $device->getErrors();
-                error_log('Device update failed: ' . json_encode($errors));
-                return $this->response
-                    ->withType('application/json')
-                    ->withStatus(400)
-                    ->withStringBody(json_encode(['success' => false, 'error' => 'Failed to update device', 'errors' => $errors]));
+            // Update customer table fields (diagnostic, suggested parts, notes)
+            $needsCustomerUpdate = isset($data['diagnostic'])
+                || isset($data['suggested_parts'])
+                || isset($data['notes']);
+
+            if ($needsCustomerUpdate) {
+                $customersTable = $this->getTableLocator()->get('Customers');
+                $customer = $customersTable->get($device->customer_id);
+
+                if (isset($data['diagnostic']))      $customer->diagnostic                = $data['diagnostic'];
+                if (isset($data['suggested_parts'])) $customer->suggested_part_replacement = $data['suggested_parts'];
+                if (isset($data['notes']))           $customer->phone_issue               = $data['notes'];
+
+                $customersTable->save($customer);
             }
+
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode(['success' => true, 'message' => 'Device updated']));
+
         } catch (\Exception $e) {
             error_log('Device update exception: ' . $e->getMessage());
             return $this->response

@@ -145,9 +145,9 @@ class DashboardController extends AppController
                 'issue' => $device->issue_description,
                 'customer' => $device->customer?->full_name ?? 'N/A',
                 'contact_no' => $device->customer?->contact_no ?? '',
-                'technician' => 'Unassigned', // Can be updated later when technician assignment is implemented
+                'technician' => $device->technician ?? 'Unassigned',
                 'date' => $device->date_received->format('M d, Y'),
-                'status' => strtolower($device->status),
+                'status' => strtolower($device->status ?? 'pending'),
                 'finished' => $device->date_released ? $device->date_released->format('M d, Y g:i A') : '',
                 'notes' => $device->customer?->phone_issue ?? '',
                 'diagnostic' => $device->customer?->diagnostic ?? '',

@@ -71,20 +71,20 @@ REPLACEMENT_MAP: dict[str, list[str]] = {
 
 # ── Symptom-specific parts map (for direct symptom guidance) ──────────────────
 SYMPTOM_PARTS_MAP: dict[str, list[str]] = {
-    "not_charging":           ["Charging Port", "USB Connector", "Charging IC", "Battery Connector"],
-    "overheating":            ["Battery", "Thermal Sensor IC", "Heatsink", "Power IC"],
-    "no_signal":              ["Antenna Module", "Baseband IC", "RF IC", "SIM Card Slot"],
-    "battery_drains_fast":    ["Battery", "Power IC", "LCD Backlight"],
-    "stuck_on_logo":          ["Mainboard (Reflash)", "CPU", "Flash Memory"],
-    "screen_black":           ["Display Driver IC", "Backlight IC", "LCD Connector", "Power Supply"],
-    "touch_not_working":      ["Touch Controller IC", "Digitizer", "Touch Panel Flex"],
-    "speaker_no_sound":       ["Speaker Module", "Audio Codec IC", "Amplifier IC"],
-    "mic_not_work":           ["Microphone Module", "Audio Codec IC", "Mic Flex Connector"],
-    "screen_flickering":      ["Display Driver IC", "Backlight IC", "LCD Flex Cable"],
-    "wifi_not_working":       ["WiFi Module", "Antenna", "RF IC"],
-    "bluetooth_issue":        ["Bluetooth Module", "Baseband IC", "Antenna"],
-    "phone_freezing":         ["RAM", "CPU", "Storage IC", "Power Management"],
-    "water_damage":           ["Mainboard (Full Inspection)", "Battery", "Flex Cables", "All Connectors"],
+    "not_charging":           ["Charging Port (the plug-in hole)", "Charging Cable Connector", "Battery", "Power Button Ribbon"],
+    "overheating":            ["Battery (getting too hot)", "Back Cover / Heat Shield", "Cooling Pad or Thermal Paste", "Power Chip"],
+    "no_signal":              ["SIM Card Slot", "SIM Card itself", "Signal Antenna (inside phone)", "Network Chip"],
+    "battery_drains_fast":    ["Battery (needs replacement)", "Screen (drains power)", "Background App Processor"],
+    "stuck_on_logo":          ["Phone Software (needs reinstall)", "Internal Storage Chip", "Main Circuit Board"],
+    "screen_black":           ["LCD Screen / Display", "Screen Backlight", "Screen Ribbon Cable", "Power Supply Line"],
+    "touch_not_working":      ["LCD Screen with Touch Layer", "Touch Glass (Digitizer)", "Screen Ribbon Cable"],
+    "speaker_no_sound":       ["Speaker", "Audio Chip", "Speaker Ribbon Cable"],
+    "mic_not_work":           ["Microphone", "Audio Chip", "Microphone Ribbon Cable"],
+    "screen_flickering":      ["LCD Screen / Display", "Screen Backlight", "Screen Ribbon Cable"],
+    "wifi_not_working":       ["WiFi Antenna", "WiFi Chip", "WiFi Signal Cable"],
+    "bluetooth_issue":        ["Bluetooth Antenna", "Wireless Chip", "Signal Cable"],
+    "phone_freezing":         ["Internal Memory (RAM)", "Phone Processor", "Internal Storage", "Software (needs update/reinstall)"],
+    "water_damage":           ["Main Circuit Board (full check needed)", "Battery", "All Internal Ribbon Cables", "All Connectors and Ports"],
 }
 
 # ── Single-symptom direct diagnosis ───────────────────────────────────────────
