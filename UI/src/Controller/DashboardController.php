@@ -37,6 +37,7 @@ class DashboardController extends AppController
                 $this->getRequest()->getSession()->write('Auth.User', [
                     'id'       => $user->id,
                     'username' => $user->username,
+                    'role'     => $user->role,       // ← store role in session
                 ]);
 
                 return $this->redirect(['action' => 'analytics']);
@@ -58,7 +59,6 @@ class DashboardController extends AppController
             $password = trim((string)($data['password'] ?? ''));
             $confirm  = trim((string)($data['confirm_password'] ?? ''));
 
-            // Basic validation
             if ($username === '' || $password === '' || $confirm === '') {
                 $this->Flash->error('All fields are required.');
                 return null;
@@ -76,7 +76,6 @@ class DashboardController extends AppController
 
             $usersTable = $this->fetchTable('Users');
 
-            // Check if username already exists
             $existing = $usersTable->find()
                 ->where(['username' => $username])
                 ->first();
@@ -86,7 +85,6 @@ class DashboardController extends AppController
                 return null;
             }
 
-            // Create and save new user
             $newUser = $usersTable->newEntity([
                 'username' => $username,
                 'password' => password_hash($password, PASSWORD_DEFAULT),
@@ -266,23 +264,126 @@ class DashboardController extends AppController
             return $this->redirect(['action' => 'login']);
         }
 
-        $devicesTable   = $this->getTableLocator()->get('Devices');
-        $totalJobs      = $devicesTable->find()->count();
-        $completedJobs  = $devicesTable->find()->where(['status' => 'Completed'])->count();
-        $inProgressJobs = $devicesTable->find()->where(['status' => 'In Progress'])->count();
-        $pendingJobs    = $devicesTable->find()->where(['status' => 'Pending'])->count();
+        $usersTable   = $this->fetchTable('Users');
+        $devicesTable = $this->getTableLocator()->get('Devices');
+
+        // Safe find — won't throw RecordNotFoundException
+        $adminRecord = $usersTable->find()
+            ->where(['id' => $user['id']])
+            ->first();
+
+        if (!$adminRecord) {
+            $this->getRequest()->getSession()->destroy();
+            return $this->redirect(['action' => 'login']);
+        }
 
         $profile = [
-            'username'       => $user['username'] ?? 'User',
-            'role'           => 'Technician',
-            'totalJobs'      => $totalJobs,
-            'completedJobs'  => $completedJobs,
-            'inProgressJobs' => $inProgressJobs,
-            'pendingJobs'    => $pendingJobs,
+            'id'        => $adminRecord->id,
+            'username'  => $adminRecord->username,
+            'full_name' => $adminRecord->full_name ?? $adminRecord->username,
+            'email'     => $adminRecord->email     ?? '',
+            'specialty' => $adminRecord->specialty ?? '',
+            'avatar'    => $adminRecord->avatar    ?? strtoupper(substr($adminRecord->username, 0, 2)),
+            'role'      => $adminRecord->role      ?? 'technician',
         ];
 
-        $this->set(compact('user', 'profile'));
+        // Load ALL users except the currently logged-in admin
+        // This shows every technician regardless of role label,
+        // so even if roles aren't perfectly set yet, all staff appear
+        $techUsers = $usersTable->find()
+            ->where(['id !=' => $user['id']])   // exclude self
+            ->orderBy(['full_name' => 'ASC'])
+            ->all();
+
+        $technicians = [];
+        foreach ($techUsers as $tech) {
+            // Match devices.technician (varchar name) to users.full_name
+            $name = !empty($tech->full_name) ? $tech->full_name : $tech->username;
+
+            $totalJobs      = $devicesTable->find()
+                ->where(['technician' => $name])
+                ->count();
+
+            $completedJobs  = $devicesTable->find()
+                ->where(['technician' => $name, 'status' => 'Completed'])
+                ->count();
+
+            $inProgressJobs = $devicesTable->find()
+                ->where(['technician' => $name, 'status' => 'In Progress'])
+                ->count();
+
+            $pendingJobs    = $devicesTable->find()
+                ->where(['technician' => $name, 'status' => 'Pending'])
+                ->count();
+
+            $waitingJobs    = $devicesTable->find()
+                ->where(['technician' => $name, 'status' => 'Waiting Parts'])
+                ->count();
+
+            $technicians[] = [
+                'id'             => $tech->id,
+                'username'       => $tech->username,
+                'full_name'      => $name,
+                'email'          => $tech->email     ?? '',
+                'specialty'      => $tech->specialty ?? 'General Repairs',
+                'avatar'         => $tech->avatar    ?? strtoupper(substr($name, 0, 2)),
+                'totalJobs'      => $totalJobs,
+                'completedJobs'  => $completedJobs,
+                'inProgressJobs' => $inProgressJobs,
+                'pendingJobs'    => $pendingJobs,
+                'waitingJobs'    => $waitingJobs,
+            ];
+        }
+
+        $this->set(compact('user', 'profile', 'technicians'));
         return null;
+    }
+
+    public function updateProfile(): ?Response
+    {
+        $user = $this->getRequest()->getSession()->read('Auth.User');
+        if (empty($user)) {
+            return $this->redirect(['action' => 'login']);
+        }
+
+        $this->request->allowMethod(['post']);
+
+        $data       = $this->request->getData();
+        $usersTable = $this->fetchTable('Users');
+
+        $adminRecord = $usersTable->find()
+            ->where(['id' => $user['id']])
+            ->first();
+
+        if (!$adminRecord) {
+            $this->getRequest()->getSession()->destroy();
+            return $this->redirect(['action' => 'login']);
+        }
+
+        $patch = [
+            'full_name' => trim((string)($data['full_name'] ?? '')),
+            'email'     => trim((string)($data['email']     ?? '')),
+            'specialty' => trim((string)($data['specialty'] ?? '')),
+        ];
+
+        $newPassword = trim((string)($data['new_password'] ?? ''));
+        if ($newPassword !== '') {
+            if (strlen($newPassword) < 8) {
+                $this->Flash->error('New password must be at least 8 characters.');
+                return $this->redirect(['action' => 'profile']);
+            }
+            $patch['password'] = password_hash($newPassword, PASSWORD_DEFAULT);
+        }
+
+        $adminRecord = $usersTable->patchEntity($adminRecord, $patch);
+
+        if ($usersTable->save($adminRecord)) {
+            $this->Flash->success('Profile updated successfully.');
+        } else {
+            $this->Flash->error('Could not save changes. Please try again.');
+        }
+
+        return $this->redirect(['action' => 'profile']);
     }
 
     public function logout(): ?Response

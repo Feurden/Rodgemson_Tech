@@ -24,105 +24,72 @@
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
-/*
- * This file is loaded in the context of the `Application` class.
- * So you can use `$this` to reference the application class instance
- * if required.
- */
 return function (RouteBuilder $routes): void {
-    /*
-     * The default class to use for all routes
-     *
-     * The following route classes are supplied with CakePHP and are appropriate
-     * to set as the default:
-     *
-     * - Route
-     * - InflectedRoute
-     * - DashedRoute
-     *
-     * If no call is made to `Router::defaultRouteClass()`, the class used is
-     * `Route` (`Cake\Routing\Route\Route`)
-     *
-     * Note that `Route` does not do any inflections on URLs which will result in
-     * inconsistently cased URLs when used with `{plugin}`, `{controller}` and
-     * `{action}` markers.
-     */
+
     $routes->setRouteClass(DashedRoute::class);
 
     $routes->scope('/', function (RouteBuilder $builder): void {
-        /*
-         * Here, we are connecting '/' (base path) to a controller called 'Pages',
-         * its action called 'display', and we pass a param to select the view file
-         * to use (in this case, templates/Pages/home.php)...
-         */
-        // Route root to Dashboard login page as app entry point
+
+        // Root → Dashboard login
         $builder->connect('/', ['controller' => 'Dashboard', 'action' => 'login']);
 
-        /*
-         * ...and connect the rest of 'Pages' controller's URLs.
-         */
         $builder->connect('/pages/*', 'Pages::display');
 
-        /*
-         * Connect catchall routes for all controllers.
-         *
-         * The `fallbacks` method is a shortcut for
-         *
-         * ```
-         * $builder->connect('/{controller}', ['action' => 'index']);
-         * $builder->connect('/{controller}/{action}/*', []);
-         * ```
-         *
-         * It is NOT recommended to use fallback routes after your initial prototyping phase!
-         * See https://book.cakephp.org/5/en/development/routing.html#fallbacks-method for more information
-         */
+        // -------------------------------------------------------
+        // Dashboard routes
+        // -------------------------------------------------------
+        $builder->connect('/dashboard/login',          ['controller' => 'Dashboard', 'action' => 'login']);
+        $builder->connect('/dashboard/signup',         ['controller' => 'Dashboard', 'action' => 'signup']);
+        $builder->connect('/dashboard/logout',         ['controller' => 'Dashboard', 'action' => 'logout']);
+        $builder->connect('/dashboard/analytics',      ['controller' => 'Dashboard', 'action' => 'analytics']);
+        $builder->connect('/dashboard/repairs',        ['controller' => 'Dashboard', 'action' => 'repairs']);
+        $builder->connect('/dashboard/stocks',         ['controller' => 'Dashboard', 'action' => 'stocks']);
+        $builder->connect('/dashboard/profile',        ['controller' => 'Dashboard', 'action' => 'profile']);
+
+        // POST-only — save profile edits from the Edit modal
+        $builder->connect('/dashboard/update-profile', ['controller' => 'Dashboard', 'action' => 'updateProfile'],
+            ['_method' => 'POST']
+        );
+
         $builder->fallbacks();
     });
 
-    // API Routes for device management
+    // -------------------------------------------------------
+    // API — Device management
+    // -------------------------------------------------------
     $routes->post('/devices/add', [
         'controller' => 'Devices',
-        'action' => 'add'
+        'action'     => 'add',
     ]);
-    
+
     $routes->patch('/devices/update', [
         'controller' => 'Devices',
-        'action' => 'update'
+        'action'     => 'update',
     ]);
-    
+
     $routes->post('/devices/update', [
         'controller' => 'Devices',
-        'action' => 'update'
+        'action'     => 'update',
     ]);
 
-    // API Routes for parts management
+    // -------------------------------------------------------
+    // API — Parts management
+    // -------------------------------------------------------
     $routes->post('/parts/add', [
         'controller' => 'Parts',
-        'action' => 'add'
-    ]);
-    
-    $routes->post('/parts/restock', [
-        'controller' => 'Parts',
-        'action' => 'restock'
+        'action'     => 'add',
     ]);
 
-    $routes->post('/ai/diagnose', [
-    'controller' => 'Ai',
-    'action' => 'diagnose'
+    $routes->post('/parts/restock', [
+        'controller' => 'Parts',
+        'action'     => 'restock',
     ]);
-    /*
-     * If you need a different set of middleware or none at all,
-     * open new scope and define routes there.
-     *
-     * ```
-     * $routes->scope('/api', function (RouteBuilder $builder): void {
-     *     // No $builder->applyMiddleware() here.
-     *
-     *     // Parse specified extensions from URLs
-     *     // $builder->setExtensions(['json', 'xml']);
-     *
-     *     // Connect API actions here.
-     * });
-     * ```
-     */
+
+    // -------------------------------------------------------
+    // API — AI diagnosis
+    // -------------------------------------------------------
+    $routes->post('/ai/diagnose', [
+        'controller' => 'Ai',
+        'action'     => 'diagnose',
+    ]);
 };
