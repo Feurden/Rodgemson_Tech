@@ -10,14 +10,14 @@
 
         <h1 class="title">Technician Portal</h1>
 
-        <p class="subtitle">Sign in to manage repairs, stock &amp; analytics</p>
+        <p class="subtitle">Create an account to get started</p>
 
         <!-- Flash messages (errors / success notices) -->
         <?= $this->Flash->render() ?>
 
         <?= $this->Form->create(null, [
             'type' => 'post',
-            'url'  => ['controller' => 'Dashboard', 'action' => 'login'],
+            'url'  => ['controller' => 'Dashboard', 'action' => 'signup'],
         ]) ?>
 
             <div class="form-group">
@@ -27,28 +27,39 @@
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                         <circle cx="12" cy="7" r="4"/>
                     </svg>
-                    <input type="text" name="username" placeholder="Enter your username" required class="input">
+                    <input type="text" name="username" placeholder="Choose a username" required class="input">
                 </div>
             </div>
 
-            <div class="form-group" style="margin-bottom:28px;">
+            <div class="form-group">
                 <label>Password</label>
                 <div class="icon-input">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
-                    <input type="password" name="password" placeholder="Enter your password" required class="input">
+                    <input type="password" name="password" placeholder="At least 8 characters" required class="input">
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Log In</button>
+            <div class="form-group" style="margin-bottom:28px;">
+                <label>Confirm Password</label>
+                <div class="icon-input">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <input type="password" name="confirm_password" placeholder="Re-enter your password" required class="input">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Account</button>
 
         <?= $this->Form->end() ?>
 
         <p class="switch-link">
-            Don't have an account?
-            <a href="<?= $this->Url->build(['controller' => 'Dashboard', 'action' => 'signup']) ?>">Sign Up</a>
+            Already have an account?
+            <a href="<?= $this->Url->build(['controller' => 'Dashboard', 'action' => 'login']) ?>">Log In</a>
         </p>
 
     </div>
