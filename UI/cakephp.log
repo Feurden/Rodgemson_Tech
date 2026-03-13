@@ -8,469 +8,60 @@ Ini Path:
 -------------------------------------------------------------------------------
 php server is running at http://localhost:8765/
 You can exit with `CTRL-C`
-[Fri Mar  6 11:53:52 2026] PHP 8.2.12 Development Server (http://localhost:8765) started
-[Fri Mar  6 11:53:52 2026] [::1]:52791 Accepted
-[Fri Mar  6 11:54:03 2026] [::1]:52791 Closing
-[Fri Mar  6 11:54:03 2026] [::1]:61878 Accepted
-[Fri Mar  6 11:54:04 2026] [::1]:61878 Closing
-[Fri Mar  6 11:54:04 2026] [::1]:59421 Accepted
-[Fri Mar  6 11:54:04 2026] [::1]:59421 [200]: GET /css/dashboard.css
-[Fri Mar  6 11:54:04 2026] [::1]:59421 Closing
-[Fri Mar  6 11:54:04 2026] [::1]:50549 Accepted
-[Fri Mar  6 11:54:05 2026] [::1]:50549 Closing
-[Fri Mar  6 11:54:05 2026] [::1]:64206 Accepted
-[Fri Mar  6 11:54:05 2026] [::1]:64206 [200]: GET /favicon.ico
-[Fri Mar  6 11:54:05 2026] [::1]:64206 Closing
-[Fri Mar  6 11:54:13 2026] [::1]:58210 Accepted
-[Fri Mar  6 11:54:13 2026] [::1]:58210 Closing
-[Fri Mar  6 11:54:13 2026] [::1]:54161 Accepted
-[Fri Mar  6 11:54:14 2026] [::1]:54161 Closing
-[Fri Mar  6 11:54:14 2026] [::1]:62707 Accepted
-[Fri Mar  6 11:54:14 2026] [::1]:62707 [200]: GET /css/dashboard.css
-[Fri Mar  6 11:54:14 2026] [::1]:62707 Closing
-[Fri Mar  6 11:54:14 2026] [::1]:60018 Accepted
-[Fri Mar  6 11:54:15 2026] [::1]:60018 Closing
-[Fri Mar  6 11:54:17 2026] [::1]:59311 Accepted
-[Fri Mar  6 11:54:17 2026] [::1]:59311 Closing
-[Fri Mar  6 11:54:17 2026] [::1]:54050 Accepted
-[Fri Mar  6 11:54:17 2026] [::1]:54050 [200]: GET /css/dashboard.css
-[Fri Mar  6 11:54:17 2026] [::1]:54050 Closing
-[Fri Mar  6 11:54:17 2026] [::1]:51397 Accepted
-[Fri Mar  6 11:54:17 2026] [::1]:51397 Closing
-[Fri Mar  6 11:54:59 2026] [::1]:54610 Accepted
-[Fri Mar  6 11:55:00 2026] [::1]:54610 Closing
-[Fri Mar  6 11:55:00 2026] [::1]:61771 Accepted
-[Fri Mar  6 11:55:00 2026] [::1]:61771 [200]: GET /css/dashboard.css
-[Fri Mar  6 11:55:00 2026] [::1]:61771 Closing
-[Fri Mar  6 11:55:00 2026] [::1]:63577 Accepted
-[Fri Mar  6 11:55:00 2026] [::1]:63577 Closing
-[Fri Mar  6 11:56:08 2026] [::1]:63819 Accepted
-[Fri Mar  6 11:56:08 2026] [::1]:63819 Closing
-[Fri Mar  6 11:56:08 2026] [::1]:61785 Accepted
-[Fri Mar  6 11:56:08 2026] [::1]:61785 [200]: GET /css/dashboard.css
-[Fri Mar  6 11:56:08 2026] [::1]:61785 Closing
-[Fri Mar  6 11:56:08 2026] [::1]:58362 Accepted
-[Fri Mar  6 11:56:09 2026] [::1]:58362 Closing
-[Fri Mar  6 11:57:09 2026] [::1]:52899 Accepted
-[Fri Mar  6 11:57:09 2026] Updating device 4: {"id":4,"technician":"Rod Baclig","status":"Pending","date_released":null,"notes":"not charging, no sound, no mic"}
-[Fri Mar  6 11:57:09 2026] [::1]:52899 Closing
-[Fri Mar  6 11:57:10 2026] [::1]:52286 Accepted
-[Fri Mar  6 11:57:11 2026] [::1]:52286 Closing
-[Fri Mar  6 11:57:11 2026] [::1]:57019 Accepted
-[Fri Mar  6 11:57:11 2026] [::1]:57019 [200]: GET /css/dashboard.css
-[Fri Mar  6 11:57:11 2026] [::1]:57019 Closing
-[Fri Mar  6 11:57:11 2026] [::1]:55327 Accepted
-[Fri Mar  6 11:57:11 2026] [::1]:55327 Closing
-[Fri Mar  6 11:57:11 2026] [::1]:49237 Accepted
-[Fri Mar  6 11:57:11 2026] [::1]:49237 [200]: GET /favicon.ico
-[Fri Mar  6 11:57:11 2026] [::1]:49237 Closing
-[Fri Mar  6 12:01:48 2026] [::1]:64328 Accepted
-[Fri Mar  6 12:01:49 2026] [::1]:64328 Closing
-[Fri Mar  6 12:01:49 2026] [::1]:58309 Accepted
-[Fri Mar  6 12:01:49 2026] [::1]:58309 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:01:49 2026] [::1]:58309 Closing
-[Fri Mar  6 12:01:49 2026] [::1]:49941 Accepted
-[Fri Mar  6 12:01:49 2026] [::1]:49941 Closing
-[Fri Mar  6 12:02:43 2026] [::1]:50529 Accepted
-[Fri Mar  6 12:03:01 2026] [::1]:50529 Closing
-[Fri Mar  6 12:03:01 2026] [::1]:62313 Accepted
-[Fri Mar  6 12:03:01 2026] [::1]:62313 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:03:01 2026] [::1]:52994 Accepted
-[Fri Mar  6 12:03:01 2026] [::1]:52994 Closing
-[Fri Mar  6 12:03:01 2026] [::1]:62313 Closing
-[Fri Mar  6 12:03:01 2026] [::1]:62689 Accepted
-[Fri Mar  6 12:03:02 2026] [::1]:62689 Closing
-[Fri Mar  6 12:03:02 2026] [::1]:65211 Accepted
-[Fri Mar  6 12:03:02 2026] [::1]:60635 Accepted
-[Fri Mar  6 12:03:02 2026] [::1]:50420 Accepted
-[Fri Mar  6 12:03:02 2026] [::1]:59266 Accepted
-[Fri Mar  6 12:03:02 2026] [::1]:53589 Accepted
-[Fri Mar  6 12:03:02 2026] [::1]:65211 Closing
-[Fri Mar  6 12:03:02 2026] [::1]:60635 Closing
-[Fri Mar  6 12:03:02 2026] [::1]:50420 Closing
-[Fri Mar  6 12:03:02 2026] [::1]:59266 Closing
-[Fri Mar  6 12:03:03 2026] [::1]:53589 Closing
-[Fri Mar  6 12:03:03 2026] [::1]:55604 Accepted
-[Fri Mar  6 12:03:03 2026] [::1]:56434 Accepted
-[Fri Mar  6 12:03:03 2026] [::1]:61035 Accepted
-[Fri Mar  6 12:03:03 2026] [::1]:56577 Accepted
-[Fri Mar  6 12:03:03 2026] [::1]:64976 Accepted
-[Fri Mar  6 12:03:03 2026] [::1]:55604 Closing
-[Fri Mar  6 12:03:03 2026] [::1]:61996 Accepted
-[Fri Mar  6 12:03:03 2026] [::1]:56434 Closing
-[Fri Mar  6 12:03:03 2026] [::1]:61035 Closing
-[Fri Mar  6 12:03:03 2026] [::1]:56577 Closing
-[Fri Mar  6 12:03:03 2026] [::1]:64976 Closing
-[Fri Mar  6 12:03:03 2026] [::1]:52702 Accepted
-[Fri Mar  6 12:03:03 2026] [::1]:61996 Closing
-[Fri Mar  6 12:03:03 2026] [::1]:54174 Accepted
-[Fri Mar  6 12:03:04 2026] [::1]:52702 Closing
-[Fri Mar  6 12:03:04 2026] [::1]:49616 Accepted
-[Fri Mar  6 12:03:04 2026] [::1]:54174 Closing
-[Fri Mar  6 12:03:04 2026] [::1]:55796 Accepted
-[Fri Mar  6 12:03:04 2026] [::1]:49616 Closing
-[Fri Mar  6 12:03:04 2026] [::1]:55796 Closing
-[Fri Mar  6 12:03:04 2026] [::1]:58902 Accepted
-[Fri Mar  6 12:03:04 2026] [::1]:58902 [200]: GET /favicon.ico
-[Fri Mar  6 12:03:04 2026] [::1]:58902 Closing
-[Fri Mar  6 12:03:07 2026] [::1]:57507 Accepted
-[Fri Mar  6 12:03:07 2026] [::1]:57507 Closing
-[Fri Mar  6 12:03:07 2026] [::1]:60634 Accepted
-[Fri Mar  6 12:03:07 2026] [::1]:60634 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:03:07 2026] [::1]:60634 Closing
-[Fri Mar  6 12:03:07 2026] [::1]:54935 Accepted
-[Fri Mar  6 12:03:07 2026] [::1]:54935 Closing
-[Fri Mar  6 12:03:34 2026] [::1]:62307 Accepted
-[Fri Mar  6 12:03:34 2026] [::1]:62307 Closing
-[Fri Mar  6 12:03:34 2026] [::1]:56559 Accepted
-[Fri Mar  6 12:03:34 2026] [::1]:56559 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:03:34 2026] [::1]:56559 Closing
-[Fri Mar  6 12:03:34 2026] [::1]:64507 Accepted
-[Fri Mar  6 12:03:34 2026] [::1]:64507 Closing
-[Fri Mar  6 12:03:34 2026] [::1]:52367 Accepted
-[Fri Mar  6 12:03:34 2026] [::1]:52367 [200]: GET /favicon.ico
-[Fri Mar  6 12:03:34 2026] [::1]:52367 Closing
-[Fri Mar  6 12:03:38 2026] [::1]:58174 Accepted
-[Fri Mar  6 12:03:38 2026] [::1]:58174 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:03:38 2026] [::1]:58174 Closing
-[Fri Mar  6 12:03:38 2026] [::1]:57280 Accepted
-[Fri Mar  6 12:03:40 2026] [::1]:57280 Closing
-[Fri Mar  6 12:05:08 2026] [::1]:52206 Accepted
-[Fri Mar  6 12:05:08 2026] [::1]:52206 Closing
-[Fri Mar  6 12:05:08 2026] [::1]:58383 Accepted
-[Fri Mar  6 12:05:08 2026] [::1]:58383 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:05:08 2026] [::1]:60482 Accepted
-[Fri Mar  6 12:05:08 2026] [::1]:60482 Closing
-[Fri Mar  6 12:05:08 2026] [::1]:56905 Accepted
-[Fri Mar  6 12:05:08 2026] [::1]:58383 Closing
-[Fri Mar  6 12:05:09 2026] [::1]:56905 Closing
-[Fri Mar  6 12:05:09 2026] [::1]:57493 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:57493 Closing
-[Fri Mar  6 12:05:09 2026] [::1]:63289 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:60019 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:52843 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:52769 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:61799 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:63289 Closing
-[Fri Mar  6 12:05:09 2026] [::1]:60019 Closing
-[Fri Mar  6 12:05:09 2026] [::1]:52843 Closing
-[Fri Mar  6 12:05:09 2026] [::1]:52769 Closing
-[Fri Mar  6 12:05:09 2026] [::1]:61799 Closing
-[Fri Mar  6 12:05:09 2026] [::1]:63986 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:58919 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:55942 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:52707 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:54138 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:58962 Accepted
-[Fri Mar  6 12:05:09 2026] [::1]:63986 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:58919 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:55942 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:52707 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:54138 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:58962 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:63679 Accepted
-[Fri Mar  6 12:05:10 2026] [::1]:50700 Accepted
-[Fri Mar  6 12:05:10 2026] [::1]:63679 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:58584 Accepted
-[Fri Mar  6 12:05:10 2026] [::1]:50700 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:63324 Accepted
-[Fri Mar  6 12:05:10 2026] [::1]:58584 Closing
-[Fri Mar  6 12:05:10 2026] [::1]:63324 Closing
-[Fri Mar  6 12:05:11 2026] [::1]:50284 Accepted
-[Fri Mar  6 12:05:11 2026] [::1]:50284 [200]: GET /favicon.ico
-[Fri Mar  6 12:05:11 2026] [::1]:50284 Closing
-[Fri Mar  6 12:33:46 2026] [::1]:61500 Accepted
-[Fri Mar  6 12:33:47 2026] [::1]:61500 Closing
-[Fri Mar  6 12:33:47 2026] [::1]:64067 Accepted
-[Fri Mar  6 12:33:47 2026] [::1]:64067 Closing
-[Fri Mar  6 12:33:47 2026] [::1]:61444 Accepted
-[Fri Mar  6 12:33:48 2026] [::1]:61444 Closing
-[Fri Mar  6 12:33:48 2026] [::1]:58269 Accepted
-[Fri Mar  6 12:33:48 2026] [::1]:58269 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:33:48 2026] [::1]:58269 Closing
-[Fri Mar  6 12:33:48 2026] [::1]:56260 Accepted
-[Fri Mar  6 12:33:48 2026] [::1]:56260 Closing
-[Fri Mar  6 12:33:48 2026] [::1]:63098 Accepted
-[Fri Mar  6 12:33:48 2026] [::1]:63098 [200]: GET /favicon.ico
-[Fri Mar  6 12:33:48 2026] [::1]:63098 Closing
-[Fri Mar  6 12:33:52 2026] [::1]:53524 Accepted
-[Fri Mar  6 12:33:53 2026] [::1]:53524 Closing
-[Fri Mar  6 12:33:53 2026] [::1]:53648 Accepted
-[Fri Mar  6 12:33:53 2026] [::1]:53648 Closing
-[Fri Mar  6 12:33:53 2026] [::1]:59289 Accepted
-[Fri Mar  6 12:33:53 2026] [::1]:59289 Closing
-[Fri Mar  6 12:33:53 2026] [::1]:54069 Accepted
-[Fri Mar  6 12:33:53 2026] [::1]:54069 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:33:53 2026] [::1]:54069 Closing
-[Fri Mar  6 12:33:53 2026] [::1]:50644 Accepted
-[Fri Mar  6 12:33:53 2026] [::1]:50644 Closing
-[Fri Mar  6 12:33:55 2026] [::1]:61242 Accepted
-[Fri Mar  6 12:33:56 2026] [::1]:61242 Closing
-[Fri Mar  6 12:33:56 2026] [::1]:63037 Accepted
-[Fri Mar  6 12:33:56 2026] [::1]:63037 Closing
-[Fri Mar  6 12:33:56 2026] [::1]:54401 Accepted
-[Fri Mar  6 12:33:56 2026] [::1]:52386 Accepted
-[Fri Mar  6 12:33:56 2026] [::1]:54401 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:33:56 2026] [::1]:59846 Accepted
-[Fri Mar  6 12:33:56 2026] [::1]:52386 [200]: GET /css/repairs.css
-[Fri Mar  6 12:33:56 2026] [::1]:59846 [200]: GET /js/repairs.js
-[Fri Mar  6 12:33:56 2026] [::1]:54401 Closing
-[Fri Mar  6 12:33:56 2026] [::1]:52386 Closing
-[Fri Mar  6 12:33:56 2026] [::1]:59846 Closing
-[Fri Mar  6 12:33:56 2026] [::1]:65111 Accepted
-[Fri Mar  6 12:33:56 2026] [::1]:65111 Closing
-[Fri Mar  6 12:33:57 2026] [::1]:63595 Accepted
-[Fri Mar  6 12:33:58 2026] [::1]:63595 Closing
-[Fri Mar  6 12:33:58 2026] [::1]:50155 Accepted
-[Fri Mar  6 12:33:58 2026] [::1]:50155 Closing
-[Fri Mar  6 12:33:58 2026] [::1]:58423 Accepted
-[Fri Mar  6 12:33:58 2026] [::1]:58423 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:33:58 2026] [::1]:58423 Closing
-[Fri Mar  6 12:33:58 2026] [::1]:50865 Accepted
-[Fri Mar  6 12:33:58 2026] [::1]:50865 Closing
-[Fri Mar  6 12:33:59 2026] [::1]:56266 Accepted
-[Fri Mar  6 12:33:59 2026] [::1]:56266 Closing
-[Fri Mar  6 12:33:59 2026] [::1]:54243 Accepted
-[Fri Mar  6 12:34:00 2026] [::1]:54243 Closing
-[Fri Mar  6 12:34:00 2026] [::1]:59780 Accepted
-[Fri Mar  6 12:34:00 2026] [::1]:57905 Accepted
-[Fri Mar  6 12:34:00 2026] [::1]:59780 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:34:00 2026] [::1]:60566 Accepted
-[Fri Mar  6 12:34:00 2026] [::1]:57905 [200]: GET /css/repairs.css
-[Fri Mar  6 12:34:00 2026] [::1]:60566 [200]: GET /js/repairs.js
-[Fri Mar  6 12:34:00 2026] [::1]:59780 Closing
-[Fri Mar  6 12:34:00 2026] [::1]:57905 Closing
-[Fri Mar  6 12:34:00 2026] [::1]:60566 Closing
-[Fri Mar  6 12:34:00 2026] [::1]:56247 Accepted
-[Fri Mar  6 12:34:00 2026] [::1]:56247 Closing
-[Fri Mar  6 12:34:03 2026] [::1]:52827 Accepted
-[Fri Mar  6 12:34:03 2026] [::1]:52827 Closing
-[Fri Mar  6 12:34:03 2026] [::1]:55265 Accepted
-[Fri Mar  6 12:34:03 2026] [::1]:55265 Closing
-[Fri Mar  6 12:34:03 2026] [::1]:49311 Accepted
-[Fri Mar  6 12:34:03 2026] [::1]:60511 Accepted
-[Fri Mar  6 12:34:03 2026] [::1]:49311 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:34:03 2026] [::1]:62404 Accepted
-[Fri Mar  6 12:34:03 2026] [::1]:60511 [200]: GET /css/repairs.css
-[Fri Mar  6 12:34:03 2026] [::1]:50838 Accepted
-[Fri Mar  6 12:34:03 2026] [::1]:62404 [200]: GET /js/repairs.js
-[Fri Mar  6 12:34:03 2026] [::1]:50838 Closing
-[Fri Mar  6 12:34:03 2026] [::1]:49311 Closing
-[Fri Mar  6 12:34:03 2026] [::1]:60511 Closing
-[Fri Mar  6 12:34:03 2026] [::1]:62404 Closing
-[Fri Mar  6 12:34:03 2026] [::1]:51173 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:51173 Closing
-[Fri Mar  6 12:34:04 2026] [::1]:64244 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:58057 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:49483 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:56926 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:54730 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:64244 Closing
-[Fri Mar  6 12:34:04 2026] [::1]:58057 Closing
-[Fri Mar  6 12:34:04 2026] [::1]:49483 Closing
-[Fri Mar  6 12:34:04 2026] [::1]:56926 Closing
-[Fri Mar  6 12:34:04 2026] [::1]:54730 Closing
-[Fri Mar  6 12:34:04 2026] [::1]:51990 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:55918 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:59432 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:56684 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:56427 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:54976 Accepted
-[Fri Mar  6 12:34:04 2026] [::1]:51990 Closing
-[Fri Mar  6 12:34:04 2026] [::1]:55918 Closing
-[Fri Mar  6 12:34:04 2026] [::1]:59432 Closing
-[Fri Mar  6 12:34:05 2026] [::1]:56684 Closing
-[Fri Mar  6 12:34:05 2026] [::1]:56427 Closing
-[Fri Mar  6 12:34:05 2026] [::1]:54976 Closing
-[Fri Mar  6 12:34:05 2026] [::1]:58266 Accepted
-[Fri Mar  6 12:34:05 2026] [::1]:58403 Accepted
-[Fri Mar  6 12:34:05 2026] [::1]:58266 Closing
-[Fri Mar  6 12:34:05 2026] [::1]:60022 Accepted
-[Fri Mar  6 12:34:05 2026] [::1]:58403 Closing
-[Fri Mar  6 12:34:05 2026] [::1]:63328 Accepted
-[Fri Mar  6 12:34:05 2026] [::1]:60022 Closing
-[Fri Mar  6 12:34:05 2026] [::1]:63328 Closing
-[Fri Mar  6 12:34:05 2026] [::1]:60580 Accepted
-[Fri Mar  6 12:34:05 2026] [::1]:60580 [200]: GET /favicon.ico
-[Fri Mar  6 12:34:05 2026] [::1]:60580 Closing
-[Fri Mar  6 12:34:41 2026] [::1]:65295 Accepted
-[Fri Mar  6 12:34:42 2026] [::1]:65295 Closing
-[Fri Mar  6 12:34:50 2026] [::1]:56730 Accepted
-[Fri Mar  6 12:34:50 2026] Device add data: {"customer_name":"John Paul Guillermo","contact_no":"1223456","brand":"iphone","model":"14","issue_description":"ghost touch, no mic, no sound","technician":"Rod Baclig","diagnostic":"Mainboard Issue","suggested_part_replacement":"LCD Screen with Touch Layer, Touch Glass (Digitizer), Screen Ribbon Cable, Speaker, Audio Chip, Speaker Ribbon Cable, Microphone, Audio Chip, Microphone Ribbon Cable","status":"Pending","priority_level":"Medium"}
-[Fri Mar  6 12:34:50 2026] Device entity: {"customer_id":5,"brand":"iphone","model":"14","issue_description":"ghost touch, no mic, no sound","technician":"Rod Baclig","status":"Pending","priority_level":"Medium"}
-[Fri Mar  6 12:34:50 2026] [::1]:56730 Closing
-[Fri Mar  6 12:34:52 2026] [::1]:55516 Accepted
-[Fri Mar  6 12:34:52 2026] [::1]:55516 Closing
-[Fri Mar  6 12:34:52 2026] [::1]:55184 Accepted
-[Fri Mar  6 12:34:53 2026] [::1]:55184 Closing
-[Fri Mar  6 12:34:53 2026] [::1]:56317 Accepted
-[Fri Mar  6 12:34:53 2026] [::1]:52796 Accepted
-[Fri Mar  6 12:34:53 2026] [::1]:56317 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:34:53 2026] [::1]:58358 Accepted
-[Fri Mar  6 12:34:53 2026] [::1]:52796 [200]: GET /css/repairs.css
-[Fri Mar  6 12:34:53 2026] [::1]:58358 [200]: GET /js/repairs.js
-[Fri Mar  6 12:34:53 2026] [::1]:56317 Closing
-[Fri Mar  6 12:34:53 2026] [::1]:52796 Closing
-[Fri Mar  6 12:34:53 2026] [::1]:58358 Closing
-[Fri Mar  6 12:34:53 2026] [::1]:49788 Accepted
-[Fri Mar  6 12:34:53 2026] [::1]:49788 Closing
-[Fri Mar  6 12:34:53 2026] [::1]:62659 Accepted
-[Fri Mar  6 12:34:53 2026] [::1]:62659 [200]: GET /favicon.ico
-[Fri Mar  6 12:34:53 2026] [::1]:62659 Closing
-[Fri Mar  6 12:35:35 2026] [::1]:62883 Accepted
-[Fri Mar  6 12:35:35 2026] [::1]:62883 Closing
-[Fri Mar  6 12:36:05 2026] [::1]:49533 Accepted
-[Fri Mar  6 12:36:05 2026] Updating device 5: {"id":5,"technician":"Rod Baclig","status":"Pending","date_released":null,"notes":"overheating, ghost touch","diagnostic":"Power IC Issue","suggested_parts":"Battery (getting too hot), Back Cover \/ Heat Shield, Cooling Pad or Thermal Paste, Power Chip, LCD Screen with Touch Layer, Touch Glass (Digitizer), Screen Ribbon Cable"}
-[Fri Mar  6 12:36:05 2026] [::1]:49533 Closing
-[Fri Mar  6 12:36:06 2026] [::1]:51826 Accepted
-[Fri Mar  6 12:36:07 2026] [::1]:51826 Closing
-[Fri Mar  6 12:36:07 2026] [::1]:62843 Accepted
-[Fri Mar  6 12:36:07 2026] [::1]:62843 Closing
-[Fri Mar  6 12:36:07 2026] [::1]:59634 Accepted
-[Fri Mar  6 12:36:07 2026] [::1]:55464 Accepted
-[Fri Mar  6 12:36:07 2026] [::1]:59634 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:36:07 2026] [::1]:58278 Accepted
-[Fri Mar  6 12:36:07 2026] [::1]:55464 [200]: GET /css/repairs.css
-[Fri Mar  6 12:36:07 2026] [::1]:58278 [200]: GET /js/repairs.js
-[Fri Mar  6 12:36:07 2026] [::1]:59634 Closing
-[Fri Mar  6 12:36:07 2026] [::1]:55464 Closing
-[Fri Mar  6 12:36:07 2026] [::1]:58278 Closing
-[Fri Mar  6 12:36:07 2026] [::1]:62336 Accepted
-[Fri Mar  6 12:36:07 2026] [::1]:62336 Closing
-[Fri Mar  6 12:36:07 2026] [::1]:57834 Accepted
-[Fri Mar  6 12:36:07 2026] [::1]:57834 [200]: GET /favicon.ico
-[Fri Mar  6 12:36:07 2026] [::1]:57834 Closing
-[Fri Mar  6 12:36:19 2026] [::1]:62593 Accepted
-[Fri Mar  6 12:36:19 2026] [::1]:62593 Closing
-[Fri Mar  6 12:36:27 2026] [::1]:57127 Accepted
-[Fri Mar  6 12:36:28 2026] [::1]:57127 Closing
-[Fri Mar  6 12:36:30 2026] [::1]:54470 Accepted
-[Fri Mar  6 12:36:31 2026] Updating device 5: {"id":5,"technician":"Rod Baclig","status":"Pending","date_released":null,"notes":"no mic, no sound","diagnostic":"Mainboard Issue","suggested_parts":"Speaker, Audio Chip, Speaker Ribbon Cable, Microphone, Audio Chip, Microphone Ribbon Cable"}
-[Fri Mar  6 12:36:31 2026] [::1]:54470 Closing
-[Fri Mar  6 12:36:32 2026] [::1]:63828 Accepted
-[Fri Mar  6 12:36:32 2026] [::1]:63828 Closing
-[Fri Mar  6 12:36:32 2026] [::1]:57982 Accepted
-[Fri Mar  6 12:36:32 2026] [::1]:57982 Closing
-[Fri Mar  6 12:36:32 2026] [::1]:63486 Accepted
-[Fri Mar  6 12:36:32 2026] [::1]:60969 Accepted
-[Fri Mar  6 12:36:32 2026] [::1]:63486 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:36:32 2026] [::1]:56875 Accepted
-[Fri Mar  6 12:36:32 2026] [::1]:60969 [200]: GET /css/repairs.css
-[Fri Mar  6 12:36:32 2026] [::1]:56875 [200]: GET /js/repairs.js
-[Fri Mar  6 12:36:32 2026] [::1]:63486 Closing
-[Fri Mar  6 12:36:32 2026] [::1]:60969 Closing
-[Fri Mar  6 12:36:32 2026] [::1]:56875 Closing
-[Fri Mar  6 12:36:32 2026] [::1]:54980 Accepted
-[Fri Mar  6 12:36:32 2026] [::1]:54980 Closing
-[Fri Mar  6 12:36:33 2026] [::1]:57675 Accepted
-[Fri Mar  6 12:36:33 2026] [::1]:57675 [200]: GET /favicon.ico
-[Fri Mar  6 12:36:33 2026] [::1]:57675 Closing
-[Fri Mar  6 12:37:30 2026] [::1]:60233 Accepted
-[Fri Mar  6 12:37:31 2026] Updating device 5: {"id":5,"technician":"Rod Baclig","status":"Pending","date_released":null,"notes":"ghost touch, no mic, no sound","diagnostic":"Mainboard Issue","suggested_parts":"Speaker, Audio Chip, Speaker Ribbon Cable, Microphone, Audio Chip, Microphone Ribbon Cable"}
-[Fri Mar  6 12:37:31 2026] [::1]:60233 Closing
-[Fri Mar  6 12:37:32 2026] [::1]:61061 Accepted
-[Fri Mar  6 12:37:32 2026] [::1]:61061 Closing
-[Fri Mar  6 12:37:32 2026] [::1]:58497 Accepted
-[Fri Mar  6 12:37:33 2026] [::1]:58497 Closing
-[Fri Mar  6 12:37:33 2026] [::1]:52286 Accepted
-[Fri Mar  6 12:37:33 2026] [::1]:63106 Accepted
-[Fri Mar  6 12:37:33 2026] [::1]:52286 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:37:33 2026] [::1]:63717 Accepted
-[Fri Mar  6 12:37:33 2026] [::1]:63106 [200]: GET /css/repairs.css
-[Fri Mar  6 12:37:33 2026] [::1]:63717 [200]: GET /js/repairs.js
-[Fri Mar  6 12:37:33 2026] [::1]:52286 Closing
-[Fri Mar  6 12:37:33 2026] [::1]:63106 Closing
-[Fri Mar  6 12:37:33 2026] [::1]:63717 Closing
-[Fri Mar  6 12:37:33 2026] [::1]:49437 Accepted
-[Fri Mar  6 12:37:33 2026] [::1]:49437 Closing
-[Fri Mar  6 12:37:33 2026] [::1]:50341 Accepted
-[Fri Mar  6 12:37:33 2026] [::1]:50341 [200]: GET /favicon.ico
-[Fri Mar  6 12:37:33 2026] [::1]:50341 Closing
-[Fri Mar  6 12:38:08 2026] [::1]:61868 Accepted
-[Fri Mar  6 12:38:08 2026] [::1]:61868 Closing
-[Fri Mar  6 12:38:08 2026] [::1]:54696 Accepted
-[Fri Mar  6 12:38:09 2026] [::1]:54696 Closing
-[Fri Mar  6 12:38:09 2026] [::1]:50932 Accepted
-[Fri Mar  6 12:38:09 2026] [::1]:50932 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:38:09 2026] [::1]:50932 Closing
-[Fri Mar  6 12:38:09 2026] [::1]:61185 Accepted
-[Fri Mar  6 12:38:09 2026] [::1]:61185 Closing
-[Fri Mar  6 12:38:25 2026] [::1]:53051 Accepted
-[Fri Mar  6 12:38:26 2026] [::1]:53051 Closing
-[Fri Mar  6 12:38:26 2026] [::1]:64541 Accepted
-[Fri Mar  6 12:38:26 2026] [::1]:64541 Closing
-[Fri Mar  6 12:38:26 2026] [::1]:63320 Accepted
-[Fri Mar  6 12:38:26 2026] [::1]:58819 Accepted
-[Fri Mar  6 12:38:26 2026] [::1]:63320 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:38:26 2026] [::1]:49411 Accepted
-[Fri Mar  6 12:38:26 2026] [::1]:58819 [200]: GET /css/repairs.css
-[Fri Mar  6 12:38:26 2026] [::1]:49411 [200]: GET /js/repairs.js
-[Fri Mar  6 12:38:26 2026] [::1]:63320 Closing
-[Fri Mar  6 12:38:26 2026] [::1]:58819 Closing
-[Fri Mar  6 12:38:26 2026] [::1]:49411 Closing
-[Fri Mar  6 12:38:26 2026] [::1]:57772 Accepted
-[Fri Mar  6 12:38:26 2026] [::1]:57772 Closing
-[Fri Mar  6 12:38:29 2026] [::1]:52848 Accepted
-[Fri Mar  6 12:38:29 2026] [::1]:52848 Closing
-[Fri Mar  6 12:38:29 2026] [::1]:59054 Accepted
-[Fri Mar  6 12:38:30 2026] [::1]:59054 Closing
-[Fri Mar  6 12:38:30 2026] [::1]:55905 Accepted
-[Fri Mar  6 12:38:30 2026] [::1]:55905 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:38:30 2026] [::1]:55905 Closing
-[Fri Mar  6 12:38:30 2026] [::1]:58195 Accepted
-[Fri Mar  6 12:38:30 2026] [::1]:58195 Closing
-[Fri Mar  6 12:38:41 2026] [::1]:50891 Accepted
-[Fri Mar  6 12:38:41 2026] [::1]:50891 Closing
-[Fri Mar  6 12:38:41 2026] [::1]:59564 Accepted
-[Fri Mar  6 12:38:42 2026] [::1]:59564 Closing
-[Fri Mar  6 12:38:42 2026] [::1]:54024 Accepted
-[Fri Mar  6 12:38:42 2026] [::1]:59159 Accepted
-[Fri Mar  6 12:38:42 2026] [::1]:54024 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:38:42 2026] [::1]:65037 Accepted
-[Fri Mar  6 12:38:42 2026] [::1]:59159 [200]: GET /css/repairs.css
-[Fri Mar  6 12:38:42 2026] [::1]:65037 [200]: GET /js/repairs.js
-[Fri Mar  6 12:38:42 2026] [::1]:54024 Closing
-[Fri Mar  6 12:38:42 2026] [::1]:59159 Closing
-[Fri Mar  6 12:38:42 2026] [::1]:65037 Closing
-[Fri Mar  6 12:38:42 2026] [::1]:61794 Accepted
-[Fri Mar  6 12:38:42 2026] [::1]:61794 Closing
-[Fri Mar  6 12:46:13 2026] [::1]:61139 Accepted
-[Fri Mar  6 12:46:14 2026] [::1]:61139 Closing
-[Fri Mar  6 12:46:14 2026] [::1]:55990 Accepted
-[Fri Mar  6 12:46:14 2026] [::1]:55990 Closing
-[Fri Mar  6 12:46:14 2026] [::1]:52715 Accepted
-[Fri Mar  6 12:46:14 2026] [::1]:61955 Accepted
-[Fri Mar  6 12:46:14 2026] [::1]:52715 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:46:14 2026] [::1]:60514 Accepted
-[Fri Mar  6 12:46:14 2026] [::1]:61955 [200]: GET /css/repairs.css
-[Fri Mar  6 12:46:14 2026] [::1]:60514 [200]: GET /js/repairs.js
-[Fri Mar  6 12:46:14 2026] [::1]:52715 Closing
-[Fri Mar  6 12:46:14 2026] [::1]:61955 Closing
-[Fri Mar  6 12:46:14 2026] [::1]:60514 Closing
-[Fri Mar  6 12:46:14 2026] [::1]:64773 Accepted
-[Fri Mar  6 12:46:14 2026] [::1]:64773 Closing
-[Fri Mar  6 12:46:14 2026] [::1]:61359 Accepted
-[Fri Mar  6 12:46:14 2026] [::1]:61359 [200]: GET /favicon.ico
-[Fri Mar  6 12:46:14 2026] [::1]:61359 Closing
-[Fri Mar  6 12:46:34 2026] [::1]:52416 Accepted
-[Fri Mar  6 12:46:34 2026] [::1]:52416 Closing
-[Fri Mar  6 12:46:55 2026] [::1]:51452 Accepted
-[Fri Mar  6 12:46:55 2026] [::1]:51452 Closing
-[Fri Mar  6 12:46:57 2026] [::1]:64777 Accepted
-[Fri Mar  6 12:46:57 2026] [::1]:64777 Closing
-[Fri Mar  6 12:46:57 2026] [::1]:52212 Accepted
-[Fri Mar  6 12:46:57 2026] [::1]:52212 Closing
-[Fri Mar  6 12:46:57 2026] [::1]:51127 Accepted
-[Fri Mar  6 12:46:57 2026] [::1]:53365 Accepted
-[Fri Mar  6 12:46:57 2026] [::1]:51127 [200]: GET /css/dashboard.css
-[Fri Mar  6 12:46:57 2026] [::1]:59919 Accepted
-[Fri Mar  6 12:46:57 2026] [::1]:53365 [200]: GET /css/repairs.css
-[Fri Mar  6 12:46:57 2026] [::1]:59919 [200]: GET /js/repairs.js
-[Fri Mar  6 12:46:57 2026] [::1]:51127 Closing
-[Fri Mar  6 12:46:57 2026] [::1]:53365 Closing
-[Fri Mar  6 12:46:57 2026] [::1]:59919 Closing
-[Fri Mar  6 12:46:57 2026] [::1]:63501 Accepted
-[Fri Mar  6 12:46:57 2026] [::1]:63501 Closing
-[Fri Mar  6 12:46:58 2026] [::1]:57155 Accepted
-[Fri Mar  6 12:46:58 2026] [::1]:57155 [200]: GET /favicon.ico
-[Fri Mar  6 12:46:58 2026] [::1]:57155 Closing
+[Thu Mar 12 03:10:51 2026] PHP 8.2.12 Development Server (http://localhost:8765) started
+[Thu Mar 12 03:10:56 2026] [::1]:64330 Accepted
+[Thu Mar 12 03:10:56 2026] [::1]:64330 Closing
+[Thu Mar 12 03:10:56 2026] [::1]:58389 Accepted
+[Thu Mar 12 03:10:56 2026] [::1]:58389 [200]: GET /css/dashboard.css
+[Thu Mar 12 03:10:56 2026] [::1]:52394 Accepted
+[Thu Mar 12 03:10:56 2026] [::1]:59538 Accepted
+[Thu Mar 12 03:10:56 2026] [::1]:52394 [200]: GET /css/repairs.css
+[Thu Mar 12 03:10:56 2026] [::1]:59538 [200]: GET /js/repairs.js
+[Thu Mar 12 03:10:56 2026] [::1]:58389 Closing
+[Thu Mar 12 03:10:56 2026] [::1]:52394 Closing
+[Thu Mar 12 03:10:56 2026] [::1]:59538 Closing
+[Thu Mar 12 03:10:56 2026] [::1]:64879 Accepted
+[Thu Mar 12 03:10:57 2026] [::1]:64879 Closing
+[Thu Mar 12 03:11:06 2026] [::1]:64480 Accepted
+[Thu Mar 12 03:11:06 2026] [::1]:64480 Closing
+[Thu Mar 12 03:11:21 2026] [::1]:60454 Accepted
+[Thu Mar 12 03:11:22 2026] [::1]:60454 Closing
+[Thu Mar 12 03:11:41 2026] [::1]:57580 Accepted
+[Thu Mar 12 03:11:42 2026] [::1]:57580 Closing
+[Thu Mar 12 03:17:45 2026] [::1]:61801 Accepted
+[Thu Mar 12 03:17:45 2026] [::1]:61801 Closing
+[Thu Mar 12 03:17:45 2026] [::1]:54552 Accepted
+[Thu Mar 12 03:17:46 2026] [::1]:54552 Closing
+[Thu Mar 12 03:17:57 2026] [::1]:55011 Accepted
+[Thu Mar 12 03:17:57 2026] [::1]:55011 Closing
+[Thu Mar 12 03:18:04 2026] [::1]:52520 Accepted
+[Thu Mar 12 03:18:04 2026] [::1]:52520 Closing
+[Thu Mar 12 03:18:12 2026] [::1]:56391 Accepted
+[Thu Mar 12 03:18:13 2026] [::1]:56391 Closing
+[Thu Mar 12 03:18:14 2026] [::1]:61131 Accepted
+[Thu Mar 12 03:18:14 2026] Device add data: {"customer_name":"test 1","contact_no":"1","brand":"test1","model":"Unknown","issue_description":"ghost touch, no sound","technician":"Rod","diagnostic":"Speaker Issue + Touch Controller Issue","suggested_part_replacement":"Touch Controller IC, Digitizer, Touch Flex Cable, LCD Screen Assembly, Power Management IC, Speaker Module, Ear Speaker, Audio IC, Speaker Flex Cable, Audio Codec IC","status":"Pending","priority_level":"Medium"}
+[Thu Mar 12 03:18:14 2026] Device entity: {"customer_id":11,"brand":"test1","model":"Unknown","issue_description":"ghost touch, no sound","technician":"Rod","status":"Pending","priority_level":"Medium"}
+[Thu Mar 12 03:18:15 2026] [::1]:61131 Closing
+[Thu Mar 12 03:18:16 2026] [::1]:54680 Accepted
+[Thu Mar 12 03:18:16 2026] [::1]:54680 Closing
+[Thu Mar 12 03:18:16 2026] [::1]:49329 Accepted
+[Thu Mar 12 03:18:16 2026] [::1]:49329 [200]: GET /css/dashboard.css
+[Thu Mar 12 03:18:16 2026] [::1]:60123 Accepted
+[Thu Mar 12 03:18:16 2026] [::1]:63076 Accepted
+[Thu Mar 12 03:18:16 2026] [::1]:60123 [200]: GET /css/repairs.css
+[Thu Mar 12 03:18:16 2026] [::1]:63076 [200]: GET /js/repairs.js
+[Thu Mar 12 03:18:16 2026] [::1]:49329 Closing
+[Thu Mar 12 03:18:16 2026] [::1]:60123 Closing
+[Thu Mar 12 03:18:16 2026] [::1]:63076 Closing
+[Thu Mar 12 03:18:16 2026] [::1]:56044 Accepted
+[Thu Mar 12 03:18:16 2026] [::1]:56044 Closing
+[Thu Mar 12 03:18:16 2026] [::1]:51596 Accepted
+[Thu Mar 12 03:18:16 2026] [::1]:51596 [200]: GET /favicon.ico
+[Thu Mar 12 03:18:16 2026] [::1]:51596 Closing
+[Thu Mar 12 03:18:20 2026] [::1]:62334 Accepted
+[Thu Mar 12 03:18:20 2026] [::1]:62334 Closing
+[Thu Mar 12 03:18:20 2026] [::1]:55698 Accepted
+[Thu Mar 12 03:18:20 2026] [::1]:55698 Closing
+[Thu Mar 12 03:18:20 2026] [::1]:60811 Accepted
+[Thu Mar 12 03:18:20 2026] [::1]:60811 Closing
+^C^C

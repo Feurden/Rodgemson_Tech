@@ -50,6 +50,7 @@ class DevicesController extends Controller
                 'brand' => trim((string)($data['brand'] ?? 'Unknown')),
                 'model' => trim((string)($data['model'] ?? 'Unknown')),
                 'issue_description' => trim((string)($data['issue_description'] ?? '')),
+                'technician' => trim((string)($data['technician'] ?? 'Unassigned')),
                 'status' => $data['status'] ?? 'Pending',
                 'priority_level' => $data['priority_level'] ?? 'Medium',
             ]);

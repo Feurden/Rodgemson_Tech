@@ -138,8 +138,8 @@ async function saveNewRepair() {
   const diagnostic     = document.getElementById('aiDiagnosis').value.trim();
   const suggestedParts = document.getElementById('aiSuggestedParts').value.trim();
 
-  if (!customerName || !device || !issue) {
-    alert('Please fill in Customer Name, Device, and Issue.');
+  if (!customerName || !device || !issue || !technician) {
+    alert('Please fill in Customer Name, Device, Issue, and select a Technician.');
     return;
   }
 
@@ -165,7 +165,7 @@ async function saveNewRepair() {
       contact_no                : contactNo,
       brand, model,
       issue_description         : issue,
-      technician                : technician || 'Unassigned',
+      technician                : technician,
       diagnostic,
       suggested_part_replacement: suggestedParts,
       status                    : 'Pending',
@@ -188,7 +188,7 @@ async function saveNewRepair() {
 
 /* ── View Modal ──────────────────────────────────────────────────────────── */
 
-function openView(i) {
+async function openView(i) {
   const r = repairs[i];
 
   const partTags = r.suggested_parts
@@ -196,6 +196,36 @@ function openView(i) {
         .map(p => `<span style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:500;">🔩 ${p}</span>`)
         .join('')
     : '<span style="color:#94a3b8; font-size:13px;">No parts recorded</span>';
+
+  // Fetch used parts for this device
+  let usedPartsHtml = '<span style="color:#94a3b8; font-size:13px;">Loading parts...</span>';
+  const csrfToken = getCsrf();
+  
+  try {
+    const usedRes = await fetch(REPAIRS_CONFIG.partsGetUsedUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body: JSON.stringify({ device_id: r.device_id }),
+    });
+    const usedData = await usedRes.json();
+    
+    if (usedData.used_parts && usedData.used_parts.length > 0) {
+      usedPartsHtml = usedData.used_parts.map(u => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#ffffff; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:6px;">
+          <div>
+            <span style="font-size:13px; font-weight:600; color:#1e293b;">${u.part_name}</span>
+            <span style="font-size:11px; color:#64748b; margin-left:8px;">${u.category || ''}</span>
+          </div>
+          <span style="background:#dbeafe; color:#1d4ed8; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">x${u.quantity}</span>
+        </div>
+      `).join('');
+    } else {
+      usedPartsHtml = '<span style="color:#94a3b8; font-size:13px;">No parts used yet</span>';
+    }
+  } catch (e) {
+    console.error('Failed to fetch used parts:', e);
+    usedPartsHtml = '<span style="color:#94a3b8; font-size:13px;">Unable to load parts</span>';
+  }
 
   document.getElementById('viewContent').innerHTML = `
 
@@ -238,9 +268,15 @@ function openView(i) {
       <p style="font-size:15px; font-weight:700; color:#1e293b; margin:0;">${r.diagnostic || '—'}</p>
     </div>
 
-    <!-- Possible Parts -->
+    <!-- Parts Used (Actually Deducted from Stock) -->
     <div style="padding:12px; background:#f0fdf4; border-radius:8px; border-left:4px solid #16a34a; margin-bottom:12px;">
-      <p style="font-size:11px; color:#15803d; font-weight:700; text-transform:uppercase; margin:0 0 10px;">🔩 Possible Replacement Parts</p>
+      <p style="font-size:11px; color:#15803d; font-weight:700; text-transform:uppercase; margin:0 0 10px;">✅ Parts Used (In Stock)</p>
+      <div style="max-height:150px; overflow-y:auto;">${usedPartsHtml}</div>
+    </div>
+
+    <!-- Possible Parts -->
+    <div style="padding:12px; background:#f8fafc; border-radius:8px; border-left:4px solid #64748b; margin-bottom:12px;">
+      <p style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; margin:0 0 10px;">🔩 Suggested Parts (AI Recommendation)</p>
       <div style="display:flex; flex-wrap:wrap; gap:6px;">${partTags}</div>
     </div>
 
@@ -554,5 +590,208 @@ async function saveFeedback() {
   }
 }
 
+/* ── Parts Selection Modal ───────────────────────────────────────────────── */
+
+let pendingStatusChange = null; // holds { idx, newStatus } while parts modal is open
+
+// Hook into the status dropdown in edit modal
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('edit-status').addEventListener('change', function () {
+    if (this.value === 'In Progress') {
+      const idx = parseInt(document.getElementById('edit-idx').value);
+      pendingStatusChange = { idx, newStatus: 'In Progress' };
+      openPartsModal(idx);
+    }
+  });
+});
+
+async function openPartsModal(idx) {
+  const repair    = repairs[idx];
+  const deviceId  = repair.device_id;
+  const diagnosis = repair.diagnostic || '';
+
+  document.getElementById('parts-modal-device-id').value          = deviceId;
+  document.getElementById('parts-modal-diagnosis').textContent     = diagnosis || 'No AI diagnosis on record';
+  document.getElementById('parts-modal-loading').style.display     = 'block';
+  document.getElementById('parts-modal-list').style.display        = 'none';
+  document.getElementById('parts-modal-empty').style.display       = 'none';
+  document.getElementById('return-parts-section').style.display    = 'none';
+
+  openModal('partsModal');
+
+  const csrfToken = getCsrf();
+
+  // ── Fetch parts by diagnosis label ──────────────────────────────────────
+  let availableParts = [];
+  if (diagnosis) {
+    // Split combined diagnosis (e.g., "Battery Issue + Touch Controller Issue") into individual diagnoses
+    const diagnoses = diagnosis.split('+').map(d => d.trim()).filter(Boolean);
+    
+    // Fetch parts for each individual diagnosis and combine
+    const allPartsMap = new Map();
+    
+    for (const individualDiagnosis of diagnoses) {
+      try {
+        const res  = await fetch(REPAIRS_CONFIG.partsGetByDiagUrl, {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+          body   : JSON.stringify({ diagnosis: individualDiagnosis }),
+        });
+        const data = await res.json();
+        
+        if (data.parts && data.parts.length > 0) {
+          for (const part of data.parts) {
+            // Use part ID as key to avoid duplicates
+            if (!allPartsMap.has(part.id)) {
+              allPartsMap.set(part.id, part);
+            } else {
+              // If already exists, add to stock quantity
+              const existing = allPartsMap.get(part.id);
+              existing.stock_quantity += part.stock_quantity;
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch parts for diagnosis:', individualDiagnosis, e);
+      }
+    }
+    
+    availableParts = Array.from(allPartsMap.values());
+  }
+
+  document.getElementById('parts-modal-loading').style.display = 'none';
+
+  if (availableParts.length === 0) {
+    document.getElementById('parts-modal-empty').style.display = 'block';
+  } else {
+    renderPartsList(availableParts);
+    document.getElementById('parts-modal-list').style.display = 'block';
+  }
+
+  // ── Check already-deducted parts (return section) ───────────────────────
+  try {
+    const usedRes  = await fetch(REPAIRS_CONFIG.partsGetUsedUrl, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body   : JSON.stringify({ device_id: deviceId }),
+    });
+    const usedData = await usedRes.json();
+    if (usedData.used_parts && usedData.used_parts.length > 0) {
+      renderReturnSection(usedData.used_parts);
+    }
+  } catch (e) { /* silent */ }
+}
+
+function renderPartsList(parts) {
+  const list = document.getElementById('parts-modal-list');
+  list.innerHTML = parts.map(p => {
+    const outOfStock = p.stock_quantity <= 0;
+    const lowStock   = p.stock_quantity > 0 && p.stock_quantity <= 3;
+    const stockColor = outOfStock ? '#ef4444' : lowStock ? '#f59e0b' : '#16a34a';
+    const stockLabel = outOfStock ? 'Out of Stock' : `${p.stock_quantity} in stock`;
+
+    return `
+    <div style="display:flex; align-items:center; gap:12px; padding:12px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; background:${outOfStock ? '#fff5f5' : '#fff'};">
+      <input type="checkbox"
+        id="part-check-${p.id}"
+        data-part-id="${p.id}"
+        data-part-name="${p.part_name}"
+        ${outOfStock ? 'disabled' : ''}
+        style="width:16px; height:16px; cursor:${outOfStock ? 'not-allowed' : 'pointer'}; accent-color:#0284c7;">
+      <div style="flex:1;">
+        <p style="margin:0; font-size:14px; font-weight:600; color:${outOfStock ? '#94a3b8' : '#1e293b'};">${p.part_name}</p>
+        <p style="margin:2px 0 0; font-size:11px; color:#94a3b8;">${p.category}</p>
+      </div>
+      <div style="text-align:right;">
+        <span style="font-size:12px; font-weight:700; color:${stockColor};">${stockLabel}</span>
+        <div style="display:flex; align-items:center; gap:6px; margin-top:4px; justify-content:flex-end;">
+          <label style="font-size:11px; color:#64748b;">Qty:</label>
+          <input type="number"
+            id="part-qty-${p.id}"
+            min="1" max="${p.stock_quantity}"
+            value="1"
+            ${outOfStock ? 'disabled' : ''}
+            style="width:52px; padding:3px 6px; border:1px solid #e2e8f0; border-radius:4px; font-size:12px; text-align:center;">
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderReturnSection(usedParts) {
+  const section = document.getElementById('return-parts-section');
+  const list    = document.getElementById('return-parts-list');
+
+  list.innerHTML = usedParts.map(u => `
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+      <input type="checkbox" id="return-check-${u.usage_id}" data-usage-id="${u.usage_id}"
+        style="width:15px; height:15px; accent-color:#f59e0b; cursor:pointer;">
+      <label for="return-check-${u.usage_id}" style="font-size:13px; color:#1e293b; cursor:pointer; flex:1;">
+        ${u.part_name} <span style="color:#94a3b8; font-size:12px;">(x${u.quantity})</span>
+      </label>
+    </div>
+  `).join('');
+
+  section.style.display = 'block';
+}
+
+async function confirmPartsSelection() {
+  const deviceId  = document.getElementById('parts-modal-device-id').value;
+  const csrfToken = getCsrf();
+  const btn       = document.getElementById('parts-confirm-btn');
+
+  // Gather selected parts
+  const checkedParts = [];
+  document.querySelectorAll('#parts-modal-list input[type="checkbox"]:checked').forEach(cb => {
+    const partId  = cb.dataset.partId;
+    const qty     = parseInt(document.getElementById(`part-qty-${partId}`).value || 1);
+    checkedParts.push({ part_id: partId, quantity: qty });
+  });
+
+  // Gather parts to return
+  const returnIds = [];
+  document.querySelectorAll('#return-parts-list input[type="checkbox"]:checked').forEach(cb => {
+    returnIds.push(cb.dataset.usageId);
+  });
+
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  try {
+    // Deduct selected parts
+    if (checkedParts.length > 0) {
+      const deductRes  = await fetch(REPAIRS_CONFIG.partsDeductUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+        body: JSON.stringify({ device_id: deviceId, parts_used: checkedParts }),
+      });
+      const deductData = await deductRes.json();
+      if (!deductData.success) {
+        alert('⚠️ ' + deductData.error);
+        btn.disabled = false;
+        btn.textContent = '✓ Confirm & Deduct Stock';
+        return;
+      }
+    }
+
+    // Return unchecked parts
+    if (returnIds.length > 0) {
+      await fetch(REPAIRS_CONFIG.partsReturnUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+        body: JSON.stringify({ device_id: deviceId, part_ids: returnIds }),
+      });
+    }
+
+    closeModal('partsModal');
+    alert('✓ Parts updated and stock adjusted!');
+    location.reload();
+
+  } catch (e) {
+    alert('Error: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = '✓ Confirm & Deduct Stock';
+  }
+}
 /* ── Init ────────────────────────────────────────────────────────────────── */
 renderTable();

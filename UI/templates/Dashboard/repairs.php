@@ -111,7 +111,12 @@
     </div>
     <div style="margin-bottom:14px;">
       <label class="modal-label">Assigned Technician</label>
-      <input type="text" id="new-technician" placeholder="e.g. Juan dela Cruz" class="modal-input">
+      <select id="new-technician" class="modal-input">
+        <option value="">-- Select Technician --</option>
+        <option value="Rod">Rod</option>
+        <option value="Rodel">Rodel</option>
+        <option value="Raymark">Raymark</option>
+      </select>
     </div>
 
     <button type="button" onclick="runDiagnosis()"
@@ -174,7 +179,12 @@
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
       <div>
         <label class="modal-label">🔧 Technician</label>
-        <input type="text" id="edit-tech" placeholder="Technician name" class="modal-input">
+        <select id="edit-tech" class="modal-input">
+          <option value="">-- Select Technician --</option>
+          <option value="Rod">Rod</option>
+          <option value="Rodel">Rodel</option>
+          <option value="Raymark">Raymark</option>
+        </select>
       </div>
       <div>
         <label class="modal-label">📋 Status</label>
@@ -261,17 +271,59 @@
     </div>
   </div>
 </div>
+<!-- ── PARTS SELECTION MODAL ────────────────────────────────────────────── -->
+<div class="modal-overlay" id="partsModal">
+  <div class="modal-box" style="width:95%; max-width:580px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <h2 style="font-size:1.1rem; color:#1e293b;">🔩 Select Parts to Use</h2>
+      <button onclick="closeModal('partsModal')" style="background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;">✕</button>
+    </div>
+    <p style="font-size:12px; color:#64748b; margin:0 0 16px;">Based on AI diagnosis. Select parts the technician will use — stock will be deducted automatically.</p>
 
+    <div style="background:#eef2ff; border-left:4px solid #6366f1; padding:10px 14px; border-radius:6px; margin-bottom:16px;">
+      <p style="font-size:11px; color:#4338ca; font-weight:700; text-transform:uppercase; margin:0 0 2px;">🤖 AI Diagnosis</p>
+      <p style="font-size:14px; font-weight:700; color:#1e293b; margin:0;" id="parts-modal-diagnosis">—</p>
+    </div>
+
+    <input type="hidden" id="parts-modal-device-id">
+
+    <div id="parts-modal-loading" style="text-align:center; padding:30px; color:#94a3b8;">
+      <p>Loading parts...</p>
+    </div>
+
+    <div id="parts-modal-list" style="display:none; max-height:320px; overflow-y:auto; margin-bottom:16px;"></div>
+
+    <div id="parts-modal-empty" style="display:none; text-align:center; padding:20px; color:#94a3b8; font-size:13px;">
+      ⚠️ No matching parts found in inventory for this diagnosis.
+    </div>
+
+    <!-- Return Parts Section (shown when job already In Progress) -->
+    <div id="return-parts-section" style="display:none; margin-bottom:16px; padding:12px; background:#fef3c7; border-radius:8px; border-left:4px solid #f59e0b;">
+      <p style="font-size:12px; font-weight:700; color:#92400e; margin:0 0 10px;">↩️ Parts Currently In Use — Return to Stock?</p>
+      <div id="return-parts-list"></div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button onclick="closeModal('partsModal')" style="flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#64748b;font-weight:600;cursor:pointer;">Cancel</button>
+      <button onclick="confirmPartsSelection()" id="parts-confirm-btn" style="flex:1;padding:10px;background:linear-gradient(135deg,#38bdf8,#0284c7);border:none;border-radius:8px;color:white;font-weight:600;cursor:pointer;">✓ Confirm & Deduct Stock</button>
+    </div>
+  </div>
+</div>
 <!-- ── Config + JS ───────────────────────────────────────────────────────── -->
 <script>
 // PHP injects data and URLs here — this is the only PHP in the JS block
 let repairs = <?= json_encode($repairs ?? []) ?>;
 
 window.REPAIRS_CONFIG = {
-  addUrl     : '<?= $this->Url->build('/devices/add') ?>',
-  updateUrl  : '<?= $this->Url->build('/devices/update') ?>',
-  diagnoseUrl: '<?= $this->Url->build('/ai/diagnose') ?>',
-  feedbackUrl: '<?= $this->Url->build('/ai/saveFeedback') ?>',
+  addUrl             : '<?= $this->Url->build('/devices/add') ?>',
+  updateUrl          : '<?= $this->Url->build('/devices/update') ?>',
+  diagnoseUrl        : '<?= $this->Url->build('/ai/diagnose') ?>',
+  feedbackUrl        : '<?= $this->Url->build('/ai/saveFeedback') ?>',
+  partsGetUrl        : '<?= $this->Url->build('/parts-usage/get-by-names') ?>',
+  partsGetByDiagUrl  : '<?= $this->Url->build('/parts-usage/get-by-diagnosis') ?>',
+  partsDeductUrl     : '<?= $this->Url->build('/parts-usage/deduct') ?>',
+  partsReturnUrl     : '<?= $this->Url->build('/parts-usage/return') ?>',
+  partsGetUsedUrl    : '<?= $this->Url->build('/parts-usage/get-used') ?>',
 };
 </script>
 <?= $this->Html->script('repairs') ?>
