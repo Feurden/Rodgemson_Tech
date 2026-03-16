@@ -417,9 +417,7 @@ def text_to_features(user_text):
 
     for keyword,symptom in KEYWORD_MAP.items():
 
-        words=keyword.split()
-
-        if all(word in user_text.split() for word in words):
+        if keyword in user_text:
 
             if features[symptom]==0:
 
@@ -598,8 +596,20 @@ def diagnose(request: DiagnoseRequest):
     )
 
 
-    # ML optional (safe)
+    # ML confidence scoring — build feature vector from detected symptoms
     confidence = None
+    try:
+        feature_vector = pd.DataFrame([{s: (1 if s in detected_symptoms else 0) for s in SYMPTOMS}])
+        proba = model.predict_proba(feature_vector)[0]
+        predicted_idx = int(proba.argmax())
+        predicted_label = label_encoder.inverse_transform([predicted_idx])[0]
+        confidence = round(float(proba[predicted_idx]), 4)
+        # If the ML prediction differs from keyword diagnosis, prefer the higher-confidence result
+        if confidence >= 0.60 and predicted_label != final_diagnosis:
+            final_diagnosis = predicted_label
+            mode = "ml_override"
+    except Exception:
+        confidence = None
 
 
     return DiagnoseResponse(

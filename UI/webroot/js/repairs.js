@@ -389,22 +389,23 @@ async function runDiagnosis() {
   }
 
   const detectedSymptoms = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
-  const confidenceText   = data.confidence !== null ? data.confidence.toFixed(1) + '%' : 'Rule-Based';
-  const confidenceColor  = data.confidence >= 80 ? '#22c55e'
-                         : data.confidence >= 60 ? '#f59e0b'
-                         : data.confidence >= 40 ? '#f97316' : '#ef4444';
-  const confidenceLabel  = data.confidence >= 80 ? 'High confidence'
-                         : data.confidence >= 60 ? 'Good confidence'
-                         : data.confidence >= 50 ? 'Moderate confidence' : 'Low confidence';
-  const isRuleBased      = data.rule_suggestion !== null;
-  const isUncertain      = !isRuleBased && data.confidence < 50;
+  const confidencePct    = data.confidence !== null ? Math.round(data.confidence * 100) : null;
+  const confidenceText   = confidencePct !== null ? confidencePct + '%' : 'Rule-Based';
+  const confidenceColor  = confidencePct >= 80 ? '#22c55e'
+                         : confidencePct >= 60 ? '#f59e0b'
+                         : confidencePct >= 40 ? '#f97316' : '#ef4444';
+  const confidenceLabel  = confidencePct >= 80 ? 'High confidence'
+                         : confidencePct >= 60 ? 'Good confidence'
+                         : confidencePct >= 50 ? 'Moderate confidence' : 'Low confidence';
+  const isRuleBased      = confidencePct === null;
+  const isUncertain      = !isRuleBased && confidencePct < 50;
   const borderColor      = isRuleBased ? '#6366f1' : isUncertain ? '#f59e0b' : confidenceColor;
 
   const confidenceBar = isRuleBased ? '' : `
     <div style="background:rgba(255,255,255,0.6); padding:10px; border-radius:6px; margin-bottom:12px;">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
         <div style="width:100%; background:#e5e7eb; border-radius:4px; height:6px; overflow:hidden;">
-          <div style="background:${confidenceColor}; height:100%; width:${data.confidence}%;"></div>
+          <div style="background:${confidenceColor}; height:100%; width:${confidencePct}%; transition:width 0.4s ease;"></div>
         </div>
         <span style="color:${confidenceColor}; font-weight:600; font-size:13px; white-space:nowrap;">${confidenceText}</span>
       </div>
@@ -512,18 +513,52 @@ async function runEditDiagnosis() {
 
   const detectedSymptoms = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
   const parts    = data.symptom_parts ? Object.values(data.symptom_parts).flat() : [];
+
+  const confidencePct    = data.confidence !== null ? Math.round(data.confidence * 100) : null;
+  const confidenceText   = confidencePct !== null ? confidencePct + '%' : 'Rule-Based';
+  const confidenceColor  = confidencePct >= 80 ? '#22c55e'
+                         : confidencePct >= 60 ? '#f59e0b'
+                         : confidencePct >= 40 ? '#f97316' : '#ef4444';
+  const confidenceLabel  = confidencePct >= 80 ? 'High confidence'
+                         : confidencePct >= 60 ? 'Good confidence'
+                         : confidencePct >= 50 ? 'Moderate confidence' : 'Low confidence';
+  const isRuleBased      = confidencePct === null;
+  const isUncertain      = !isRuleBased && confidencePct < 50;
+  const borderColor      = isRuleBased ? '#6366f1' : isUncertain ? '#f59e0b' : confidenceColor;
+
+  const confidenceBar = isRuleBased ? '' : `
+    <div style="background:rgba(255,255,255,0.6); padding:10px; border-radius:6px; margin-bottom:10px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <div style="flex:1; background:#e5e7eb; border-radius:4px; height:6px; overflow:hidden;">
+          <div style="background:${confidenceColor}; height:100%; width:${confidencePct}%; transition:width 0.4s ease;"></div>
+        </div>
+        <span style="color:${confidenceColor}; font-weight:700; font-size:13px; white-space:nowrap;">${confidenceText}</span>
+      </div>
+      <p style="font-size:11px; color:#64748b; margin:0;">${confidenceLabel}</p>
+    </div>`;
+
+  const uncertainWarning = isUncertain
+    ? `<div style="background:#fef3c7; border:1px solid #fcd34d; padding:8px 12px; border-radius:6px; margin-bottom:10px; font-size:12px; color:#92400e;"><strong>⚠ Low Confidence:</strong> Verify with technician expertise or gather more details.</div>`
+    : '';
+
   const partTags = parts.map(p =>
     `<span style="display:inline-block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:3px 8px;border-radius:12px;font-size:11px;margin:2px;">🔩 ${p}</span>`
   ).join('');
 
   box.style.display = 'block';
   box.innerHTML = `
-    <div style="margin-bottom:8px;">
-      <span style="font-size:11px; color:#6366f1; font-weight:700; text-transform:uppercase;">🤖 AI Diagnosis</span>
-      <p style="font-size:15px; font-weight:700; color:#1e293b; margin:4px 0 0;">${data.diagnosis}</p>
-    </div>
-    <p style="font-size:11px; color:#64748b; margin:0 0 6px;"><strong>Symptoms:</strong> ${detectedSymptoms}</p>
-    <div style="display:flex; flex-wrap:wrap; gap:4px;">${partTags}</div>`;
+    <div style="border-left:4px solid ${borderColor}; padding:12px; border-radius:0 6px 6px 0;">
+      <div style="margin-bottom:10px;">
+        <span style="font-size:11px; color:#6366f1; font-weight:700; text-transform:uppercase;">🤖 AI Diagnosis</span>
+        <p style="font-size:15px; font-weight:700; color:#1e293b; margin:4px 0 0;">${data.diagnosis}</p>
+        ${isRuleBased ? '<span style="font-size:11px; color:#6366f1; background:#eef2ff; padding:3px 8px; border-radius:4px; font-weight:600; margin-top:6px; display:inline-block;">Rule-Based</span>' : ''}
+        ${isUncertain ? '<span style="font-size:11px; color:#d97706; background:#fef3c7; padding:3px 8px; border-radius:4px; font-weight:600; margin-top:6px; display:inline-block; margin-left:4px;">⚠ Uncertain</span>' : ''}
+      </div>
+      ${uncertainWarning}
+      ${confidenceBar}
+      <p style="font-size:11px; color:#64748b; margin:0 0 8px;"><strong>Symptoms:</strong> ${detectedSymptoms}</p>
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">${partTags}</div>
+    </div>`;
 
   document.getElementById('edit-ai-diagnosis').value = data.diagnosis;
   document.getElementById('edit-ai-parts').value     = parts.join(', ');
@@ -593,6 +628,17 @@ async function saveFeedback() {
 /* ── Parts Selection Modal ───────────────────────────────────────────────── */
 
 let pendingStatusChange = null; // holds { idx, newStatus } while parts modal is open
+
+function cancelPartsModal() {
+  // If the parts modal was opened because the user switched status to "In Progress",
+  // revert the dropdown back to "Pending" since they cancelled.
+  const statusDropdown = document.getElementById('edit-status');
+  if (statusDropdown && statusDropdown.value === 'In Progress') {
+    statusDropdown.value = 'Pending';
+  }
+  pendingStatusChange = null;
+  closeModal('partsModal');
+}
 
 // Hook into the status dropdown in edit modal
 document.addEventListener('DOMContentLoaded', () => {

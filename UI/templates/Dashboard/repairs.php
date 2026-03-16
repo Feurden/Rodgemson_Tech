@@ -276,7 +276,7 @@
   <div class="modal-box" style="width:95%; max-width:580px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
       <h2 style="font-size:1.1rem; color:#1e293b;">🔩 Select Parts to Use</h2>
-      <button onclick="closeModal('partsModal')" style="background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;">✕</button>
+      <button onclick="cancelPartsModal()" style="background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;">✕</button>
     </div>
     <p style="font-size:12px; color:#64748b; margin:0 0 16px;">Based on AI diagnosis. Select parts the technician will use — stock will be deducted automatically.</p>
 
@@ -304,7 +304,7 @@
     </div>
 
     <div style="display:flex; gap:10px;">
-      <button onclick="closeModal('partsModal')" style="flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#64748b;font-weight:600;cursor:pointer;">Cancel</button>
+      <button onclick="cancelPartsModal()" style="flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#64748b;font-weight:600;cursor:pointer;">Cancel</button>
       <button onclick="confirmPartsSelection()" id="parts-confirm-btn" style="flex:1;padding:10px;background:linear-gradient(135deg,#38bdf8,#0284c7);border:none;border-radius:8px;color:white;font-weight:600;cursor:pointer;">✓ Confirm & Deduct Stock</button>
     </div>
   </div>
