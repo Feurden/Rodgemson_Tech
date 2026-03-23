@@ -17,36 +17,67 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Http\Response;
 
 /**
  * Application Controller
  *
- * Add your application-wide methods in the class below, your controllers
- * will inherit them.
- *
- * @link https://book.cakephp.org/5/en/controllers.html#the-app-controller
+ * Enforces session-based authentication for all controllers that extend this
+ * class. Public actions (login, signup) are explicitly allowlisted below.
+ * API routes return 401 JSON; page routes redirect to login.
  */
 class AppController extends Controller
 {
     /**
-     * Initialization hook method.
-     *
-     * Use this method to add common initialization code like loading components.
-     *
-     * e.g. `$this->loadComponent('FormProtection');`
-     *
-     * @return void
+     * Actions that do not require an authenticated session.
+     * Format: 'ControllerName.actionName'
      */
+    private const PUBLIC_ACTIONS = [
+        'Dashboard.login',
+        'Dashboard.signup',
+    ];
+
     public function initialize(): void
     {
         parent::initialize();
 
         $this->loadComponent('Flash');
+    }
 
-        /*
-         * Enable the following component for recommended CakePHP form protection settings.
-         * see https://book.cakephp.org/5/en/controllers/components/form-protection.html
-         */
-        //$this->loadComponent('FormProtection');
+    /**
+     * Runs before every action. Rejects unauthenticated requests before any
+     * controller logic executes.
+     */
+    public function beforeFilter(\Cake\Event\EventInterface $event): ?Response
+    {
+        parent::beforeFilter($event);
+
+        $controller = $this->getName();
+        $action     = $this->request->getParam('action');
+        $key        = "$controller.$action";
+
+        if (in_array($key, self::PUBLIC_ACTIONS, true)) {
+            return null;
+        }
+
+        $user = $this->getRequest()->getSession()->read('Auth.User');
+
+        if (empty($user)) {
+            // API requests get a 401 JSON response
+            if ($this->request->is('json') || $this->request->accepts('application/json')) {
+                return $this->response
+                    ->withType('application/json')
+                    ->withStatus(401)
+                    ->withStringBody(json_encode([
+                        'success' => false,
+                        'error'   => 'Unauthenticated. Please log in.',
+                    ]));
+            }
+
+            // Browser requests redirect to login
+            return $this->redirect(['controller' => 'Dashboard', 'action' => 'login']);
+        }
+
+        return null;
     }
 }

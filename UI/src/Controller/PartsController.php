@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Controller\Controller;
 use Cake\Http\Response;
 
-class PartsController extends Controller
+class PartsController extends AppController
 {
     public function initialize(): void
     {

@@ -37,7 +37,7 @@ class DashboardController extends AppController
                 $this->getRequest()->getSession()->write('Auth.User', [
                     'id'       => $user->id,
                     'username' => $user->username,
-                    'role'     => $user->role,       // ← store role in session
+                    'role'     => $user->role,
                 ]);
 
                 return $this->redirect(['action' => 'analytics']);
@@ -110,10 +110,11 @@ class DashboardController extends AppController
 
         $devicesTable = $this->getTableLocator()->get('Devices');
 
-        $totalRepairs     = $devicesTable->find()->count();
-        $completedRepairs = $devicesTable->find()->where(['status' => 'Completed'])->count();
-        $pendingRepairs   = $devicesTable->find()->where(['status !=' => 'Completed'])->count();
-        $completionRate   = $totalRepairs > 0 ? round(($completedRepairs / $totalRepairs) * 100) : 0;
+        $totalRepairs      = $devicesTable->find()->count();
+        $completedRepairs  = $devicesTable->find()->where(['status' => 'Completed'])->count();
+        $inProgressRepairs = $devicesTable->find()->where(['status' => 'In Progress'])->count();
+        $pendingRepairs    = $devicesTable->find()->where(['status' => 'Pending'])->count();
+        $completionRate    = $totalRepairs > 0 ? round(($completedRepairs / $totalRepairs) * 100) : 0;
 
         // Weekly data — last 7 days
         $weeklyData = [];
@@ -135,23 +136,25 @@ class DashboardController extends AppController
             ];
         }
 
-        // Monthly data — last 4 weeks
+        // Monthly data — last 4 weeks with status breakdown
         $monthlyData = [];
         for ($week = 3; $week >= 0; $week--) {
             $weekStart = new \DateTime("-$week weeks");
             $weekEnd   = new \DateTime("-$week weeks +6 days");
             $weekLabel = 'Wk ' . (4 - $week);
 
-            $count = $devicesTable->find()
-                ->where(['DATE(date_received) >=' => $weekStart->format('Y-m-d')])
-                ->andWhere(['DATE(date_received) <=' => $weekEnd->format('Y-m-d')])
-                ->count();
+            $completed  = $devicesTable->find()->where(['status' => 'Completed',   'DATE(date_received) >=' => $weekStart->format('Y-m-d'), 'DATE(date_received) <=' => $weekEnd->format('Y-m-d')])->count();
+            $inProgress = $devicesTable->find()->where(['status' => 'In Progress', 'DATE(date_received) >=' => $weekStart->format('Y-m-d'), 'DATE(date_received) <=' => $weekEnd->format('Y-m-d')])->count();
+            $pending    = $devicesTable->find()->where(['status' => 'Pending',     'DATE(date_received) >=' => $weekStart->format('Y-m-d'), 'DATE(date_received) <=' => $weekEnd->format('Y-m-d')])->count();
 
             $monthlyData[] = [
-                'week'  => $weekLabel,
-                'start' => $weekStart->format('Y-m-d'),
-                'end'   => $weekEnd->format('Y-m-d'),
-                'count' => $count,
+                'week'       => $weekLabel,
+                'start'      => $weekStart->format('Y-m-d'),
+                'end'        => $weekEnd->format('Y-m-d'),
+                'count'      => $completed + $inProgress + $pending,
+                'completed'  => $completed,
+                'in_progress'=> $inProgress,
+                'pending'    => $pending,
             ];
         }
 
@@ -171,11 +174,111 @@ class DashboardController extends AppController
 
         $this->set(compact(
             'user', 'totalRepairs', 'completedRepairs',
-            'pendingRepairs', 'completionRate',
+            'inProgressRepairs', 'pendingRepairs', 'completionRate',
             'weeklyData', 'monthlyData', 'stockLevels'
         ));
 
         return null;
+    }
+
+    /**
+     * AJAX: daily breakdown for a specific month + year (Weekly tab)
+     * GET /dashboard/getWeeklyByMonth?month=3&year=2026
+     */
+    public function getWeeklyByMonth(): Response
+    {
+        $user = $this->getRequest()->getSession()->read('Auth.User');
+        if (empty($user)) {
+            return $this->response->withType('application/json')->withStatus(401)
+                ->withStringBody(json_encode(['success' => false, 'error' => 'Unauthenticated']));
+        }
+
+        $month = (int)($this->request->getQuery('month') ?? date('n'));
+        $year  = (int)($this->request->getQuery('year')  ?? date('Y'));
+
+        $devicesTable = $this->getTableLocator()->get('Devices');
+        $dayNames     = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        $daysInMonth  = (int)(new \DateTime("$year-$month-01"))->format('t');
+        $monthStart   = sprintf('%04d-%02d-01', $year, $month);
+        $monthEnd     = sprintf('%04d-%02d-%02d', $year, $month, $daysInMonth);
+
+        $days  = [];
+        $total = 0;
+
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dateStr = sprintf('%04d-%02d-%02d', $year, $month, $d);
+            $dayName = $dayNames[(int)(new \DateTime($dateStr))->format('w')];
+            $count   = $devicesTable->find()->where(['DATE(date_received)' => $dateStr])->count();
+            $days[]  = ['day' => $dayName . ' ' . $d, 'count' => $count];
+            $total  += $count;
+        }
+
+        $completed = $devicesTable->find()->where(['status' => 'Completed', 'DATE(date_received) >=' => $monthStart, 'DATE(date_received) <=' => $monthEnd])->count();
+        $pending   = $devicesTable->find()->where(['status !=' => 'Completed', 'DATE(date_received) >=' => $monthStart, 'DATE(date_received) <=' => $monthEnd])->count();
+
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode(['success' => true, 'days' => $days, 'total' => $total, 'completed' => $completed, 'pending' => $pending]));
+    }
+
+    /**
+     * AJAX: week-by-week breakdown with status colors for a specific month + year (Monthly tab)
+     * GET /dashboard/getMonthlyByYear?month=3&year=2026
+     */
+    public function getMonthlyByYear(): Response
+    {
+        $user = $this->getRequest()->getSession()->read('Auth.User');
+        if (empty($user)) {
+            return $this->response->withType('application/json')->withStatus(401)
+                ->withStringBody(json_encode(['success' => false, 'error' => 'Unauthenticated']));
+        }
+
+        $month       = (int)($this->request->getQuery('month') ?? date('n'));
+        $year        = (int)($this->request->getQuery('year')  ?? date('Y'));
+        $daysInMonth = (int)(new \DateTime("$year-$month-01"))->format('t');
+        $monthStart  = sprintf('%04d-%02d-01', $year, $month);
+        $monthEnd    = sprintf('%04d-%02d-%02d', $year, $month, $daysInMonth);
+
+        $devicesTable = $this->getTableLocator()->get('Devices');
+        $weeks        = [];
+        $total        = 0;
+        $weekNum      = 1;
+        $day          = 1;
+
+        while ($day <= $daysInMonth) {
+            $weekStartStr = sprintf('%04d-%02d-%02d', $year, $month, $day);
+            $weekEndStr   = sprintf('%04d-%02d-%02d', $year, $month, min($day + 6, $daysInMonth));
+
+            $completed  = $devicesTable->find()->where(['status' => 'Completed',   'DATE(date_received) >=' => $weekStartStr, 'DATE(date_received) <=' => $weekEndStr])->count();
+            $inProgress = $devicesTable->find()->where(['status' => 'In Progress', 'DATE(date_received) >=' => $weekStartStr, 'DATE(date_received) <=' => $weekEndStr])->count();
+            $pending    = $devicesTable->find()->where(['status' => 'Pending',     'DATE(date_received) >=' => $weekStartStr, 'DATE(date_received) <=' => $weekEndStr])->count();
+            $count      = $completed + $inProgress + $pending;
+
+            $weeks[] = [
+                'week'        => 'Wk ' . $weekNum,
+                'count'       => $count,
+                'completed'   => $completed,
+                'in_progress' => $inProgress,
+                'pending'     => $pending,
+            ];
+
+            $total   += $count;
+            $weekNum++;
+            $day     += 7;
+        }
+
+        $completedTotal  = $devicesTable->find()->where(['status' => 'Completed',   'DATE(date_received) >=' => $monthStart, 'DATE(date_received) <=' => $monthEnd])->count();
+        $inProgressTotal = $devicesTable->find()->where(['status' => 'In Progress', 'DATE(date_received) >=' => $monthStart, 'DATE(date_received) <=' => $monthEnd])->count();
+        $pendingTotal    = $devicesTable->find()->where(['status' => 'Pending',      'DATE(date_received) >=' => $monthStart, 'DATE(date_received) <=' => $monthEnd])->count();
+
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode([
+                'success'     => true,
+                'weeks'       => $weeks,
+                'total'       => $total,
+                'completed'   => $completedTotal,
+                'in_progress' => $inProgressTotal,
+                'pending'     => $pendingTotal,
+            ]));
     }
 
     public function repairs(): ?Response
@@ -196,9 +299,7 @@ class DashboardController extends AppController
         $seenIds = [];
 
         foreach ($devices as $device) {
-            if (in_array($device->id, $seenIds)) {
-                continue;
-            }
+            if (in_array($device->id, $seenIds)) continue;
             $seenIds[] = $device->id;
 
             $repairs[] = [
@@ -210,9 +311,7 @@ class DashboardController extends AppController
                 'technician'      => $device->technician ?? 'Unassigned',
                 'date'            => $device->date_received->format('M d, Y'),
                 'status'          => strtolower($device->status ?? 'pending'),
-                'finished'        => $device->date_released
-                                        ? $device->date_released->format('M d, Y g:i A')
-                                        : '',
+                'finished'        => $device->date_released ? $device->date_released->format('M d, Y g:i A') : '',
                 'notes'           => $device->customer?->phone_issue ?? '',
                 'diagnostic'      => $device->customer?->diagnostic ?? '',
                 'suggested_parts' => $device->customer?->suggested_part_replacement ?? '',
@@ -220,7 +319,19 @@ class DashboardController extends AppController
             ];
         }
 
-        $this->set(compact('user', 'repairs'));
+        // Load all technician names from Users table for the dropdown
+        $usersTable     = $this->fetchTable('Users');
+        $techUsers      = $usersTable->find()
+            ->where(['id !=' => $user['id']])
+            ->orderBy(['full_name' => 'ASC'])
+            ->all();
+
+        $technicianList = [];
+        foreach ($techUsers as $tech) {
+            $technicianList[] = !empty($tech->full_name) ? $tech->full_name : $tech->username;
+        }
+
+        $this->set(compact('user', 'repairs', 'technicianList'));
         return null;
     }
 
@@ -232,16 +343,11 @@ class DashboardController extends AppController
         }
 
         $partsTable = $this->getTableLocator()->get('Parts');
-        $parts      = $partsTable->find()
-            ->orderBy(['Parts.part_name' => 'ASC'])
-            ->all();
+        $parts      = $partsTable->find()->orderBy(['Parts.part_name' => 'ASC'])->all();
 
         $stocks = [];
         foreach ($parts as $part) {
-            $status = $part->stock_quantity <= ($part->minimum_stock ?? 5)
-                ? 'warning'
-                : 'normal';
-
+            $status = $part->stock_quantity <= ($part->minimum_stock ?? 5) ? 'warning' : 'normal';
             $stocks[] = [
                 'id'       => $part->id,
                 'part'     => $part->part_name,
@@ -267,10 +373,7 @@ class DashboardController extends AppController
         $usersTable   = $this->fetchTable('Users');
         $devicesTable = $this->getTableLocator()->get('Devices');
 
-        // Safe find — won't throw RecordNotFoundException
-        $adminRecord = $usersTable->find()
-            ->where(['id' => $user['id']])
-            ->first();
+        $adminRecord = $usersTable->find()->where(['id' => $user['id']])->first();
 
         if (!$adminRecord) {
             $this->getRequest()->getSession()->destroy();
@@ -287,51 +390,23 @@ class DashboardController extends AppController
             'role'      => $adminRecord->role      ?? 'technician',
         ];
 
-        // Load ALL users except the currently logged-in admin
-        // This shows every technician regardless of role label,
-        // so even if roles aren't perfectly set yet, all staff appear
-        $techUsers = $usersTable->find()
-            ->where(['id !=' => $user['id']])   // exclude self
-            ->orderBy(['full_name' => 'ASC'])
-            ->all();
-
+        $techUsers   = $usersTable->find()->where(['id !=' => $user['id']])->orderBy(['full_name' => 'ASC'])->all();
         $technicians = [];
+
         foreach ($techUsers as $tech) {
-            // Match devices.technician (varchar name) to users.full_name
-            $name = !empty($tech->full_name) ? $tech->full_name : $tech->username;
-
-            $totalJobs      = $devicesTable->find()
-                ->where(['technician' => $name])
-                ->count();
-
-            $completedJobs  = $devicesTable->find()
-                ->where(['technician' => $name, 'status' => 'Completed'])
-                ->count();
-
-            $inProgressJobs = $devicesTable->find()
-                ->where(['technician' => $name, 'status' => 'In Progress'])
-                ->count();
-
-            $pendingJobs    = $devicesTable->find()
-                ->where(['technician' => $name, 'status' => 'Pending'])
-                ->count();
-
-            $waitingJobs    = $devicesTable->find()
-                ->where(['technician' => $name, 'status' => 'Waiting Parts'])
-                ->count();
-
-            $technicians[] = [
+            $name           = !empty($tech->full_name) ? $tech->full_name : $tech->username;
+            $technicians[]  = [
                 'id'             => $tech->id,
                 'username'       => $tech->username,
                 'full_name'      => $name,
                 'email'          => $tech->email     ?? '',
                 'specialty'      => $tech->specialty ?? 'General Repairs',
                 'avatar'         => $tech->avatar    ?? strtoupper(substr($name, 0, 2)),
-                'totalJobs'      => $totalJobs,
-                'completedJobs'  => $completedJobs,
-                'inProgressJobs' => $inProgressJobs,
-                'pendingJobs'    => $pendingJobs,
-                'waitingJobs'    => $waitingJobs,
+                'totalJobs'      => $devicesTable->find()->where(['technician' => $name])->count(),
+                'completedJobs'  => $devicesTable->find()->where(['technician' => $name, 'status' => 'Completed'])->count(),
+                'inProgressJobs' => $devicesTable->find()->where(['technician' => $name, 'status' => 'In Progress'])->count(),
+                'pendingJobs'    => $devicesTable->find()->where(['technician' => $name, 'status' => 'Pending'])->count(),
+                'waitingJobs'    => $devicesTable->find()->where(['technician' => $name, 'status' => 'Waiting Parts'])->count(),
             ];
         }
 
@@ -347,13 +422,9 @@ class DashboardController extends AppController
         }
 
         $this->request->allowMethod(['post']);
-
-        $data       = $this->request->getData();
-        $usersTable = $this->fetchTable('Users');
-
-        $adminRecord = $usersTable->find()
-            ->where(['id' => $user['id']])
-            ->first();
+        $data        = $this->request->getData();
+        $usersTable  = $this->fetchTable('Users');
+        $adminRecord = $usersTable->find()->where(['id' => $user['id']])->first();
 
         if (!$adminRecord) {
             $this->getRequest()->getSession()->destroy();

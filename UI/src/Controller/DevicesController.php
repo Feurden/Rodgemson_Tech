@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Controller\Controller;
 use Cake\Http\Response;
 
-class DevicesController extends Controller
+class DevicesController extends AppController
 {
     public function initialize(): void
     {
@@ -108,7 +107,16 @@ class DevicesController extends Controller
                     ? new \DateTime($data['date_released']) : null;
             }
 
-            $devicesTable->save($device);
+            if (!$devicesTable->save($device)) {
+                return $this->response
+                    ->withType('application/json')
+                    ->withStatus(400)
+                    ->withStringBody(json_encode([
+                        'success' => false,
+                        'error'   => 'Failed to update device',
+                        'errors'  => $device->getErrors(),
+                    ]));
+            }
 
             // Update customer table fields (diagnostic, suggested parts, notes)
             $needsCustomerUpdate = isset($data['diagnostic'])

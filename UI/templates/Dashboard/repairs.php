@@ -46,6 +46,7 @@
       <option value="completed">Completed</option>
       <option value="in progress">In Progress</option>
       <option value="pending">Pending</option>
+      <option value="waiting parts">Waiting Parts</option>
     </select>
   </div>
 
@@ -113,9 +114,9 @@
       <label class="modal-label">Assigned Technician</label>
       <select id="new-technician" class="modal-input">
         <option value="">-- Select Technician --</option>
-        <option value="Rod">Rod</option>
-        <option value="Rodel">Rodel</option>
-        <option value="Raymark">Raymark</option>
+        <?php foreach ($technicianList ?? [] as $techName): ?>
+        <option value="<?= htmlspecialchars($techName) ?>"><?= htmlspecialchars($techName) ?></option>
+        <?php endforeach; ?>
       </select>
     </div>
 
@@ -181,9 +182,9 @@
         <label class="modal-label">🔧 Technician</label>
         <select id="edit-tech" class="modal-input">
           <option value="">-- Select Technician --</option>
-          <option value="Rod">Rod</option>
-          <option value="Rodel">Rodel</option>
-          <option value="Raymark">Raymark</option>
+          <?php foreach ($technicianList ?? [] as $techName): ?>
+          <option value="<?= htmlspecialchars($techName) ?>"><?= htmlspecialchars($techName) ?></option>
+          <?php endforeach; ?>
         </select>
       </div>
       <div>
@@ -230,45 +231,121 @@
 
 <!-- ── FEEDBACK MODAL ────────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="feedbackModal">
-  <div class="modal-box" style="width:95%; max-width:600px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-      <h2 style="font-size:1.1rem; color:#1e293b;">📊 Diagnosis Feedback</h2>
+  <div class="modal-box" style="width:95%; max-width:600px; max-height:90vh; overflow-y:auto;">
+
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div>
+        <h2 style="font-size:1.1rem; color:#1e293b; margin:0;">📊 Diagnosis Feedback</h2>
+        <p style="font-size:11px; color:#94a3b8; margin:2px 0 0;">Help improve the AI by confirming or correcting the diagnosis</p>
+      </div>
       <button onclick="closeModal('feedbackModal')" style="background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;">✕</button>
     </div>
 
+    <!-- Hidden fields -->
     <input type="hidden" id="feedback-jobid">
     <input type="hidden" id="feedback-ai-diagnosis">
+    <input type="hidden" id="feedback-ai-confidence">
 
-    <div style="margin-bottom:14px; padding:10px; background:#f0f9ff; border-radius:6px; border-left:4px solid #0284c7;">
-      <p style="font-size:12px; color:#0c4a6e; margin:0;"><strong>AI Suggested:</strong> <span id="feedback-ai-display"></span></p>
+    <!-- Already submitted banner (hidden by default) -->
+    <div id="feedback-already-submitted" style="display:none; margin-bottom:14px; padding:10px 14px; background:#f0fdf4; border-radius:6px; border-left:4px solid #22c55e;">
+      <p style="font-size:12px; color:#166534; margin:0;">✓ <strong>Feedback already submitted</strong> for this job. Submitting again will update the existing record.</p>
     </div>
 
-    <div style="margin-bottom:14px;">
-      <label class="modal-label">Was the AI diagnosis correct?</label>
-      <div style="display:flex; gap:10px;">
-        <button onclick="feedbackCorrect(true)" id="btn-correct" style="flex:1; padding:10px; background:#22c55e; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">✓ Correct</button>
-        <button onclick="feedbackCorrect(false)" id="btn-incorrect" style="flex:1; padding:10px; background:#ef4444; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">✕ Incorrect</button>
+    <!-- AI diagnosis info card -->
+    <div style="margin-bottom:16px; padding:12px 14px; background:#f0f9ff; border-radius:8px; border-left:4px solid #0284c7;">
+      <p style="font-size:11px; font-weight:700; color:#0c4a6e; text-transform:uppercase; letter-spacing:0.5px; margin:0 0 6px;">🤖 AI Diagnosis</p>
+      <p style="font-size:15px; font-weight:700; color:#1e293b; margin:0 0 4px;" id="feedback-ai-display">—</p>
+      <div id="feedback-confidence-bar-wrap" style="display:none; margin-top:8px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="flex:1; background:#e5e7eb; border-radius:4px; height:5px; overflow:hidden;">
+            <div id="feedback-confidence-bar" style="height:100%; border-radius:4px; transition:width 0.4s;"></div>
+          </div>
+          <span id="feedback-confidence-text" style="font-size:12px; font-weight:700; white-space:nowrap;"></span>
+        </div>
+        <p id="feedback-confidence-label" style="font-size:11px; color:#64748b; margin:4px 0 0;"></p>
       </div>
     </div>
 
-    <div id="feedback-incorrect-section" style="display:none; margin-bottom:14px; padding:12px; background:#fef3c7; border-radius:6px; border-left:4px solid #f59e0b;">
-      <label class="modal-label">What was the actual diagnosis?</label>
-      <input type="text" id="feedback-actual-diagnosis" class="modal-input" placeholder="e.g. Charging IC Issue">
-      <label class="modal-label" style="margin-top:12px;">Root cause / what you found:</label>
-      <textarea id="feedback-root-cause" class="modal-input" placeholder="Describe what you actually discovered during repair..." rows="2" style="resize:vertical;"></textarea>
-      <label class="modal-label" style="margin-top:12px;">Parts actually replaced:</label>
-      <input type="text" id="feedback-actual-parts" class="modal-input" placeholder="e.g. Charging IC, Power Connector">
+    <!-- Was it correct? -->
+    <div style="margin-bottom:16px;">
+      <label class="modal-label">Was the AI diagnosis correct?</label>
+      <div style="display:flex; gap:10px;">
+        <button onclick="feedbackCorrect(true)" id="btn-correct"
+          style="flex:1; padding:10px; background:#22c55e; color:white; border:2px solid transparent; border-radius:6px; cursor:pointer; font-weight:600; transition:all 0.15s;">
+          ✓ Correct
+        </button>
+        <button onclick="feedbackCorrect(false)" id="btn-incorrect"
+          style="flex:1; padding:10px; background:#ef4444; color:white; border:2px solid transparent; border-radius:6px; cursor:pointer; font-weight:600; transition:all 0.15s;">
+          ✕ Incorrect
+        </button>
+      </div>
     </div>
 
-    <div style="margin-bottom:14px;">
-      <label class="modal-label">Technician notes (optional)</label>
-      <textarea id="feedback-notes" class="modal-input" placeholder="Any additional observations..." rows="2" style="resize:vertical;"></textarea>
+    <!-- Incorrect section — shown when technician clicks Incorrect -->
+    <div id="feedback-incorrect-section" style="display:none; margin-bottom:16px; padding:14px; background:#fef3c7; border-radius:8px; border-left:4px solid #f59e0b;">
+      <p style="font-size:11px; font-weight:700; color:#92400e; text-transform:uppercase; margin:0 0 12px;">⚠ Correction Details</p>
+
+      <!-- Actual diagnosis — dropdown of known labels -->
+      <label class="modal-label">Actual diagnosis <span style="color:#ef4444;">*</span></label>
+      <select id="feedback-actual-diagnosis" class="modal-input" style="background:white;">
+        <option value="">— Select the correct diagnosis —</option>
+        <option value="Battery Issue">Battery Issue</option>
+        <option value="Charging Port Issue">Charging Port Issue</option>
+        <option value="Charging IC Issue">Charging IC Issue</option>
+        <option value="Display IC Issue">Display IC Issue</option>
+        <option value="Touch Controller Issue">Touch Controller Issue</option>
+        <option value="Speaker Issue">Speaker Issue</option>
+        <option value="Microphone Issue">Microphone Issue</option>
+        <option value="Baseband Issue">Baseband Issue</option>
+        <option value="Antenna Issue">Antenna Issue</option>
+        <option value="Power IC Issue">Power IC Issue</option>
+        <option value="Mainboard Issue">Mainboard Issue</option>
+        <option value="SIM IC Issue">SIM IC Issue</option>
+        <option value="Software/OS Issue">Software/OS Issue</option>
+        <option value="Display Issue">Display Issue</option>
+        <option value="Water Damage - Inspect All Components">Water Damage</option>
+        <option value="Other">Other (specify in notes)</option>
+      </select>
+
+      <!-- Root cause -->
+      <label class="modal-label" style="margin-top:12px;">Root cause / what you found</label>
+      <textarea id="feedback-root-cause" class="modal-input"
+        placeholder="Describe what you actually discovered during repair..."
+        rows="2" style="resize:vertical;"></textarea>
+
+      <!-- Parts actually replaced — checkbox list -->
+      <label class="modal-label" style="margin-top:12px;">Parts actually replaced</label>
+      <div id="feedback-parts-checklist"
+        style="background:white; border:1px solid #e2e8f0; border-radius:6px; padding:10px; max-height:160px; overflow-y:auto; display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+        <!-- Populated by JS from parts inventory -->
+        <p style="color:#94a3b8; font-size:12px; grid-column:span 2; margin:0;">Loading parts...</p>
+      </div>
     </div>
 
+    <!-- Technician notes — always visible -->
+    <div style="margin-bottom:16px;">
+      <label class="modal-label">Technician notes <span style="font-size:11px; color:#94a3b8;">(optional)</span></label>
+      <textarea id="feedback-notes" class="modal-input"
+        placeholder="Any additional observations about this repair..."
+        rows="2" style="resize:vertical;"></textarea>
+    </div>
+
+    <!-- Inline success/error message -->
+    <div id="feedback-msg" style="display:none; margin-bottom:12px; padding:10px 14px; border-radius:6px; font-size:13px; font-weight:600;"></div>
+
+    <!-- Actions -->
     <div style="display:flex; gap:10px;">
-      <button onclick="closeModal('feedbackModal')" style="flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#64748b;font-weight:600;cursor:pointer;">Cancel</button>
-      <button onclick="saveFeedback()" style="flex:1;padding:10px;background:linear-gradient(135deg,#38bdf8,#0284c7);border:none;border-radius:8px;color:white;font-weight:600;cursor:pointer;">Save Feedback</button>
+      <button onclick="closeModal('feedbackModal')"
+        style="flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:white;color:#64748b;font-weight:600;cursor:pointer;">
+        Cancel
+      </button>
+      <button onclick="saveFeedback()" id="feedback-save-btn"
+        style="flex:1;padding:10px;background:linear-gradient(135deg,#38bdf8,#0284c7);border:none;border-radius:8px;color:white;font-weight:600;cursor:pointer;">
+        Save Feedback
+      </button>
     </div>
+
   </div>
 </div>
 <!-- ── PARTS SELECTION MODAL ────────────────────────────────────────────── -->
@@ -319,6 +396,7 @@ window.REPAIRS_CONFIG = {
   updateUrl          : '<?= $this->Url->build('/devices/update') ?>',
   diagnoseUrl        : '<?= $this->Url->build('/ai/diagnose') ?>',
   feedbackUrl        : '<?= $this->Url->build('/ai/saveFeedback') ?>',
+  checkFeedbackUrl   : '<?= $this->Url->build('/ai/checkFeedback') ?>',
   partsGetUrl        : '<?= $this->Url->build('/parts-usage/get-by-names') ?>',
   partsGetByDiagUrl  : '<?= $this->Url->build('/parts-usage/get-by-diagnosis') ?>',
   partsDeductUrl     : '<?= $this->Url->build('/parts-usage/deduct') ?>',

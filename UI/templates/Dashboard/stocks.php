@@ -127,6 +127,12 @@
         <p style="font-size:15px;">No items match your search.</p>
     </div>
 
+    <!-- Pagination -->
+    <div id="paginationBar" style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; flex-wrap:wrap; gap:10px;">
+        <span id="paginationInfo" style="font-size:13px; color:#64748b;"></span>
+        <div style="display:flex; gap:6px;" id="paginationBtns"></div>
+    </div>
+
 </div>
 
 <!-- Add Stock Modal -->
@@ -224,7 +230,120 @@
     </div>
 </div>
 
+<style>
+.pg-btn {
+    padding: 6px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    background: white;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.pg-btn:hover { background: #f1f5f9; }
+.pg-btn.active {
+    background: linear-gradient(135deg, #38bdf8, #0284c7);
+    color: white;
+    border-color: transparent;
+}
+.pg-btn:disabled { opacity: 0.4; cursor: default; }
+</style>
+
 <script>
+/* ======= PAGINATION ======= */
+const ROWS_PER_PAGE = 8;
+let currentPage = 1;
+let allRows = [];
+let filteredRows = [];
+
+function initPagination() {
+    allRows = Array.from(document.querySelectorAll('#stockBody tr'));
+    filteredRows = [...allRows];
+    renderPage(1);
+}
+
+function renderPage(page) {
+    currentPage = page;
+    const total = filteredRows.length;
+    const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+    const start = (page - 1) * ROWS_PER_PAGE;
+    const end   = start + ROWS_PER_PAGE;
+
+    // Show/hide rows
+    allRows.forEach(r => r.style.display = 'none');
+    filteredRows.forEach((r, i) => {
+        r.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+
+    // Info text
+    const from = total === 0 ? 0 : start + 1;
+    const to   = Math.min(end, total);
+    document.getElementById('paginationInfo').textContent =
+        total === 0 ? 'No items found' : `Showing ${from}–${to} of ${total} items`;
+
+    // Empty state
+    document.getElementById('stockEmpty').style.display = total === 0 ? 'block' : 'none';
+
+    // Build page buttons
+    const btns = document.getElementById('paginationBtns');
+    btns.innerHTML = '';
+
+    // Prev
+    const prev = document.createElement('button');
+    prev.className = 'pg-btn';
+    prev.textContent = '‹';
+    prev.disabled = page <= 1;
+    prev.onclick = () => renderPage(page - 1);
+    btns.appendChild(prev);
+
+    // Page numbers (show max 5 around current)
+    const range = pagRange(page, totalPages);
+    range.forEach(p => {
+        if (p === '…') {
+            const dots = document.createElement('span');
+            dots.textContent = '…';
+            dots.style.cssText = 'padding:6px 4px; color:#94a3b8; font-size:13px;';
+            btns.appendChild(dots);
+        } else {
+            const btn = document.createElement('button');
+            btn.className = 'pg-btn' + (p === page ? ' active' : '');
+            btn.textContent = p;
+            btn.onclick = () => renderPage(p);
+            btns.appendChild(btn);
+        }
+    });
+
+    // Next
+    const next = document.createElement('button');
+    next.className = 'pg-btn';
+    next.textContent = '›';
+    next.disabled = page >= totalPages;
+    next.onclick = () => renderPage(page + 1);
+    btns.appendChild(next);
+}
+
+function pagRange(current, total) {
+    if (total <= 7) return Array.from({length: total}, (_, i) => i + 1);
+    if (current <= 4) return [1,2,3,4,5,'…',total];
+    if (current >= total - 3) return [1,'…',total-4,total-3,total-2,total-1,total];
+    return [1,'…',current-1,current,current+1,'…',total];
+}
+
+/* ======= SEARCH (override original to also re-paginate) ======= */
+function filterStock(val) {
+    const q = val.toLowerCase();
+    filteredRows = allRows.filter(r => r.innerText.toLowerCase().includes(q));
+    renderPage(1);
+}
+
+function filterStockStatus(val) {
+    filteredRows = allRows.filter(r => val === 'all' || r.dataset.level === val);
+    renderPage(1);
+}
+
+/* ======= MODALS ======= */
 let currentStockItem = {};
 
 function openStockView(item) {
@@ -247,113 +366,48 @@ function openRestockModal(item) {
     document.getElementById('restock-current').value = item.quantity;
     document.getElementById('restock-qty').value = 0;
     document.getElementById('restock-total').textContent = item.quantity;
-    
-    // Update total when user changes quantity
     document.getElementById('restock-qty').oninput = function() {
         document.getElementById('restock-total').textContent = item.quantity + parseInt(this.value || 0);
     };
-    
     document.getElementById('restockModal').style.display = 'flex';
 }
 
 async function saveRestock() {
     const partId = document.getElementById('restock-id').value;
     const qtyToAdd = parseInt(document.getElementById('restock-qty').value || 0);
-    
-    if (qtyToAdd <= 0) {
-        alert('Please enter a quantity to add.');
-        return;
-    }
-    
+    if (qtyToAdd <= 0) { alert('Please enter a quantity to add.'); return; }
     const csrfToken = document.querySelector('meta[name="csrfToken"]')?.getAttribute('content');
-    if (!csrfToken) {
-        alert('Security error: CSRF token not found');
-        return;
-    }
-    
+    if (!csrfToken) { alert('Security error: CSRF token not found'); return; }
     const response = await fetch("<?= $this->Url->build('/parts/restock') ?>", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrfToken
-        },
-        body: JSON.stringify({
-            part_id: partId,
-            quantity_added: qtyToAdd
-        })
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
+        body: JSON.stringify({ part_id: partId, quantity_added: qtyToAdd })
     });
-    
     const data = await response.json();
-    if (data.success) {
-        alert('✓ Stock updated successfully!');
-        document.getElementById('restockModal').style.display = 'none';
-        location.reload();
-    } else {
-        alert('Error: ' + (data.error || 'Failed to update stock'));
-    }
-}
-
-function filterStock(val) {
-    const rows = document.querySelectorAll('#stockBody tr');
-    const q = val.toLowerCase();
-    let visible = 0;
-    rows.forEach(r => {
-        const match = r.innerText.toLowerCase().includes(q);
-        r.style.display = match ? '' : 'none';
-        if (match) visible++;
-    });
-    document.getElementById('stockEmpty').style.display = visible === 0 ? 'block' : 'none';
-}
-
-function filterStockStatus(val) {
-    const rows = document.querySelectorAll('#stockBody tr');
-    rows.forEach(r => {
-        r.style.display = (val === 'all' || r.dataset.level === val) ? '' : 'none';
-    });
+    if (data.success) { alert('✓ Stock updated successfully!'); document.getElementById('restockModal').style.display = 'none'; location.reload(); }
+    else { alert('Error: ' + (data.error || 'Failed to update stock')); }
 }
 
 async function saveAddStock(e) {
     e.preventDefault();
-    
     const partName = document.getElementById('add-part-name').value.trim();
     const category = document.getElementById('add-part-category').value.trim();
-    const qty = parseInt(document.getElementById('add-part-qty').value || 0);
-    const minQty = parseInt(document.getElementById('add-part-min').value || 0);
-    const price = parseFloat(document.getElementById('add-part-price').value || 0);
-    
-    if (!partName || !category || qty < 0 || minQty < 0 || price < 0) {
-        alert('Please fill in all fields with valid values.');
-        return;
-    }
-    
+    const qty      = parseInt(document.getElementById('add-part-qty').value || 0);
+    const minQty   = parseInt(document.getElementById('add-part-min').value || 0);
+    const price    = parseFloat(document.getElementById('add-part-price').value || 0);
+    if (!partName || !category || qty < 0 || minQty < 0 || price < 0) { alert('Please fill in all fields with valid values.'); return; }
     const csrfToken = document.querySelector('meta[name="csrfToken"]')?.getAttribute('content');
-    if (!csrfToken) {
-        alert('Security error: CSRF token not found');
-        return;
-    }
-    
+    if (!csrfToken) { alert('Security error: CSRF token not found'); return; }
     const response = await fetch("<?= $this->Url->build('/parts/add') ?>", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrfToken
-        },
-        body: JSON.stringify({
-            part_name: partName,
-            category: category,
-            stock_quantity: qty,
-            minimum_stock: minQty,
-            unit_price: price
-        })
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
+        body: JSON.stringify({ part_name: partName, category: category, stock_quantity: qty, minimum_stock: minQty, unit_price: price })
     });
-    
     const data = await response.json();
-    if (data.success) {
-        alert('✓ Stock item added successfully!');
-        document.getElementById('addStockModal').style.display = 'none';
-        location.reload();
-    } else {
-        alert('Error: ' + (data.error || 'Failed to add stock item'));
-    }
+    if (data.success) { alert('✓ Stock item added successfully!'); document.getElementById('addStockModal').style.display = 'none'; location.reload(); }
+    else { alert('Error: ' + (data.error || 'Failed to add stock item')); }
 }
+
+// Init on load
+document.addEventListener('DOMContentLoaded', initPagination);
 </script>

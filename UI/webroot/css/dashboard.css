@@ -368,3 +368,108 @@ main { flex:1; }
     background:rgba(239,68,68,0.15);
     }
 
+/* ================================================
+   ANALYTICS — General / Specific Toggle
+   Add these to your existing stylesheet
+   ================================================ */
+
+/* View Mode Toggle pill (General / Specific) */
+.view-mode-toggle {
+    display: flex;
+    gap: 4px;
+    margin: 0 0 14px;
+    background: #e2e8f0;
+    border-radius: 8px;
+    padding: 3px;
+}
+
+.view-mode-btn {
+    flex: 1;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    color: #64748b;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.view-mode-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.view-mode-btn:hover:not(.active) {
+    color: #334155;
+}
+
+/* ------------------------------------------------
+   Specific controls (label + select dropdown row)
+   ------------------------------------------------ */
+.specific-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.specific-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.specific-select {
+    flex: 1;
+    padding: 7px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1e293b;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: auto;
+}
+
+.specific-select:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+/* ------------------------------------------------
+   View sections (general / specific sub-panels)
+   Keep display:flex column so bar chart fills height
+   ------------------------------------------------ */
+.view-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+/* ------------------------------------------------
+   Weekly-specific bar accent  (teal/green)
+   Monthly-specific bar accent (pink/rose)
+   These override the default blue gradient
+   ------------------------------------------------ */
+#specific-week-chart   .bar-fill-v { background: linear-gradient(180deg, #34d399, #059669); }
+#specific-month-chart  .bar-fill-v { background: linear-gradient(180deg, #f472b6, #db2777); }
+
+/* ------------------------------------------------
+   Report tabs — keep them on one line with toggle
+   ------------------------------------------------ */
+.report-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;   /* tightened slightly so toggle doesn't push chart down */
+}

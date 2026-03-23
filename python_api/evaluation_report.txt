@@ -1,0 +1,130 @@
+{
+  "model": "RandomForestClassifier",
+  "input_format": "binary_symptom_vectors_v2",
+  "note": "v2: iFixit contamination removed; screen_physically_damaged and battery_issue_natural features added for natural-language rows. Model and API are aligned.",
+  "accuracy": 0.996309963099631,
+  "f1_macro": 0.9964263378897525,
+  "f1_weighted": 0.9963076553842461,
+  "auc_score": 1.0,
+  "train_size": 1084,
+  "test_size": 271,
+  "n_classes": 14,
+  "features": [
+    "not_charging",
+    "overheating",
+    "no_signal",
+    "battery_drains_fast",
+    "stuck_on_logo",
+    "screen_black",
+    "touch_not_working",
+    "speaker_no_sound",
+    "mic_not_work",
+    "screen_flickering",
+    "wifi_not_working",
+    "bluetooth_issue",
+    "phone_freezing",
+    "water_damage",
+    "screen_physically_damaged",
+    "battery_issue_natural"
+  ],
+  "timestamp": "2026-03-19T13:58:25.832882",
+  "classification_report": {
+    "Antenna Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 20.0
+    },
+    "Baseband Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 20.0
+    },
+    "Battery Issue": {
+      "precision": 1.0,
+      "recall": 0.95,
+      "f1-score": 0.9743589743589743,
+      "support": 20.0
+    },
+    "Charging IC Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 19.0
+    },
+    "Charging Port Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 20.0
+    },
+    "Display IC Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 20.0
+    },
+    "Display Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 16.0
+    },
+    "Mainboard Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 19.0
+    },
+    "Microphone Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 20.0
+    },
+    "Power IC Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 19.0
+    },
+    "SIM IC Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 19.0
+    },
+    "Software/OS Issue": {
+      "precision": 0.9523809523809523,
+      "recall": 1.0,
+      "f1-score": 0.975609756097561,
+      "support": 20.0
+    },
+    "Speaker Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 19.0
+    },
+    "Touch Controller Issue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 20.0
+    },
+    "accuracy": 0.996309963099631,
+    "macro avg": {
+      "precision": 0.9965986394557823,
+      "recall": 0.9964285714285713,
+      "f1-score": 0.9964263378897525,
+      "support": 271.0
+    },
+    "weighted avg": {
+      "precision": 0.9964856791425056,
+      "recall": 0.996309963099631,
+      "f1-score": 0.9963076553842461,
+      "support": 271.0
+    }
+  }
+}

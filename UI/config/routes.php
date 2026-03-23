@@ -93,6 +93,16 @@ return function (RouteBuilder $routes): void {
         'action'     => 'diagnose',
     ]);
 
+    $routes->post('/ai/saveFeedback', [
+        'controller' => 'Ai',
+        'action'     => 'saveFeedback',
+    ]);
+
+    $routes->post('/ai/checkFeedback', [
+        'controller' => 'Ai',
+        'action'     => 'checkFeedback',
+    ]);
+
     $routes->post('/parts-usage/get-by-names', ['controller' => 'PartsUsage', 'action' => 'getByNames']);
     $routes->post('/parts-usage/deduct',        ['controller' => 'PartsUsage', 'action' => 'deduct']);
     $routes->post('/parts-usage/return',        ['controller' => 'PartsUsage', 'action' => 'returnParts']);

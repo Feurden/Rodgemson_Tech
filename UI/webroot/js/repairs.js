@@ -1,7 +1,89 @@
 /* ── repairs.js ──────────────────────────────────────────────────────────────
    JavaScript for the Repair Dashboard page (repairs.php)
+   FIXED: Confidence percentage conversion (decimal to percentage)
    URLs are injected by PHP via window.REPAIRS_CONFIG before this script loads.
    ──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Helper: Convert confidence decimal to percentage ────────────────────── */
+
+
+/* ── Result modal (replaces all alert() calls) ───────────────────────────── */
+
+function showModal(type, message) {
+  let overlay = document.getElementById('resultModal');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'resultModal';
+    overlay.style.cssText = [
+      'position:fixed','inset:0','background:rgba(0,0,0,0.45)',
+      'display:flex','align-items:center','justify-content:center',
+      'z-index:9999','opacity:0','transition:opacity .18s',
+    ].join(';');
+    overlay.innerHTML = `
+      <div id="resultModalBox" style="
+        background:#fff;border-radius:16px;padding:36px 32px;
+        max-width:360px;width:90%;text-align:center;
+        box-shadow:0 20px 60px rgba(0,0,0,0.18);
+        transform:scale(.92);transition:transform .18s;
+      ">
+        <div id="resultModalIcon" style="
+          width:56px;height:56px;border-radius:50%;
+          display:flex;align-items:center;justify-content:center;
+          margin:0 auto 16px;font-size:26px;
+        "></div>
+        <p id="resultModalMsg" style="
+          font-size:15px;font-weight:600;color:#1e293b;
+          margin:0 0 20px;line-height:1.5;
+        "></p>
+        <button onclick="closeResultModal()" style="
+          padding:10px 28px;background:linear-gradient(135deg,#38bdf8,#0284c7);
+          border:none;border-radius:8px;color:white;
+          font-weight:600;font-size:14px;cursor:pointer;
+        ">OK</button>
+      </div>`;
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeResultModal(); });
+    document.body.appendChild(overlay);
+  }
+
+  const isSuccess = type === 'success';
+  const icon      = overlay.querySelector('#resultModalIcon');
+  const msg       = overlay.querySelector('#resultModalMsg');
+  const box       = overlay.querySelector('#resultModalBox');
+
+  icon.textContent    = isSuccess ? '✓' : '✕';
+  icon.style.background  = isSuccess ? '#dcfce7' : '#fee2e2';
+  icon.style.color       = isSuccess ? '#16a34a' : '#dc2626';
+  msg.textContent     = message;
+
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => {
+    overlay.style.opacity = '1';
+    box.style.transform   = 'scale(1)';
+  });
+}
+
+function closeResultModal() {
+  const overlay = document.getElementById('resultModal');
+  if (!overlay) return;
+  const box = overlay.querySelector('#resultModalBox');
+  overlay.style.opacity = '0';
+  box.style.transform   = 'scale(.92)';
+  setTimeout(() => { overlay.style.display = 'none'; }, 180);
+}
+
+function convertConfidenceToPercentage(confidence) {
+  if (confidence === null || confidence === undefined) return 0;
+  
+  let value = parseFloat(confidence);
+  
+  // If it's a decimal (0-1), convert to percentage (0-100)
+  if (value > 0 && value <= 1) {
+    value = value * 100;
+  }
+  
+  // Ensure it's in valid 0-100 range
+  return Math.min(100, Math.max(0, value));
+}
 
 /* ── Status helpers ──────────────────────────────────────────────────────── */
 
@@ -42,7 +124,9 @@ const symptomLabels = {
   'wifi_not_working'  : 'WiFi not working',
   'bluetooth_issue'   : 'Bluetooth issues',
   'phone_freezing'    : 'Phone freezing/restarting',
-  'water_damage'      : 'Water damage',
+  'water_damage'            : 'Water damage',
+  'screen_physically_damaged': 'Cracked / physical screen damage',
+  'battery_issue_natural'    : 'Battery issue',
 };
 
 /* ── Table rendering ─────────────────────────────────────────────────────── */
@@ -139,7 +223,7 @@ async function saveNewRepair() {
   const suggestedParts = document.getElementById('aiSuggestedParts').value.trim();
 
   if (!customerName || !device || !issue || !technician) {
-    alert('Please fill in Customer Name, Device, Issue, and select a Technician.');
+    showModal('error', 'Please fill in Customer Name, Device, Issue, and select a Technician.');
     return;
   }
 
@@ -148,7 +232,7 @@ async function saveNewRepair() {
   const model = parts.slice(1).join(' ') || 'Unknown';
 
   const csrfToken = getCsrf();
-  if (!csrfToken) { alert('Security error: CSRF token not found'); return; }
+  if (!csrfToken) { showModal('error', 'Security error: CSRF token not found'); return; }
 
   isSavingRepair = true;
   const saveBtn = document.getElementById('newRepairModal')
@@ -175,10 +259,10 @@ async function saveNewRepair() {
 
   const data = await response.json();
   if (data.success) {
-    alert('✓ Repair job created successfully!');
-    location.reload();
+    showModal('success', 'Repair job created successfully!');
+    setTimeout(() => location.reload(), 900);
   } else {
-    alert('Error: ' + (data.error || 'Failed to create repair'));
+    showModal('error', data.error || 'Failed to create repair');
     isSavingRepair        = false;
     saveBtn.disabled      = false;
     saveBtn.style.opacity = '1';
@@ -332,15 +416,25 @@ async function saveEdit() {
   const repair     = repairs[idx];
   const deviceId   = repair.device_id;
   const technician = document.getElementById('edit-tech').value.trim();
-  const status     = document.getElementById('edit-status').value;
+  const statusDisplay = document.getElementById('edit-status').value;
   const finished   = document.getElementById('edit-finished').value;
   const notes      = document.getElementById('edit-notes').value.trim();
   const issue      = document.getElementById('edit-issue').value.trim();
   const diagnostic = document.getElementById('edit-ai-diagnosis').value.trim();
   const suggestedParts = document.getElementById('edit-ai-parts').value.trim();
 
+  // ✅ CRITICAL FIX: Normalize status back to lowercase for database
+  const statusMap = {
+    'Pending'      : 'pending',
+    'In Progress'  : 'in progress',
+    'Completed'    : 'completed',
+    'Waiting Parts': 'waiting parts',
+    'Released'     : 'released',
+  };
+  const status = statusMap[statusDisplay] || statusDisplay.toLowerCase();
+
   const csrfToken = getCsrf();
-  if (!csrfToken) { alert('Security error: CSRF token not found'); return; }
+  if (!csrfToken) { showModal('error', 'Security error: CSRF token not found'); return; }
 
   const response = await fetch(REPAIRS_CONFIG.updateUrl, {
     method: 'POST',
@@ -359,10 +453,10 @@ async function saveEdit() {
 
   const data = await response.json();
   if (data.success) {
-    alert('✓ Repair updated successfully!');
-    location.reload();
+    showModal('success', 'Repair updated successfully!');
+    setTimeout(() => location.reload(), 900);
   } else {
-    alert('Error: ' + (data.error || 'Failed to update repair'));
+    showModal('error', data.error || 'Failed to update repair');
   }
 }
 
@@ -370,42 +464,72 @@ async function saveEdit() {
 
 async function runDiagnosis() {
   const description = document.getElementById('new-issue').value.trim();
-  if (!description) { alert('Please describe the problem first.'); return; }
+  if (!description) { showModal('error', 'Please describe the problem first.'); return; }
 
   const csrfToken = getCsrf();
-  const response  = await fetch(REPAIRS_CONFIG.diagnoseUrl, {
-    method : 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-    body   : JSON.stringify({ description }),
-  });
+  const diagBtn = document.querySelector('#newRepairModal button[onclick*="runDiagnosis"]');
+  const box     = document.getElementById('aiResultBox');
 
-  const data = await response.json();
-  const box  = document.getElementById('aiResultBox');
+  if (diagBtn) { diagBtn.disabled = true; diagBtn.textContent = '🤖 Diagnosing...'; }
+  box.style.display = 'none';
+
+  let data;
+  try {
+    const response = await fetch(REPAIRS_CONFIG.diagnoseUrl, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body   : JSON.stringify({ description }),
+    });
+    data = await response.json();
+  } catch (err) {
+    box.style.display = 'block';
+    box.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:#fef2f2;border-radius:8px;border-left:4px solid #ef4444;">
+      <span style="font-size:20px;color:#dc2626;">✕</span>
+      <div>
+        <p style="font-weight:600;color:#991b1b;margin:0 0 2px;font-size:13px;">AI server unavailable</p>
+        <p style="color:#b91c1c;margin:0;font-size:12px;">Make sure the Python API is running on port 8000.</p>
+      </div></div>`;
+    if (diagBtn) { diagBtn.disabled = false; diagBtn.textContent = '🤖 Diagnose with AI'; }
+    return;
+  } finally {
+    if (diagBtn) { diagBtn.disabled = false; diagBtn.textContent = '🤖 Diagnose with AI'; }
+  }
 
   if (!data.success) {
     box.style.display = 'block';
-    box.innerHTML = `<span style="color:#dc2626; font-weight:600;">✕ ${data.error}</span>`;
+    box.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:#fef2f2;border-radius:8px;border-left:4px solid #ef4444;">
+      <span style="font-size:20px;color:#dc2626;">✕</span>
+      <p style="font-weight:600;color:#991b1b;margin:0;font-size:13px;">${data.error || 'Diagnosis failed — please try again.'}</p>
+    </div>`;
     return;
   }
 
   const detectedSymptoms = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
-  const confidencePct    = data.confidence !== null ? Math.round(data.confidence * 100) : null;
-  const confidenceText   = confidencePct !== null ? confidencePct + '%' : 'Rule-Based';
-  const confidenceColor  = confidencePct >= 80 ? '#22c55e'
-                         : confidencePct >= 60 ? '#f59e0b'
-                         : confidencePct >= 40 ? '#f97316' : '#ef4444';
-  const confidenceLabel  = confidencePct >= 80 ? 'High confidence'
-                         : confidencePct >= 60 ? 'Good confidence'
-                         : confidencePct >= 50 ? 'Moderate confidence' : 'Low confidence';
-  const isRuleBased      = confidencePct === null;
-  const isUncertain      = !isRuleBased && confidencePct < 50;
-  const borderColor      = isRuleBased ? '#6366f1' : isUncertain ? '#f59e0b' : confidenceColor;
+  
+  // FIXED: Convert confidence from decimal (0-1) to percentage (0-100)
+  const confidenceValue = convertConfidenceToPercentage(data.confidence);
+  const confidenceText = data.confidence !== null ? confidenceValue.toFixed(1) + '%' : 'Rule-Based';
+
+  // Determine color based on confidence percentage
+  const confidenceColor = confidenceValue >= 80 ? '#22c55e'  // Green for high
+                        : confidenceValue >= 60 ? '#f59e0b'  // Orange for good
+                        : confidenceValue >= 40 ? '#f97316'  // Orange-red for moderate
+                        : '#ef4444';  // Red for low
+
+  const confidenceLabel = confidenceValue >= 80 ? 'High confidence'
+                        : confidenceValue >= 60 ? 'Good confidence'
+                        : confidenceValue >= 50 ? 'Moderate confidence' 
+                        : 'Low confidence';
+
+  const isRuleBased = data.rule_suggestion !== null;
+  const isUncertain = !isRuleBased && confidenceValue < 50;
+  const borderColor = isRuleBased ? '#6366f1' : isUncertain ? '#f59e0b' : confidenceColor;
 
   const confidenceBar = isRuleBased ? '' : `
     <div style="background:rgba(255,255,255,0.6); padding:10px; border-radius:6px; margin-bottom:12px;">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
         <div style="width:100%; background:#e5e7eb; border-radius:4px; height:6px; overflow:hidden;">
-          <div style="background:${confidenceColor}; height:100%; width:${confidencePct}%; transition:width 0.4s ease;"></div>
+          <div style="background:${confidenceColor}; height:100%; width:${confidenceValue}%;"></div>
         </div>
         <span style="color:${confidenceColor}; font-weight:600; font-size:13px; white-space:nowrap;">${confidenceText}</span>
       </div>
@@ -493,72 +617,60 @@ async function runDiagnosis() {
 
 async function runEditDiagnosis() {
   const description = document.getElementById('edit-issue').value.trim();
-  if (!description) { alert('Please describe the issue first.'); return; }
+  if (!description) { showModal('error', 'Please describe the issue first.'); return; }
 
   const csrfToken = getCsrf();
-  const response  = await fetch(REPAIRS_CONFIG.diagnoseUrl, {
-    method : 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-    body   : JSON.stringify({ description }),
-  });
+  const editDiagBtn = document.querySelector('#editModal button[onclick*="runEditDiagnosis"]');
+  const box         = document.getElementById('editAiResultBox');
 
-  const data = await response.json();
-  const box  = document.getElementById('editAiResultBox');
+  if (editDiagBtn) { editDiagBtn.disabled = true; editDiagBtn.textContent = '🤖 Diagnosing...'; }
+  box.style.display = 'none';
+
+  let data;
+  try {
+    const response = await fetch(REPAIRS_CONFIG.diagnoseUrl, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body   : JSON.stringify({ description }),
+    });
+    data = await response.json();
+  } catch (err) {
+    box.style.display = 'block';
+    box.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:#fef2f2;border-radius:8px;border-left:4px solid #ef4444;">
+      <span style="font-size:20px;color:#dc2626;">✕</span>
+      <div>
+        <p style="font-weight:600;color:#991b1b;margin:0 0 2px;font-size:13px;">AI server unavailable</p>
+        <p style="color:#b91c1c;margin:0;font-size:12px;">Make sure the Python API is running on port 8000.</p>
+      </div></div>`;
+    if (editDiagBtn) { editDiagBtn.disabled = false; editDiagBtn.textContent = '🤖 Re-Diagnose with AI'; }
+    return;
+  } finally {
+    if (editDiagBtn) { editDiagBtn.disabled = false; editDiagBtn.textContent = '🤖 Re-Diagnose with AI'; }
+  }
 
   if (!data.success) {
     box.style.display = 'block';
-    box.innerHTML = `<span style="color:#dc2626; font-weight:600;">✕ ${data.error}</span>`;
+    box.innerHTML = `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:#fef2f2;border-radius:8px;border-left:4px solid #ef4444;">
+      <span style="font-size:20px;color:#dc2626;">✕</span>
+      <p style="font-weight:600;color:#991b1b;margin:0;font-size:13px;">${data.error || 'Diagnosis failed — please try again.'}</p>
+    </div>`;
     return;
   }
 
   const detectedSymptoms = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
   const parts    = data.symptom_parts ? Object.values(data.symptom_parts).flat() : [];
-
-  const confidencePct    = data.confidence !== null ? Math.round(data.confidence * 100) : null;
-  const confidenceText   = confidencePct !== null ? confidencePct + '%' : 'Rule-Based';
-  const confidenceColor  = confidencePct >= 80 ? '#22c55e'
-                         : confidencePct >= 60 ? '#f59e0b'
-                         : confidencePct >= 40 ? '#f97316' : '#ef4444';
-  const confidenceLabel  = confidencePct >= 80 ? 'High confidence'
-                         : confidencePct >= 60 ? 'Good confidence'
-                         : confidencePct >= 50 ? 'Moderate confidence' : 'Low confidence';
-  const isRuleBased      = confidencePct === null;
-  const isUncertain      = !isRuleBased && confidencePct < 50;
-  const borderColor      = isRuleBased ? '#6366f1' : isUncertain ? '#f59e0b' : confidenceColor;
-
-  const confidenceBar = isRuleBased ? '' : `
-    <div style="background:rgba(255,255,255,0.6); padding:10px; border-radius:6px; margin-bottom:10px;">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-        <div style="flex:1; background:#e5e7eb; border-radius:4px; height:6px; overflow:hidden;">
-          <div style="background:${confidenceColor}; height:100%; width:${confidencePct}%; transition:width 0.4s ease;"></div>
-        </div>
-        <span style="color:${confidenceColor}; font-weight:700; font-size:13px; white-space:nowrap;">${confidenceText}</span>
-      </div>
-      <p style="font-size:11px; color:#64748b; margin:0;">${confidenceLabel}</p>
-    </div>`;
-
-  const uncertainWarning = isUncertain
-    ? `<div style="background:#fef3c7; border:1px solid #fcd34d; padding:8px 12px; border-radius:6px; margin-bottom:10px; font-size:12px; color:#92400e;"><strong>⚠ Low Confidence:</strong> Verify with technician expertise or gather more details.</div>`
-    : '';
-
   const partTags = parts.map(p =>
     `<span style="display:inline-block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:3px 8px;border-radius:12px;font-size:11px;margin:2px;">🔩 ${p}</span>`
   ).join('');
 
   box.style.display = 'block';
   box.innerHTML = `
-    <div style="border-left:4px solid ${borderColor}; padding:12px; border-radius:0 6px 6px 0;">
-      <div style="margin-bottom:10px;">
-        <span style="font-size:11px; color:#6366f1; font-weight:700; text-transform:uppercase;">🤖 AI Diagnosis</span>
-        <p style="font-size:15px; font-weight:700; color:#1e293b; margin:4px 0 0;">${data.diagnosis}</p>
-        ${isRuleBased ? '<span style="font-size:11px; color:#6366f1; background:#eef2ff; padding:3px 8px; border-radius:4px; font-weight:600; margin-top:6px; display:inline-block;">Rule-Based</span>' : ''}
-        ${isUncertain ? '<span style="font-size:11px; color:#d97706; background:#fef3c7; padding:3px 8px; border-radius:4px; font-weight:600; margin-top:6px; display:inline-block; margin-left:4px;">⚠ Uncertain</span>' : ''}
-      </div>
-      ${uncertainWarning}
-      ${confidenceBar}
-      <p style="font-size:11px; color:#64748b; margin:0 0 8px;"><strong>Symptoms:</strong> ${detectedSymptoms}</p>
-      <div style="display:flex; flex-wrap:wrap; gap:4px;">${partTags}</div>
-    </div>`;
+    <div style="margin-bottom:8px;">
+      <span style="font-size:11px; color:#6366f1; font-weight:700; text-transform:uppercase;">🤖 AI Diagnosis</span>
+      <p style="font-size:15px; font-weight:700; color:#1e293b; margin:4px 0 0;">${data.diagnosis}</p>
+    </div>
+    <p style="font-size:11px; color:#64748b; margin:0 0 6px;"><strong>Symptoms:</strong> ${detectedSymptoms}</p>
+    <div style="display:flex; flex-wrap:wrap; gap:4px;">${partTags}</div>`;
 
   document.getElementById('edit-ai-diagnosis').value = data.diagnosis;
   document.getElementById('edit-ai-parts').value     = parts.join(', ');
@@ -568,26 +680,143 @@ async function runEditDiagnosis() {
 
 let currentFeedbackData = {};
 
-function openFeedback(i) {
+async function openFeedback(i) {
   const r = repairs[i];
-  document.getElementById('feedback-jobid').value              = r.id;
-  document.getElementById('feedback-ai-diagnosis').value       = r.issue;
-  document.getElementById('feedback-ai-display').textContent   = r.issue;
+
+  // Reset modal state
+  document.getElementById('feedback-jobid').value          = r.id;
+  document.getElementById('feedback-ai-diagnosis').value   = r.diagnostic || r.issue || '';
+  document.getElementById('feedback-ai-confidence').value  = r.ai_confidence ?? '';
+  document.getElementById('feedback-ai-display').textContent = r.diagnostic || '— No AI diagnosis on record —';
   document.getElementById('feedback-incorrect-section').style.display = 'none';
-  document.getElementById('feedback-actual-diagnosis').value   = '';
-  document.getElementById('feedback-root-cause').value         = '';
-  document.getElementById('feedback-actual-parts').value       = '';
-  document.getElementById('feedback-notes').value              = '';
-  document.getElementById('btn-correct').style.opacity         = '1';
-  document.getElementById('btn-incorrect').style.opacity       = '1';
-  currentFeedbackData = { jobid: r.id, aiDiagnosis: r.issue, correct: undefined };
+  document.getElementById('feedback-already-submitted').style.display = 'none';
+  document.getElementById('feedback-actual-diagnosis').value = '';
+  document.getElementById('feedback-root-cause').value      = '';
+  document.getElementById('feedback-notes').value           = '';
+  document.getElementById('feedback-msg').style.display     = 'none';
+
+  const saveBtn = document.getElementById('feedback-save-btn');
+  saveBtn.disabled      = false;
+  saveBtn.textContent   = 'Save Feedback';
+  saveBtn.style.opacity = '1';
+  saveBtn.style.background = 'linear-gradient(135deg,#38bdf8,#0284c7)';
+
+  // Reset correct/incorrect button states
+  document.getElementById('btn-correct').style.opacity   = '1';
+  document.getElementById('btn-correct').style.border    = '2px solid transparent';
+  document.getElementById('btn-incorrect').style.opacity = '1';
+  document.getElementById('btn-incorrect').style.border  = '2px solid transparent';
+
+  currentFeedbackData = { jobid: r.id, aiDiagnosis: r.diagnostic || r.issue || '', correct: undefined };
+
+  // Show confidence bar if available
+  const confWrap = document.getElementById('feedback-confidence-bar-wrap');
+  // FIXED: Convert confidence properly
+  let conf = r.ai_confidence;
+  if (conf !== null && conf !== undefined && conf !== '') {
+    conf = convertConfidenceToPercentage(conf);
+    conf = Math.round(conf);
+    
+    const color = conf >= 80 ? '#22c55e' 
+                : conf >= 60 ? '#f59e0b' 
+                : conf >= 40 ? '#f97316' 
+                : '#ef4444';
+    const label = conf >= 80 ? 'High confidence' 
+                : conf >= 60 ? 'Good confidence' 
+                : conf >= 50 ? 'Moderate confidence' 
+                : 'Low confidence';
+    
+    document.getElementById('feedback-confidence-bar').style.background = color;
+    document.getElementById('feedback-confidence-bar').style.width = conf + '%';
+    document.getElementById('feedback-confidence-text').textContent = conf + '%';
+    document.getElementById('feedback-confidence-text').style.color = color;
+    document.getElementById('feedback-confidence-label').textContent = label;
+    confWrap.style.display = 'block';
+  } else {
+    confWrap.style.display = 'none';
+  }
+
+  // Load parts checklist from inventory
+  loadFeedbackPartsChecklist(r.diagnostic || '');
+
+  // Check if feedback already exists for this job
+  try {
+    const csrfToken = getCsrf();
+    const res  = await fetch(REPAIRS_CONFIG.checkFeedbackUrl, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body   : JSON.stringify({ job_id: r.id }),
+    });
+    const data = await res.json();
+    if (data.exists) {
+      document.getElementById('feedback-already-submitted').style.display = 'block';
+    }
+  } catch (e) { /* non-critical — don't block modal open */ }
+
   openModal('feedbackModal');
+}
+
+
+async function loadFeedbackPartsChecklist(diagnosis) {
+  const container = document.getElementById('feedback-parts-checklist');
+  container.innerHTML = '<p style="color:#94a3b8; font-size:12px; grid-column:span 2; margin:0;">Loading parts...</p>';
+
+  if (!diagnosis) {
+    container.innerHTML = '<p style="color:#94a3b8; font-size:12px; grid-column:span 2; margin:0;">No AI diagnosis — select parts manually in notes.</p>';
+    return;
+  }
+
+  try {
+    const csrfToken = getCsrf();
+    const diagnoses = diagnosis.split('+').map(d => d.trim()).filter(Boolean);
+    const allPartsMap = new Map();
+
+    for (const diag of diagnoses) {
+      const res  = await fetch(REPAIRS_CONFIG.partsGetByDiagUrl, {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+        body   : JSON.stringify({ diagnosis: diag }),
+      });
+      const data = await res.json();
+      (data.parts ?? []).forEach(p => { if (!allPartsMap.has(p.part_name)) allPartsMap.set(p.part_name, p); });
+    }
+
+    if (allPartsMap.size === 0) {
+      container.innerHTML = '<p style="color:#94a3b8; font-size:12px; grid-column:span 2; margin:0;">No matching parts found for this diagnosis.</p>';
+      return;
+    }
+
+    container.innerHTML = [...allPartsMap.values()].map(p => `
+      <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:#1e293b; cursor:pointer; padding:4px 6px; border-radius:4px; border:1px solid #e2e8f0; background:#f8fafc;">
+        <input type="checkbox" name="feedback-part" value="${p.part_name}"
+          style="accent-color:#0284c7; cursor:pointer;"
+          ${!p.in_inventory ? 'disabled' : ''}>
+        <span style="${!p.in_inventory ? 'color:#94a3b8;' : ''}">${p.part_name}</span>
+        ${!p.in_inventory ? '<span style="font-size:10px;color:#ef4444;margin-left:auto;">Not in stock</span>' : ''}
+      </label>`).join('');
+  } catch (e) {
+    container.innerHTML = '<p style="color:#94a3b8; font-size:12px; grid-column:span 2; margin:0;">Could not load parts list.</p>';
+  }
 }
 
 function feedbackCorrect(isCorrect) {
   currentFeedbackData.correct = isCorrect;
-  document.getElementById('btn-correct').style.opacity   = isCorrect ? '1' : '0.6';
-  document.getElementById('btn-incorrect').style.opacity = isCorrect ? '0.6' : '1';
+
+  const btnCorrect   = document.getElementById('btn-correct');
+  const btnIncorrect = document.getElementById('btn-incorrect');
+
+  if (isCorrect) {
+    btnCorrect.style.opacity   = '1';
+    btnCorrect.style.border    = '2px solid #166534';
+    btnIncorrect.style.opacity = '0.4';
+    btnIncorrect.style.border  = '2px solid transparent';
+  } else {
+    btnIncorrect.style.opacity = '1';
+    btnIncorrect.style.border  = '2px solid #991b1b';
+    btnCorrect.style.opacity   = '0.4';
+    btnCorrect.style.border    = '2px solid transparent';
+  }
+
   document.getElementById('feedback-incorrect-section').style.display = isCorrect ? 'none' : 'block';
 }
 
@@ -595,39 +824,89 @@ async function saveFeedback() {
   const jobId     = document.getElementById('feedback-jobid').value;
   const isCorrect = currentFeedbackData.correct;
 
-  if (isCorrect === undefined) { alert('Please indicate if the diagnosis was correct.'); return; }
-  if (!isCorrect && !document.getElementById('feedback-actual-diagnosis').value.trim()) {
-    alert('Please enter the actual diagnosis.');
+  if (isCorrect === undefined) {
+    showFeedbackMsg('Please indicate if the diagnosis was correct.', 'error');
+    return;
+  }
+  if (!isCorrect && !document.getElementById('feedback-actual-diagnosis').value) {
+    showFeedbackMsg('Please select the actual diagnosis.', 'error');
     return;
   }
 
-  const csrfToken = getCsrf();
-  const response  = await fetch(REPAIRS_CONFIG.feedbackUrl, {
-    method : 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-    body   : JSON.stringify({
-      job_id           : jobId,
-      ai_diagnosis     : currentFeedbackData.aiDiagnosis,
-      diagnosis_correct: isCorrect,
-      actual_diagnosis : isCorrect ? null : document.getElementById('feedback-actual-diagnosis').value.trim(),
-      root_cause       : isCorrect ? null : document.getElementById('feedback-root-cause').value.trim(),
-      parts_replaced   : isCorrect ? null : document.getElementById('feedback-actual-parts').value.trim(),
-      notes            : document.getElementById('feedback-notes').value.trim(),
-    }),
-  });
+  // Collect checked parts
+  const checkedParts = [...document.querySelectorAll('input[name="feedback-part"]:checked')]
+    .map(cb => cb.value).join(', ');
 
-  const data = await response.json();
-  if (data.success) {
-    alert('✓ Feedback saved! This data will improve the AI model.');
-    closeModal('feedbackModal');
-  } else {
-    alert('Error saving feedback: ' + (data.error || 'Unknown error'));
+  const saveBtn = document.getElementById('feedback-save-btn');
+  saveBtn.disabled      = true;
+  saveBtn.textContent   = 'Saving...';
+  saveBtn.style.opacity = '0.7';
+
+  const csrfToken = getCsrf();
+  try {
+    const response = await fetch(REPAIRS_CONFIG.feedbackUrl, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body   : JSON.stringify({
+        job_id           : jobId,
+        ai_diagnosis     : currentFeedbackData.aiDiagnosis,
+        ai_confidence    : document.getElementById('feedback-ai-confidence').value || null,
+        diagnosis_correct: isCorrect,
+        actual_diagnosis : isCorrect ? null : document.getElementById('feedback-actual-diagnosis').value,
+        root_cause       : isCorrect ? null : document.getElementById('feedback-root-cause').value.trim(),
+        parts_replaced   : checkedParts || null,
+        notes            : document.getElementById('feedback-notes').value.trim(),
+      }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      const msg = data.updated ? '✓ Feedback updated!' : '✓ Feedback saved! This will help improve the AI.';
+      showFeedbackMsg(msg, 'success');
+      document.getElementById('feedback-already-submitted').style.display = 'block';
+      saveBtn.textContent       = '✓ Saved';
+      saveBtn.style.background  = '#22c55e';
+      saveBtn.style.opacity     = '1';
+    } else {
+      showFeedbackMsg('Error: ' + (data.error || 'Unknown error'), 'error');
+      saveBtn.disabled      = false;
+      saveBtn.textContent   = 'Save Feedback';
+      saveBtn.style.opacity = '1';
+    }
+  } catch (e) {
+    showFeedbackMsg('Network error. Please try again.', 'error');
+    saveBtn.disabled      = false;
+    saveBtn.textContent   = 'Save Feedback';
+    saveBtn.style.opacity = '1';
   }
+}
+
+function showFeedbackMsg(text, type) {
+  const el = document.getElementById('feedback-msg');
+  el.textContent          = text;
+  el.style.display        = 'block';
+  el.style.background     = type === 'success' ? '#f0fdf4' : '#fef2f2';
+  el.style.color          = type === 'success' ? '#166534'  : '#991b1b';
+  el.style.borderLeft     = type === 'success' ? '4px solid #22c55e' : '4px solid #ef4444';
 }
 
 /* ── Parts Selection Modal ───────────────────────────────────────────────── */
 
 let pendingStatusChange = null; // holds { idx, newStatus } while parts modal is open
+
+// Hook into the status dropdown in edit modal
+document.addEventListener('DOMContentLoaded', () => {
+  const statusDropdown = document.getElementById('edit-status');
+  if (statusDropdown) {
+    statusDropdown.addEventListener('change', function () {
+      if (this.value === 'In Progress') {
+        const idx = parseInt(document.getElementById('edit-idx').value);
+        pendingStatusChange = { idx, newStatus: 'In Progress' };
+        openPartsModal(idx);
+      }
+    });
+  }
+});
 
 function cancelPartsModal() {
   // If the parts modal was opened because the user switched status to "In Progress",
@@ -639,17 +918,6 @@ function cancelPartsModal() {
   pendingStatusChange = null;
   closeModal('partsModal');
 }
-
-// Hook into the status dropdown in edit modal
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('edit-status').addEventListener('change', function () {
-    if (this.value === 'In Progress') {
-      const idx = parseInt(document.getElementById('edit-idx').value);
-      pendingStatusChange = { idx, newStatus: 'In Progress' };
-      openPartsModal(idx);
-    }
-  });
-});
 
 async function openPartsModal(idx) {
   const repair    = repairs[idx];
@@ -813,7 +1081,7 @@ async function confirmPartsSelection() {
       });
       const deductData = await deductRes.json();
       if (!deductData.success) {
-        alert('⚠️ ' + deductData.error);
+        showModal('error', deductData.error);
         btn.disabled = false;
         btn.textContent = '✓ Confirm & Deduct Stock';
         return;
@@ -829,15 +1097,39 @@ async function confirmPartsSelection() {
       });
     }
 
+    // If there's a pending status change to "In Progress", update the repair
+    if (pendingStatusChange && pendingStatusChange.newStatus === 'In Progress') {
+      const idx = pendingStatusChange.idx;
+      const repair = repairs[idx];
+      
+      // Update the status via API (send as lowercase "in progress")
+      const updateRes = await fetch(REPAIRS_CONFIG.updateUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+        body: JSON.stringify({
+          id: repair.device_id,
+          status: 'in progress',
+        }),
+      });
+      
+      const updateData = await updateRes.json();
+      if (!updateData.success) {
+        console.warn('Status updated but failed to sync:', updateData.error);
+      }
+    }
+
     closeModal('partsModal');
-    alert('✓ Parts updated and stock adjusted!');
-    location.reload();
+    showModal('success', 'Parts updated and status changed to In Progress!');
+    setTimeout(() => location.reload(), 900);
 
   } catch (e) {
-    alert('Error: ' + e.message);
+    showModal('error', e.message);
     btn.disabled = false;
     btn.textContent = '✓ Confirm & Deduct Stock';
+  } finally {
+    pendingStatusChange = null;
   }
 }
+
 /* ── Init ────────────────────────────────────────────────────────────────── */
 renderTable();
