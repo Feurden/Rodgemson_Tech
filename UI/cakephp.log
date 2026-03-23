@@ -8,166 +8,257 @@ Ini Path:
 -------------------------------------------------------------------------------
 php server is running at http://localhost:8765/
 You can exit with `CTRL-C`
-[Thu Mar 19 01:06:28 2026] PHP 8.2.12 Development Server (http://localhost:8765) started
-[Thu Mar 19 01:06:32 2026] [::1]:52379 Accepted
-[Thu Mar 19 01:06:32 2026] [::1]:52379 Closing
-[Thu Mar 19 01:06:32 2026] [::1]:60707 Accepted
-[Thu Mar 19 01:06:33 2026] [::1]:60707 Closing
-[Thu Mar 19 01:06:33 2026] [::1]:57333 Accepted
-[Thu Mar 19 01:06:33 2026] [::1]:57333 [200]: GET /css/dashboard.css
-[Thu Mar 19 01:06:33 2026] [::1]:57333 Closing
-[Thu Mar 19 01:06:33 2026] [::1]:60366 Accepted
-[Thu Mar 19 01:06:33 2026] [::1]:60366 Closing
-[Thu Mar 19 01:06:35 2026] [::1]:56711 Accepted
-[Thu Mar 19 01:06:35 2026] [::1]:56711 [200]: GET /favicon.ico
-[Thu Mar 19 01:06:35 2026] [::1]:56711 Closing
-[Thu Mar 19 01:06:41 2026] [::1]:61254 Accepted
-[Thu Mar 19 01:06:41 2026] [::1]:56877 Accepted
-[Thu Mar 19 01:06:41 2026] [::1]:61254 Closing
-[Thu Mar 19 01:06:42 2026] [::1]:56877 Closing
-[Thu Mar 19 01:06:42 2026] [::1]:59606 Accepted
-[Thu Mar 19 01:06:42 2026] [::1]:59606 [200]: GET /css/dashboard.css
-[Thu Mar 19 01:06:42 2026] [::1]:59606 Closing
-[Thu Mar 19 01:06:42 2026] [::1]:59311 Accepted
-[Thu Mar 19 01:06:42 2026] [::1]:59311 Closing
-[Thu Mar 19 01:06:47 2026] [::1]:58782 Accepted
-[Thu Mar 19 01:06:47 2026] [::1]:51500 Accepted
-[Thu Mar 19 01:06:47 2026] [::1]:58782 Closing
-[Thu Mar 19 01:06:47 2026] [::1]:51500 [200]: GET /css/dashboard.css
-[Thu Mar 19 01:06:47 2026] [::1]:59066 Accepted
-[Thu Mar 19 01:06:47 2026] [::1]:61944 Accepted
-[Thu Mar 19 01:06:47 2026] [::1]:59066 [200]: GET /css/repairs.css
-[Thu Mar 19 01:06:47 2026] [::1]:61944 [200]: GET /js/repairs.js
-[Thu Mar 19 01:06:47 2026] [::1]:51500 Closing
-[Thu Mar 19 01:06:47 2026] [::1]:59066 Closing
-[Thu Mar 19 01:06:47 2026] [::1]:61944 Closing
-[Thu Mar 19 01:06:48 2026] [::1]:61214 Accepted
-[Thu Mar 19 01:06:48 2026] [::1]:61214 Closing
-[Thu Mar 19 01:06:51 2026] [::1]:56967 Accepted
-[Thu Mar 19 01:06:51 2026] [::1]:54913 Accepted
-[Thu Mar 19 01:06:51 2026] [::1]:56967 Closing
-[Thu Mar 19 01:06:51 2026] [::1]:54913 [200]: GET /css/dashboard.css
-[Thu Mar 19 01:06:51 2026] [::1]:54913 Closing
-[Thu Mar 19 01:06:51 2026] [::1]:52904 Accepted
-[Thu Mar 19 01:06:51 2026] [::1]:52904 Closing
-[Thu Mar 19 01:06:55 2026] [::1]:58415 Accepted
-[Thu Mar 19 01:06:55 2026] [::1]:53344 Accepted
-[Thu Mar 19 01:06:55 2026] [::1]:58415 Closing
-[Thu Mar 19 01:06:55 2026] [::1]:53344 [200]: GET /css/dashboard.css
-[Thu Mar 19 01:06:55 2026] [::1]:53344 Closing
-[Thu Mar 19 01:06:55 2026] [::1]:61218 Accepted
-[Thu Mar 19 01:06:56 2026] [::1]:61218 Closing
-[Thu Mar 19 01:07:00 2026] [::1]:50998 Accepted
-[Thu Mar 19 01:07:00 2026] [::1]:60058 Accepted
-[Thu Mar 19 01:07:01 2026] [::1]:50998 Closing
-[Thu Mar 19 01:07:01 2026] [::1]:60058 [200]: GET /css/dashboard.css
-[Thu Mar 19 01:07:01 2026] [::1]:64464 Accepted
-[Thu Mar 19 01:07:01 2026] [::1]:64464 [200]: GET /css/repairs.css
-[Thu Mar 19 01:07:01 2026] [::1]:52439 Accepted
-[Thu Mar 19 01:07:01 2026] [::1]:60058 Closing
-[Thu Mar 19 01:07:01 2026] [::1]:52439 [200]: GET /js/repairs.js
-[Thu Mar 19 01:07:01 2026] [::1]:64464 Closing
-[Thu Mar 19 01:07:01 2026] [::1]:52439 Closing
-[Thu Mar 19 01:07:01 2026] [::1]:54245 Accepted
-[Thu Mar 19 01:07:01 2026] [::1]:54245 Closing
-[Thu Mar 19 01:16:51 2026] [::1]:53866 Accepted
-[Thu Mar 19 01:16:53 2026] [::1]:53866 Closing
-[Thu Mar 19 01:16:57 2026] [::1]:54861 Accepted
-[Thu Mar 19 01:16:57 2026] [::1]:54861 [200]: GET /css/dashboard.css
-[Thu Mar 19 01:16:57 2026] [::1]:65074 Accepted
-[Thu Mar 19 01:16:57 2026] [::1]:65074 [200]: GET /css/repairs.css
-[Thu Mar 19 01:16:57 2026] [::1]:54861 Closing
-[Thu Mar 19 01:16:57 2026] [::1]:65074 Closing
-[Thu Mar 19 01:16:57 2026] [::1]:57964 Accepted
-[Thu Mar 19 01:16:58 2026] PHP Fatal error:  Declaration of App\Controller\ErrorController::beforeFilter(Cake\Event\EventInterface $event): void must be compatible with App\Controller\AppController::beforeFilter(Cake\Event\EventInterface $event): ?Cake\Http\Response in C:\xampp\htdocs\Rodgemson_Tech\UI\src\Controller\ErrorController.php on line 44
-[Thu Mar 19 01:16:58 2026] [::1]:57964 Closing
-[Thu Mar 19 01:17:00 2026] [::1]:59189 Accepted
-[Thu Mar 19 01:17:02 2026] [::1]:59189 Closing
-[Thu Mar 19 01:17:02 2026] [::1]:64794 Accepted
-[Thu Mar 19 01:17:02 2026] [::1]:49284 Accepted
-[Thu Mar 19 01:17:04 2026] [::1]:64794 Closing
-[Thu Mar 19 01:17:07 2026] [::1]:49284 Closing
-[Thu Mar 19 01:17:14 2026] [::1]:54857 Accepted
-[Thu Mar 19 01:20:38 2026] [::1]:54857 Closed without sending a request; it was probably just an unused speculative preconnection
-[Thu Mar 19 01:20:38 2026] [::1]:54857 Closing
-[Thu Mar 19 01:21:38 2026] [::1]:62626 Accepted
-[Thu Mar 19 01:21:41 2026] [::1]:62626 Closing
-[Thu Mar 19 01:21:41 2026] [::1]:60921 Accepted
-[Thu Mar 19 01:21:41 2026] [::1]:55122 Accepted
-[Thu Mar 19 01:21:43 2026] [::1]:60921 Closing
-[Thu Mar 19 01:21:45 2026] [::1]:55122 Closing
-[Thu Mar 19 01:21:49 2026] [::1]:57140 Accepted
-[Thu Mar 19 01:21:52 2026] [::1]:57140 Closing
-[Thu Mar 19 01:21:52 2026] [::1]:49806 Accepted
-[Thu Mar 19 01:21:52 2026] [::1]:56144 Accepted
-[Thu Mar 19 01:21:54 2026] [::1]:49806 Closing
-[Thu Mar 19 01:21:54 2026] [::1]:56030 Accepted
-[Thu Mar 19 01:21:56 2026] [::1]:56144 Closing
-[Thu Mar 19 01:21:56 2026] [::1]:59720 Accepted
-[Thu Mar 19 01:21:56 2026] PHP Fatal error:  Declaration of App\Controller\ErrorController::beforeFilter(Cake\Event\EventInterface $event): void must be compatible with App\Controller\AppController::beforeFilter(Cake\Event\EventInterface $event): ?Cake\Http\Response in C:\xampp\htdocs\Rodgemson_Tech\UI\src\Controller\ErrorController.php on line 44
-[Thu Mar 19 01:21:56 2026] [::1]:56030 Closing
-[Thu Mar 19 01:21:56 2026] [::1]:62218 Accepted
-[Thu Mar 19 01:21:59 2026] [::1]:59720 Closing
-[Thu Mar 19 01:21:59 2026] [::1]:57542 Accepted
-[Thu Mar 19 01:22:01 2026] [::1]:62218 Closing
-[Thu Mar 19 01:22:01 2026] [::1]:62031 Accepted
-[Thu Mar 19 01:22:03 2026] [::1]:57542 Closing
-[Thu Mar 19 01:22:03 2026] [::1]:53489 Accepted
-[Thu Mar 19 01:22:05 2026] [::1]:62031 Closing
-[Thu Mar 19 01:22:05 2026] [::1]:56096 Accepted
-[Thu Mar 19 01:22:08 2026] [::1]:53489 Closing
-[Thu Mar 19 01:22:10 2026] [::1]:56096 Closing
-[Thu Mar 19 01:24:04 2026] [::1]:61398 Accepted
-[Thu Mar 19 01:24:04 2026] [::1]:55355 Accepted
-[Thu Mar 19 01:24:05 2026] [::1]:61398 Closing
-[Thu Mar 19 01:24:05 2026] PHP Fatal error:  Declaration of App\Controller\ErrorController::beforeFilter(Cake\Event\EventInterface $event): void must be compatible with App\Controller\AppController::beforeFilter(Cake\Event\EventInterface $event): ?Cake\Http\Response in C:\xampp\htdocs\Rodgemson_Tech\UI\src\Controller\ErrorController.php on line 44
-[Thu Mar 19 01:24:05 2026] [::1]:55355 Closing
-[Thu Mar 19 01:24:05 2026] [::1]:63204 Accepted
-[Thu Mar 19 01:24:05 2026] [::1]:63826 Accepted
-[Thu Mar 19 01:24:05 2026] [::1]:63204 [200]: GET /css/dashboard.css
-[Thu Mar 19 01:24:05 2026] [::1]:51678 Accepted
-[Thu Mar 19 01:24:05 2026] [::1]:63826 [200]: GET /css/repairs.css
-[Thu Mar 19 01:24:05 2026] [::1]:53447 Accepted
-[Thu Mar 19 01:24:05 2026] [::1]:51678 [200]: GET /js/repairs.js
-[Thu Mar 19 01:24:05 2026] [::1]:53447 Closing
-[Thu Mar 19 01:24:05 2026] [::1]:63204 Closing
-[Thu Mar 19 01:24:05 2026] [::1]:63826 Closing
-[Thu Mar 19 01:24:05 2026] [::1]:51678 Closing
-[Thu Mar 19 01:24:05 2026] [::1]:55199 Accepted
-[Thu Mar 19 01:24:05 2026] [::1]:55199 Closing
-[Thu Mar 19 01:24:05 2026] [::1]:49824 Accepted
-[Thu Mar 19 01:24:06 2026] [::1]:49824 Closing
-[Thu Mar 19 01:24:06 2026] [::1]:56175 Accepted
-[Thu Mar 19 01:24:06 2026] [::1]:61083 Accepted
-[Thu Mar 19 01:24:06 2026] [::1]:56175 Closing
-[Thu Mar 19 01:24:06 2026] [::1]:61057 Accepted
-[Thu Mar 19 01:24:06 2026] [::1]:61083 Closing
-[Thu Mar 19 01:24:06 2026] [::1]:54334 Accepted
-[Thu Mar 19 01:24:06 2026] [::1]:61057 Closing
-[Thu Mar 19 01:24:06 2026] [::1]:54334 Closing
-[Thu Mar 19 01:24:09 2026] [::1]:52394 Accepted
-[Thu Mar 19 01:24:09 2026] [::1]:52602 Accepted
-[Thu Mar 19 01:24:09 2026] [::1]:58196 Accepted
-[Thu Mar 19 01:24:09 2026] [::1]:65396 Accepted
-[Thu Mar 19 01:24:09 2026] [::1]:60176 Accepted
-[Thu Mar 19 01:24:09 2026] [::1]:59973 Accepted
-[Thu Mar 19 01:24:09 2026] [::1]:52394 Closing
-[Thu Mar 19 01:24:09 2026] [::1]:52602 Closing
-[Thu Mar 19 01:24:09 2026] [::1]:58196 Closing
-[Thu Mar 19 01:24:09 2026] [::1]:65396 Closing
-[Thu Mar 19 01:24:09 2026] [::1]:60176 Closing
-[Thu Mar 19 01:24:09 2026] [::1]:59973 Closing
-[Thu Mar 19 01:24:09 2026] [::1]:57188 Accepted
-[Thu Mar 19 01:24:09 2026] [::1]:56290 Accepted
-[Thu Mar 19 01:24:10 2026] [::1]:57188 Closing
-[Thu Mar 19 01:24:10 2026] [::1]:55610 Accepted
-[Thu Mar 19 01:24:10 2026] [::1]:56290 Closing
-[Thu Mar 19 01:24:10 2026] [::1]:58225 Accepted
-[Thu Mar 19 01:24:10 2026] [::1]:55610 Closing
-[Thu Mar 19 01:24:10 2026] [::1]:58225 Closing
-[Thu Mar 19 01:24:10 2026] [::1]:57872 Accepted
-[Thu Mar 19 01:24:10 2026] [::1]:57872 [200]: GET /favicon.ico
-[Thu Mar 19 01:24:10 2026] [::1]:57872 Closing
-[Thu Mar 19 01:24:13 2026] [::1]:57292 Accepted
-[Thu Mar 19 01:24:16 2026] [::1]:57292 Closing
-^C
+[Mon Mar 23 17:50:07 2026] PHP 8.2.12 Development Server (http://localhost:8765) started
+[Mon Mar 23 17:50:12 2026] [::1]:49282 Accepted
+[Mon Mar 23 17:50:12 2026] [::1]:49282 Closing
+[Mon Mar 23 17:50:12 2026] [::1]:59378 Accepted
+[Mon Mar 23 17:50:12 2026] [::1]:59378 Closing
+[Mon Mar 23 17:50:12 2026] [::1]:54135 Accepted
+[Mon Mar 23 17:50:12 2026] [::1]:54135 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:50:12 2026] [::1]:60435 Accepted
+[Mon Mar 23 17:50:13 2026] [::1]:60435 Closing
+[Mon Mar 23 17:50:13 2026] [::1]:54135 Closing
+[Mon Mar 23 17:50:13 2026] [::1]:52487 Accepted
+[Mon Mar 23 17:50:13 2026] [::1]:52487 Closing
+[Mon Mar 23 17:50:14 2026] [::1]:64229 Accepted
+[Mon Mar 23 17:50:14 2026] [::1]:64229 Closing
+[Mon Mar 23 17:50:14 2026] [::1]:64995 Accepted
+[Mon Mar 23 17:50:14 2026] [::1]:64527 Accepted
+[Mon Mar 23 17:50:14 2026] [::1]:64995 Closing
+[Mon Mar 23 17:50:14 2026] [::1]:50730 Accepted
+[Mon Mar 23 17:50:15 2026] [::1]:64527 Closing
+[Mon Mar 23 17:50:15 2026] [::1]:51720 Accepted
+[Mon Mar 23 17:50:15 2026] [::1]:50730 Closing
+[Mon Mar 23 17:50:15 2026] [::1]:51720 Closing
+[Mon Mar 23 17:50:16 2026] [::1]:61590 Accepted
+[Mon Mar 23 17:50:16 2026] [::1]:61590 Closing
+[Mon Mar 23 17:50:16 2026] [::1]:51005 Accepted
+[Mon Mar 23 17:50:16 2026] [::1]:63609 Accepted
+[Mon Mar 23 17:50:16 2026] [::1]:51005 Closing
+[Mon Mar 23 17:50:16 2026] [::1]:53695 Accepted
+[Mon Mar 23 17:50:16 2026] [::1]:63609 Closing
+[Mon Mar 23 17:50:16 2026] [::1]:59709 Accepted
+[Mon Mar 23 17:50:17 2026] [::1]:53695 Closing
+[Mon Mar 23 17:50:17 2026] [::1]:59531 Accepted
+[Mon Mar 23 17:50:17 2026] [::1]:59709 Closing
+[Mon Mar 23 17:50:17 2026] [::1]:57807 Accepted
+[Mon Mar 23 17:50:17 2026] [::1]:59531 Closing
+[Mon Mar 23 17:50:17 2026] [::1]:51329 Accepted
+[Mon Mar 23 17:50:17 2026] [::1]:57807 Closing
+[Mon Mar 23 17:50:17 2026] [::1]:58748 Accepted
+[Mon Mar 23 17:50:17 2026] [::1]:51329 Closing
+[Mon Mar 23 17:50:17 2026] [::1]:51235 Accepted
+[Mon Mar 23 17:50:17 2026] [::1]:58748 Closing
+[Mon Mar 23 17:50:17 2026] [::1]:51235 Closing
+[Mon Mar 23 17:50:18 2026] [::1]:57128 Accepted
+[Mon Mar 23 17:50:18 2026] [::1]:50551 Accepted
+[Mon Mar 23 17:50:18 2026] [::1]:57128 Closing
+[Mon Mar 23 17:50:19 2026] [::1]:50551 Closing
+[Mon Mar 23 17:50:19 2026] [::1]:61362 Accepted
+[Mon Mar 23 17:50:19 2026] [::1]:61362 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:50:19 2026] [::1]:61362 Closing
+[Mon Mar 23 17:50:19 2026] [::1]:61303 Accepted
+[Mon Mar 23 17:50:19 2026] [::1]:61303 Closing
+[Mon Mar 23 17:50:21 2026] [::1]:52716 Accepted
+[Mon Mar 23 17:50:21 2026] [::1]:54948 Accepted
+[Mon Mar 23 17:50:21 2026] [::1]:52716 Closing
+[Mon Mar 23 17:50:22 2026] [::1]:54948 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:50:22 2026] [::1]:54948 Closing
+[Mon Mar 23 17:50:22 2026] [::1]:53772 Accepted
+[Mon Mar 23 17:50:22 2026] [::1]:49275 Accepted
+[Mon Mar 23 17:50:22 2026] [::1]:53772 [200]: GET /css/repairs.css
+[Mon Mar 23 17:50:22 2026] [::1]:49275 [200]: GET /js/repairs.js
+[Mon Mar 23 17:50:22 2026] [::1]:53772 Closing
+[Mon Mar 23 17:50:22 2026] [::1]:49275 Closing
+[Mon Mar 23 17:50:23 2026] [::1]:64974 Accepted
+[Mon Mar 23 17:50:23 2026] [::1]:64974 Closing
+[Mon Mar 23 17:50:45 2026] [::1]:59528 Accepted
+[Mon Mar 23 17:50:46 2026] [::1]:59528 Closing
+[Mon Mar 23 17:52:35 2026] [::1]:50581 Accepted
+[Mon Mar 23 17:52:36 2026] [::1]:50581 Closing
+[Mon Mar 23 17:52:36 2026] [::1]:53911 Accepted
+[Mon Mar 23 17:52:36 2026] [::1]:53911 Closing
+[Mon Mar 23 17:52:41 2026] [::1]:59198 Accepted
+[Mon Mar 23 17:52:41 2026] [::1]:52263 Accepted
+[Mon Mar 23 17:52:41 2026] [::1]:59198 Closing
+[Mon Mar 23 17:52:41 2026] [::1]:52263 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:52:41 2026] [::1]:52263 Closing
+[Mon Mar 23 17:52:41 2026] [::1]:62203 Accepted
+[Mon Mar 23 17:52:42 2026] [::1]:62203 [200]: GET /css/repairs.css
+[Mon Mar 23 17:52:42 2026] [::1]:59406 Accepted
+[Mon Mar 23 17:52:42 2026] [::1]:59406 [200]: GET /js/repairs.js
+[Mon Mar 23 17:52:42 2026] [::1]:62203 Closing
+[Mon Mar 23 17:52:42 2026] [::1]:59406 Closing
+[Mon Mar 23 17:52:42 2026] [::1]:58857 Accepted
+[Mon Mar 23 17:52:42 2026] [::1]:58857 Closing
+[Mon Mar 23 17:52:47 2026] [::1]:58271 Accepted
+[Mon Mar 23 17:52:47 2026] [::1]:53821 Accepted
+[Mon Mar 23 17:52:47 2026] [::1]:58271 Closing
+[Mon Mar 23 17:52:47 2026] [::1]:53821 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:52:47 2026] [::1]:53821 Closing
+[Mon Mar 23 17:52:47 2026] [::1]:61572 Accepted
+[Mon Mar 23 17:52:48 2026] [::1]:61572 Closing
+[Mon Mar 23 17:52:56 2026] [::1]:57465 Accepted
+[Mon Mar 23 17:52:56 2026] [::1]:49999 Accepted
+[Mon Mar 23 17:52:56 2026] [::1]:57465 Closing
+[Mon Mar 23 17:52:56 2026] [::1]:49999 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:52:56 2026] [::1]:59043 Accepted
+[Mon Mar 23 17:52:56 2026] [::1]:59043 [200]: GET /css/repairs.css
+[Mon Mar 23 17:52:56 2026] [::1]:62861 Accepted
+[Mon Mar 23 17:52:56 2026] [::1]:49999 Closing
+[Mon Mar 23 17:52:56 2026] [::1]:62861 [200]: GET /js/repairs.js
+[Mon Mar 23 17:52:56 2026] [::1]:59043 Closing
+[Mon Mar 23 17:52:56 2026] [::1]:62861 Closing
+[Mon Mar 23 17:52:56 2026] [::1]:57082 Accepted
+[Mon Mar 23 17:52:57 2026] [::1]:57082 Closing
+[Mon Mar 23 17:53:16 2026] [::1]:58309 Accepted
+[Mon Mar 23 17:53:16 2026] [::1]:60413 Accepted
+[Mon Mar 23 17:53:16 2026] [::1]:58309 Closing
+[Mon Mar 23 17:53:16 2026] [::1]:60413 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:53:16 2026] [::1]:60413 Closing
+[Mon Mar 23 17:53:16 2026] [::1]:63594 Accepted
+[Mon Mar 23 17:53:16 2026] [::1]:63594 Closing
+[Mon Mar 23 17:53:29 2026] [::1]:56146 Accepted
+[Mon Mar 23 17:53:30 2026] [::1]:56146 Closing
+[Mon Mar 23 17:53:30 2026] [::1]:56154 Accepted
+[Mon Mar 23 17:53:30 2026] [::1]:56154 Closing
+[Mon Mar 23 17:53:30 2026] [::1]:63879 Accepted
+[Mon Mar 23 17:53:30 2026] [::1]:63879 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:53:30 2026] [::1]:63879 Closing
+[Mon Mar 23 17:53:30 2026] [::1]:61554 Accepted
+[Mon Mar 23 17:53:30 2026] [::1]:61554 Closing
+[Mon Mar 23 17:53:37 2026] [::1]:56397 Accepted
+[Mon Mar 23 17:53:37 2026] [::1]:63847 Accepted
+[Mon Mar 23 17:53:37 2026] [::1]:56397 Closing
+[Mon Mar 23 17:53:37 2026] [::1]:63847 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:53:37 2026] [::1]:60289 Accepted
+[Mon Mar 23 17:53:37 2026] [::1]:60289 [200]: GET /css/repairs.css
+[Mon Mar 23 17:53:37 2026] [::1]:54131 Accepted
+[Mon Mar 23 17:53:37 2026] [::1]:63847 Closing
+[Mon Mar 23 17:53:37 2026] [::1]:54131 [200]: GET /js/repairs.js
+[Mon Mar 23 17:53:37 2026] [::1]:60289 Closing
+[Mon Mar 23 17:53:37 2026] [::1]:54131 Closing
+[Mon Mar 23 17:53:37 2026] [::1]:59079 Accepted
+[Mon Mar 23 17:53:37 2026] [::1]:59079 Closing
+[Mon Mar 23 17:53:39 2026] [::1]:56948 Accepted
+[Mon Mar 23 17:53:39 2026] [::1]:56948 Closing
+[Mon Mar 23 17:53:39 2026] [::1]:49615 Accepted
+[Mon Mar 23 17:53:40 2026] [::1]:49615 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:53:40 2026] [::1]:49615 Closing
+[Mon Mar 23 17:53:41 2026] [::1]:53485 Accepted
+[Mon Mar 23 17:53:41 2026] [::1]:53485 Closing
+[Mon Mar 23 17:53:43 2026] [::1]:53541 Accepted
+[Mon Mar 23 17:53:43 2026] [::1]:62672 Accepted
+[Mon Mar 23 17:53:44 2026] [::1]:53541 Closing
+[Mon Mar 23 17:53:44 2026] [::1]:62672 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:53:44 2026] [::1]:62672 Closing
+[Mon Mar 23 17:53:44 2026] [::1]:65152 Accepted
+[Mon Mar 23 17:53:44 2026] [::1]:65152 Closing
+[Mon Mar 23 17:54:13 2026] [::1]:60621 Accepted
+[Mon Mar 23 17:54:13 2026] [::1]:56103 Accepted
+[Mon Mar 23 17:54:13 2026] [::1]:60621 Closing
+[Mon Mar 23 17:54:13 2026] [::1]:56103 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:54:13 2026] [::1]:56103 Closing
+[Mon Mar 23 17:54:13 2026] [::1]:53958 Accepted
+[Mon Mar 23 17:54:14 2026] [::1]:53958 Closing
+[Mon Mar 23 17:54:15 2026] [::1]:59273 Accepted
+[Mon Mar 23 17:54:15 2026] [::1]:63466 Accepted
+[Mon Mar 23 17:54:16 2026] [::1]:59273 Closing
+[Mon Mar 23 17:54:17 2026] [::1]:63466 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:54:17 2026] [::1]:50911 Accepted
+[Mon Mar 23 17:54:17 2026] [::1]:50911 [200]: GET /css/repairs.css
+[Mon Mar 23 17:54:17 2026] [::1]:61844 Accepted
+[Mon Mar 23 17:54:17 2026] [::1]:63466 Closing
+[Mon Mar 23 17:54:17 2026] [::1]:61844 [200]: GET /js/repairs.js
+[Mon Mar 23 17:54:17 2026] [::1]:50911 Closing
+[Mon Mar 23 17:54:17 2026] [::1]:61844 Closing
+[Mon Mar 23 17:54:17 2026] [::1]:59808 Accepted
+[Mon Mar 23 17:54:17 2026] [::1]:59808 Closing
+[Mon Mar 23 17:54:34 2026] [::1]:61977 Accepted
+[Mon Mar 23 17:54:34 2026] [::1]:59086 Accepted
+[Mon Mar 23 17:54:34 2026] [::1]:61977 Closing
+[Mon Mar 23 17:54:34 2026] [::1]:59086 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:54:34 2026] [::1]:59086 Closing
+[Mon Mar 23 17:54:34 2026] [::1]:51468 Accepted
+[Mon Mar 23 17:54:34 2026] [::1]:51468 Closing
+[Mon Mar 23 17:55:13 2026] [::1]:50217 Accepted
+[Mon Mar 23 17:55:13 2026] Parts add data: {"part_name":"Phone Case","category":"Accesorries","stock_quantity":30,"minimum_stock":30,"unit_price":100}
+[Mon Mar 23 17:55:13 2026] Part entity created: {"part_name":"Phone Case","category":"Accesorries","stock_quantity":30,"minimum_stock":30,"unit_price":"100"}
+[Mon Mar 23 17:55:13 2026] [::1]:50217 Closing
+[Mon Mar 23 17:55:14 2026] [::1]:64543 Accepted
+[Mon Mar 23 17:55:14 2026] [::1]:52192 Accepted
+[Mon Mar 23 17:55:14 2026] [::1]:64543 Closing
+[Mon Mar 23 17:55:14 2026] [::1]:52192 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:55:14 2026] [::1]:52192 Closing
+[Mon Mar 23 17:55:15 2026] [::1]:55559 Accepted
+[Mon Mar 23 17:55:15 2026] [::1]:55559 Closing
+[Mon Mar 23 17:55:17 2026] [::1]:50290 Accepted
+[Mon Mar 23 17:55:17 2026] [::1]:50290 [200]: GET /favicon.ico
+[Mon Mar 23 17:55:17 2026] [::1]:50290 Closing
+[Mon Mar 23 17:55:42 2026] [::1]:61702 Accepted
+[Mon Mar 23 17:55:43 2026] Restocking part 31 with quantity 40
+[Mon Mar 23 17:55:43 2026] [::1]:61702 Closing
+[Mon Mar 23 17:55:44 2026] [::1]:53071 Accepted
+[Mon Mar 23 17:55:44 2026] [::1]:53071 Closing
+[Mon Mar 23 17:55:44 2026] [::1]:51520 Accepted
+[Mon Mar 23 17:55:44 2026] [::1]:51520 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:55:44 2026] [::1]:51520 Closing
+[Mon Mar 23 17:55:44 2026] [::1]:52651 Accepted
+[Mon Mar 23 17:55:44 2026] [::1]:52651 Closing
+[Mon Mar 23 17:55:46 2026] [::1]:49952 Accepted
+[Mon Mar 23 17:55:46 2026] [::1]:49952 [200]: GET /favicon.ico
+[Mon Mar 23 17:55:46 2026] [::1]:49952 Closing
+[Mon Mar 23 17:55:47 2026] [::1]:60694 Accepted
+[Mon Mar 23 17:55:47 2026] [::1]:56424 Accepted
+[Mon Mar 23 17:55:48 2026] [::1]:60694 Closing
+[Mon Mar 23 17:55:48 2026] [::1]:56424 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:55:48 2026] [::1]:56424 Closing
+[Mon Mar 23 17:55:48 2026] [::1]:50271 Accepted
+[Mon Mar 23 17:55:48 2026] [::1]:50271 Closing
+[Mon Mar 23 17:55:54 2026] [::1]:55889 Accepted
+[Mon Mar 23 17:55:54 2026] [::1]:55889 Closing
+[Mon Mar 23 17:55:57 2026] [::1]:60981 Accepted
+[Mon Mar 23 17:55:57 2026] [::1]:60981 Closing
+[Mon Mar 23 17:55:58 2026] [::1]:50024 Accepted
+[Mon Mar 23 17:55:58 2026] [::1]:50024 Closing
+[Mon Mar 23 17:55:59 2026] [::1]:65417 Accepted
+[Mon Mar 23 17:55:59 2026] [::1]:65417 Closing
+[Mon Mar 23 17:56:08 2026] [::1]:57465 Accepted
+[Mon Mar 23 17:56:08 2026] [::1]:57465 Closing
+[Mon Mar 23 17:56:13 2026] [::1]:54471 Accepted
+[Mon Mar 23 17:56:13 2026] [::1]:54471 Closing
+[Mon Mar 23 17:56:19 2026] [::1]:56943 Accepted
+[Mon Mar 23 17:56:19 2026] [::1]:51244 Accepted
+[Mon Mar 23 17:56:19 2026] [::1]:56943 Closing
+[Mon Mar 23 17:56:19 2026] [::1]:51244 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:56:19 2026] [::1]:54940 Accepted
+[Mon Mar 23 17:56:19 2026] [::1]:54940 [200]: GET /css/repairs.css
+[Mon Mar 23 17:56:19 2026] [::1]:51244 Closing
+[Mon Mar 23 17:56:19 2026] [::1]:50799 Accepted
+[Mon Mar 23 17:56:19 2026] [::1]:50799 [200]: GET /js/repairs.js
+[Mon Mar 23 17:56:19 2026] [::1]:54940 Closing
+[Mon Mar 23 17:56:19 2026] [::1]:50799 Closing
+[Mon Mar 23 17:56:19 2026] [::1]:55141 Accepted
+[Mon Mar 23 17:56:20 2026] [::1]:55141 Closing
+[Mon Mar 23 17:56:22 2026] [::1]:64517 Accepted
+[Mon Mar 23 17:56:23 2026] [::1]:49315 Accepted
+[Mon Mar 23 17:56:23 2026] [::1]:64517 Closing
+[Mon Mar 23 17:56:23 2026] [::1]:49315 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:56:23 2026] [::1]:49315 Closing
+[Mon Mar 23 17:56:23 2026] [::1]:49408 Accepted
+[Mon Mar 23 17:56:23 2026] [::1]:49408 Closing
+[Mon Mar 23 17:56:38 2026] [::1]:64326 Accepted
+[Mon Mar 23 17:56:38 2026] [::1]:63435 Accepted
+[Mon Mar 23 17:56:38 2026] [::1]:64326 Closing
+[Mon Mar 23 17:56:38 2026] [::1]:63435 [200]: GET /css/dashboard.css
+[Mon Mar 23 17:56:38 2026] [::1]:63297 Accepted
+[Mon Mar 23 17:56:38 2026] [::1]:63297 [200]: GET /css/repairs.css
+[Mon Mar 23 17:56:38 2026] [::1]:63435 Closing
+[Mon Mar 23 17:56:38 2026] [::1]:51476 Accepted
+[Mon Mar 23 17:56:38 2026] [::1]:51476 [200]: GET /js/repairs.js
+[Mon Mar 23 17:56:38 2026] [::1]:63297 Closing
+[Mon Mar 23 17:56:38 2026] [::1]:51476 Closing
+[Mon Mar 23 17:56:39 2026] [::1]:64409 Accepted
+[Mon Mar 23 17:56:39 2026] [::1]:64409 Closing
+[Mon Mar 23 17:56:56 2026] [::1]:50465 Accepted
+[Mon Mar 23 17:56:57 2026] [::1]:50465 Closing

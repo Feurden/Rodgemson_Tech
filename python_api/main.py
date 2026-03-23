@@ -85,6 +85,11 @@ SYMPTOM_DESCRIPTIONS = {
         "cable connected but battery percentage not rising",
         "phone only charges with certain angle",
         "charging port physically damaged",
+        "not charging",
+        "charging very slowly",
+        "slow charging",
+        "charges slower than normal",
+        "battery charges at 5 watts instead of fast charge",
     ],
     "overheating": [
         "phone body gets extremely hot",
@@ -94,6 +99,10 @@ SYMPTOM_DESCRIPTIONS = {
         "phone shuts off due to heat",
         "unusually hot near the battery area",
         "hot to the touch near charging port",
+        "overheating during calls or gaming",
+        "overheating while charging",
+        "overheating even when not in use",
+        "overheating"
     ],
     "no_signal": [
         "no cellular bars showing",
@@ -124,15 +133,22 @@ SYMPTOM_DESCRIPTIONS = {
         "display shows nothing but is powered on",
         "backlight not turning on",
         "screen completely unlit and unresponsive to power button",
-        "LCD panel showing no image at all",
-        "no visual output on display glass",
+        "no visual output on display",
         "screen stays dark after pressing power",
+        "screen very dim and barely visible",
+        "display too dark even at max brightness",
+        "dim screen",
+        "black screen of death",
+        "screen completely dead and shows nothing",
     ],
     "touch_not_working": [
         "finger taps not registering on glass",
         "touchscreen digitizer unresponsive",
         "swipe gestures not detected",
         "phantom touches appearing by themselves",
+        "ghost touch",
+        "ghost touching by itself",
+        "screen touches itself randomly",
         "touch input delayed or inaccurate",
         "screen does not respond to finger press",
     ],
@@ -149,6 +165,10 @@ SYMPTOM_DESCRIPTIONS = {
         "bottom speaker stopped working",
         "speaker stopped producing any sound",
         "audio output from speaker not working",
+        "earpiece has no sound during calls",
+        "cannot hear caller through earpiece",
+        "ear speaker not working",
+        "call audio not audible through earpiece",
     ],
     "mic_not_work": [
         "caller on other end cannot hear my voice",
@@ -162,9 +182,15 @@ SYMPTOM_DESCRIPTIONS = {
         "display flashing on and off rapidly",
         "LCD backlight strobing or pulsing",
         "horizontal lines appearing across display",
+        "vertical lines on the screen",
+        "colored lines running down the LCD",
+        "lines on screen",
+        "green or pink lines across display",
+        "screen has lines",
         "screen brightness fluctuating by itself",
         "visual glitches and artifacts on screen",
         "display unstable and flickering during use",
+        "LCD showing colored lines or streaks",
     ],
     "wifi_not_working": [
         "wifi toggle not finding any networks",
@@ -173,6 +199,10 @@ SYMPTOM_DESCRIPTIONS = {
         "wireless router visible but authentication fails",
         "wifi symbol with exclamation showing",
         "internet unavailable despite wifi being on",
+        "no wifi connection",
+        "wifi not working",
+        "cannot connect to wifi",
+        "wifi keeps disconnecting",
     ],
     "bluetooth_issue": [
         "bluetooth pairing with other devices fails",
@@ -188,6 +218,14 @@ SYMPTOM_DESCRIPTIONS = {
         "touch and buttons stop responding mid-use",
         "forced reboot required due to system hang",
         "home screen freezes and will not animate",
+        "phone lagging badly",
+        "apps lagging and stuttering",
+        "phone is very slow and laggy",
+        "phone hangs and becomes unresponsive",
+        "device hangs randomly",
+        "phone randomly restarts by itself",
+        "random restart without warning",
+        "phone reboots on its own",
     ],
     "water_damage": [
         "phone submerged in water or liquid",
@@ -350,8 +388,10 @@ def detect_symptoms_nlp(
     scores = []
 
     for symptom_id in SYMPTOMS:
-        cached_embedding = symptom_embeddings[symptom_id]
-        similarity = util.pytorch_cos_sim(user_embedding, cached_embedding)[0][0].item()
+        cached_embeddings = symptom_embeddings[symptom_id]
+        # Take the MAX similarity across all individual descriptions
+        sims = [util.pytorch_cos_sim(user_embedding, emb)[0][0].item() for emb in cached_embeddings]
+        similarity = max(sims)
         if similarity >= threshold:
             detected_symptoms.append(symptom_id)
             scores.append(similarity)
@@ -411,7 +451,7 @@ async def lifespan(app: FastAPI):
     global symptom_embeddings
     symptom_embeddings = {
         symptom_id: nlp_model.encode(
-            " ".join(SYMPTOM_DESCRIPTIONS[symptom_id]),
+            SYMPTOM_DESCRIPTIONS[symptom_id],  # encode each description separately
             convert_to_numpy=True
         )
         for symptom_id in SYMPTOMS

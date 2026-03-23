@@ -523,7 +523,13 @@ async function runDiagnosis() {
 
   const isRuleBased = data.rule_suggestion !== null;
   const isUncertain = !isRuleBased && confidenceValue < 50;
+  const isMlOverride = data.mode === 'ml_override';
   const borderColor = isRuleBased ? '#6366f1' : isUncertain ? '#f59e0b' : confidenceColor;
+
+  // When ML overrides, collect the unique rule-based diagnoses for display
+  const uniqueSymptomDiagnoses = data.symptom_diagnoses
+    ? [...new Set(Object.values(data.symptom_diagnoses))]
+    : [];
 
   const confidenceBar = isRuleBased ? '' : `
     <div style="background:rgba(255,255,255,0.6); padding:10px; border-radius:6px; margin-bottom:12px;">
@@ -589,12 +595,14 @@ async function runDiagnosis() {
         <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:8px;">
           <span style="font-size:28px;">✓</span>
           <div>
-            <strong style="color:#1e293b; font-size:18px; display:block;">Combined Diagnosis</strong>
+            <strong style="color:#1e293b; font-size:18px; display:block;">${isMlOverride && uniqueSymptomDiagnoses.length > 1 ? 'ML Diagnosis (Override)' : 'Combined Diagnosis'}</strong>
             <div style="font-size:16px; color:${borderColor}; font-weight:700; margin-top:4px;">${data.diagnosis}</div>
+            ${isMlOverride && uniqueSymptomDiagnoses.length > 1 ? `<div style="font-size:12px; color:#64748b; margin-top:6px;">Overrides rule-based: <span style="color:#6366f1; font-weight:600;">${uniqueSymptomDiagnoses.join(' + ')}</span></div>` : ''}
           </div>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
           ${isRuleBased ? '<span style="font-size:11px; color:#6366f1; background:#eef2ff; padding:4px 10px; border-radius:4px; font-weight:600;">Rule-Based</span>' : ''}
+          ${isMlOverride ? '<span style="font-size:11px; color:#0369a1; background:#e0f2fe; padding:4px 10px; border-radius:4px; font-weight:600;">ML Override</span>' : ''}
           ${uncertainBadge}
         </div>
       </div>
@@ -663,11 +671,17 @@ async function runEditDiagnosis() {
     `<span style="display:inline-block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:3px 8px;border-radius:12px;font-size:11px;margin:2px;">🔩 ${p}</span>`
   ).join('');
 
+  const editIsMlOverride = data.mode === 'ml_override';
+  const editUniqueSymptomDiagnoses = data.symptom_diagnoses
+    ? [...new Set(Object.values(data.symptom_diagnoses))]
+    : [];
+
   box.style.display = 'block';
   box.innerHTML = `
     <div style="margin-bottom:8px;">
-      <span style="font-size:11px; color:#6366f1; font-weight:700; text-transform:uppercase;">🤖 AI Diagnosis</span>
+      <span style="font-size:11px; color:#6366f1; font-weight:700; text-transform:uppercase;">🤖 ${editIsMlOverride && editUniqueSymptomDiagnoses.length > 1 ? 'ML Override' : 'AI Diagnosis'}</span>
       <p style="font-size:15px; font-weight:700; color:#1e293b; margin:4px 0 0;">${data.diagnosis}</p>
+      ${editIsMlOverride && editUniqueSymptomDiagnoses.length > 1 ? `<p style="font-size:11px; color:#64748b; margin:4px 0 0;">Overrides: <span style="color:#6366f1; font-weight:600;">${editUniqueSymptomDiagnoses.join(' + ')}</span></p>` : ''}
     </div>
     <p style="font-size:11px; color:#64748b; margin:0 0 6px;"><strong>Symptoms:</strong> ${detectedSymptoms}</p>
     <div style="display:flex; flex-wrap:wrap; gap:4px;">${partTags}</div>`;
@@ -818,6 +832,10 @@ function feedbackCorrect(isCorrect) {
   }
 
   document.getElementById('feedback-incorrect-section').style.display = isCorrect ? 'none' : 'block';
+  if (!isCorrect) {
+    const selected = document.getElementById('feedback-actual-diagnosis').value;
+    loadFeedbackPartsChecklist(selected || document.getElementById('feedback-ai-diagnosis').value || '');
+  }
 }
 
 async function saveFeedback() {

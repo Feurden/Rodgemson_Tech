@@ -29,7 +29,7 @@ class AiController extends AppController
         try {
 
             $response = $http->post(
-                'http://127.0.0.1:8000/diagnose',
+                'http://127.0.0.1:5000/diagnose',
                 json_encode(['description' => $description]),
                 [
                     'headers' => [
