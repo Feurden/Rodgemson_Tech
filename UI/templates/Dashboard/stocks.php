@@ -1,3 +1,14 @@
+
+<?php
+$conn = new mysqli("localhost", "root", "", "rodgemson_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$orders = $conn->query("SELECT * FROM orders ORDER BY created DESC");
+?>
+
 <div class="page-section">
 
     <!-- Header -->
@@ -6,9 +17,14 @@
             <h1 style="font-size:26px; color:#1e293b; margin:0 0 4px;">📦 Stock Inventory</h1>
             <p style="color:#64748b; margin:0;">Monitor spare parts and supplies available for repairs.</p>
         </div>
-        <button class="btn-new-repair" onclick="document.getElementById('addStockModal').style.display='flex'">
-            + Add Stock
-        </button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn-part-request" onclick="document.getElementById('partRequestModal').style.display='flex'">
+                📋 Part Request
+            </button>
+            <button class="btn-new-repair" onclick="document.getElementById('addStockModal').style.display='flex'">
+                + Add Stock
+            </button>
+        </div>
     </div>
 
     <!-- Summary Cards -->
@@ -133,6 +149,197 @@
         <div style="display:flex; gap:6px;" id="paginationBtns"></div>
     </div>
 
+    <div style="margin:30px 0 15px; display:flex; align-items:center;">
+        <div style="flex:1; height:1px; background:#e2e8f0;"></div>
+            <span style="margin:0 10px; font-size:13px; color:#94a3b8;">📋 PART REQUESTS</span>
+        <div style="flex:1; height:1px; background:#e2e8f0;"></div>
+    </div>
+            <!-- ===================== ORDER REQUEST TABLE ===================== -->
+    <div style="margin-top:30px;">
+
+        <h2 style="font-size:18px; color:#1e293b; margin-bottom:10px;">
+            📋 Part Requested (Technician)
+        </h2>
+
+        <div class="table-responsive">
+            <table class="dashboard-table">
+
+                <thead>
+                    <tr>
+                        <th>Part Name</th>
+                        <th>Customer</th>
+                        <th>Phone Model</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th style="text-align:center;">Notes</th>
+                        <th style="text-align:center;">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <?php if ($orders && $orders->num_rows > 0): ?>
+                        <?php while ($row = $orders->fetch_assoc()): 
+
+                            if ($row['status'] === 'Pending') {
+                                $badge = 'background:#f59e0b;';
+                                $text  = 'Pending';
+                            } elseif ($row['status'] === 'Ordered') {
+                                $badge = 'background:#3b82f6;';
+                                $text  = 'Ordered';
+                            } else {
+                                $badge = 'background:#16a34a;';
+                                $text  = 'Received';
+                            }
+                        ?>
+
+                        <tr>
+        <td>
+            <strong><?= htmlspecialchars($row['part_name']) ?></strong>
+        </td>
+
+        <td><?= htmlspecialchars($row['customer_name']) ?></td>
+
+        <td style="color:#64748b; font-size:13px;">
+            <?= htmlspecialchars($row['phone_model']) ?>
+        </td>
+
+        <td>
+            <span style="font-weight:700;"><?= $row['quantity'] ?></span>
+        </td>
+
+        <td>
+            <span style="
+                padding:4px 10px;
+                border-radius:6px;
+                font-size:12px;
+                color:white;
+                <?= $badge ?>">
+                <?= $text ?>
+            </span>
+        </td>
+
+        <td style="text-align:center; color:#64748b;">
+            <?= htmlspecialchars($row['notes']) ?>
+        </td>
+
+        <!-- ✅ ACTION COLUMN -->
+        <td style="text-align:center; white-space:nowrap;">
+
+        <form method="POST" action="/parts/updateStatus" style="display:inline;">
+            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+            <input type="hidden" name="status" value="Pending">
+            <button type="submit" class="tbl-btn" style="background:#f59e0b; color:white;" title="Pending">⏳</button>
+        </form>
+
+        <form method="POST" action="/parts/updateStatus" style="display:inline;">
+            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+            <input type="hidden" name="status" value="Ordered">
+            <button type="submit" class="tbl-btn" style="background:#3b82f6; color:white;" title="Ordered">📦</button>
+        </form>
+
+        <form method="POST" action="/parts/updateStatus" style="display:inline;">
+            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+            <input type="hidden" name="status" value="Received">
+            <button type="submit" class="tbl-btn" style="background:#16a34a; color:white;" title="Received">✅</button>
+        </form>
+
+        <form method="POST" action="/parts/delete" style="display:inline;" onsubmit="return confirm('Delete?');">
+            <input type="hidden" name="id" value="<?= $row['id'] ?>">
+            <button type="submit" class="tbl-btn" style="background:#ef4444; color:white;" title="Delete">🗑</button>
+        </form>
+    </td>
+    </tr>
+
+        <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="6" style="text-align:center;">No requests yet</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================== PART REQUEST MODAL ===================== -->
+<div class="modal-overlay" id="partRequestModal" onclick="if(event.target===this) closePartRequestModal()">
+    <div class="modal-box" style="width:520px; max-height:90vh; overflow-y:auto;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div>
+                <h2 style="font-size:1.1rem; color:#1e293b; margin:0;">📋 Part Request / Order Note</h2>
+                <p style="font-size:12px; color:#94a3b8; margin:4px 0 0;">Flag a missing part needed for a customer's repair.</p>
+            </div>
+            <button onclick="closePartRequestModal()"
+                style="background:none; border:none; font-size:1.4rem; color:#94a3b8; cursor:pointer; line-height:1;">✕</button>
+        </div>
+
+        <!-- Divider -->
+        <div style="height:1px; background:#f1f5f9; margin:14px 0;"></div>
+
+        <form onsubmit="savePartRequest(event);">
+
+            <!-- Part info -->
+            <p style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Part Details</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                <div>
+                    <label class="modal-label">Part Name <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="req-part-name" placeholder="e.g. LCD Screen" class="modal-input" required>
+                </div>
+                <div>
+                    <label class="modal-label">Quantity Needed <span style="color:#ef4444;">*</span></label>
+                    <input type="number" id="req-quantity" placeholder="1" min="1" value="1" class="modal-input" required>
+                </div>
+            </div>
+
+            <!-- Customer info -->
+            <p style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Customer & Device</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                <div>
+                    <label class="modal-label">Customer Name <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="req-customer-name" placeholder="e.g. Juan Dela Cruz" class="modal-input" required>
+                </div>
+                <div>
+                    <label class="modal-label">Phone Model <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="req-phone-model" placeholder="e.g. iPhone 14" class="modal-input" required>
+                </div>
+            </div>
+
+            <!-- Note -->
+            <p style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Technician Note</p>
+            <div style="margin-bottom:20px;">
+                <label class="modal-label">Note / Reason <span style="color:#ef4444;">*</span></label>
+                <textarea id="req-notes" class="modal-input" rows="3"
+                    placeholder="e.g. LCD needed for Renante's Oppo A3s — screen is cracked and not in stock."
+                    style="resize:vertical; min-height:72px;" required></textarea>
+            </div>
+
+            <!-- Info banner -->
+            <div style="display:flex; align-items:flex-start; gap:10px; background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 14px; margin-bottom:20px;">
+                <span style="font-size:16px; flex-shrink:0;">💡</span>
+                <p style="margin:0; font-size:12px; color:#92400e; line-height:1.6;">
+                    This request will be saved as a <strong>Pending</strong> order. You can track it under the Orders section and update its status once the part is sourced.
+                </p>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button type="button" onclick="closePartRequestModal()"
+                    style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:white; color:#64748b; font-weight:600; cursor:pointer;">
+                    Cancel
+                </button>
+                <button type="submit" id="req-submit-btn"
+                    style="flex:1; padding:10px; background:linear-gradient(135deg,#f59e0b,#d97706); border:none; border-radius:8px; color:white; font-weight:600; cursor:pointer; box-shadow:0 4px 12px rgba(245,158,11,0.3);">
+                    📋 Submit Request
+                </button>
+            </div>
+
+        </form>
+    </div>
+    
 </div>
 
 <!-- Add Stock Modal -->
@@ -171,7 +378,7 @@
             </div>
 
             <div style="margin-bottom:20px;">
-                <label class="modal-label">Unit Price ($)</label>
+                <label class="modal-label">Unit Price (₱)</label>
                 <input type="number" id="add-part-price" placeholder="0.00" step="0.01" min="0" class="modal-input" required>
             </div>
 
@@ -249,6 +456,22 @@
     border-color: transparent;
 }
 .pg-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* Part Request button — amber/yellow to visually separate from Add Stock */
+.btn-part-request {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(245,158,11,0.3);
+    transition: opacity .2s, transform .1s;
+}
+.btn-part-request:hover { opacity: .9; transform: translateY(-1px); }
+.btn-part-request:active { transform: translateY(1px); }
 </style>
 
 <script>
@@ -271,26 +494,21 @@ function renderPage(page) {
     const start = (page - 1) * ROWS_PER_PAGE;
     const end   = start + ROWS_PER_PAGE;
 
-    // Show/hide rows
     allRows.forEach(r => r.style.display = 'none');
     filteredRows.forEach((r, i) => {
         r.style.display = (i >= start && i < end) ? '' : 'none';
     });
 
-    // Info text
     const from = total === 0 ? 0 : start + 1;
     const to   = Math.min(end, total);
     document.getElementById('paginationInfo').textContent =
         total === 0 ? 'No items found' : `Showing ${from}–${to} of ${total} items`;
 
-    // Empty state
     document.getElementById('stockEmpty').style.display = total === 0 ? 'block' : 'none';
 
-    // Build page buttons
     const btns = document.getElementById('paginationBtns');
     btns.innerHTML = '';
 
-    // Prev
     const prev = document.createElement('button');
     prev.className = 'pg-btn';
     prev.textContent = '‹';
@@ -298,7 +516,6 @@ function renderPage(page) {
     prev.onclick = () => renderPage(page - 1);
     btns.appendChild(prev);
 
-    // Page numbers (show max 5 around current)
     const range = pagRange(page, totalPages);
     range.forEach(p => {
         if (p === '…') {
@@ -315,7 +532,6 @@ function renderPage(page) {
         }
     });
 
-    // Next
     const next = document.createElement('button');
     next.className = 'pg-btn';
     next.textContent = '›';
@@ -331,7 +547,7 @@ function pagRange(current, total) {
     return [1,'…',current-1,current,current+1,'…',total];
 }
 
-/* ======= SEARCH (override original to also re-paginate) ======= */
+/* ======= SEARCH ======= */
 function filterStock(val) {
     const q = val.toLowerCase();
     filteredRows = allRows.filter(r => r.innerText.toLowerCase().includes(q));
@@ -343,7 +559,7 @@ function filterStockStatus(val) {
     renderPage(1);
 }
 
-/* ======= MODALS ======= */
+/* ======= STOCK MODALS ======= */
 let currentStockItem = {};
 
 function openStockView(item) {
@@ -354,7 +570,7 @@ function openStockView(item) {
         ${row('Category', item.category)}
         ${row('Current Stock', item.quantity + ' units')}
         ${row('Minimum Stock', item.minimum + ' units')}
-        ${row('Unit Price', '$' + (item.price ?? '0.00'))}
+        ${row('Unit Price', '₱' + (item.price ?? '0.00'))}
         ${row('Status', item.status === 'warning' ? '⚠️ Low Stock' : '✓ Well Stocked')}
         ${row('Last Updated', new Date().toLocaleDateString())}`;
     document.getElementById('stockViewModal').style.display = 'flex';
@@ -406,6 +622,104 @@ async function saveAddStock(e) {
     const data = await response.json();
     if (data.success) { alert('✓ Stock item added successfully!'); document.getElementById('addStockModal').style.display = 'none'; location.reload(); }
     else { alert('Error: ' + (data.error || 'Failed to add stock item')); }
+}
+
+/* ======= PART REQUEST MODAL ======= */
+function closePartRequestModal() {
+    document.getElementById('partRequestModal').style.display = 'none';
+    // Reset form
+    document.getElementById('req-part-name').value = '';
+    document.getElementById('req-quantity').value = '1';
+    document.getElementById('req-customer-name').value = '';
+    document.getElementById('req-phone-model').value = '';
+    document.getElementById('req-notes').value = '';
+}
+
+async function savePartRequest(e) {
+    e.preventDefault();
+
+    const partName     = document.getElementById('req-part-name').value.trim();
+    const quantity     = parseInt(document.getElementById('req-quantity').value || 1);
+    const customerName = document.getElementById('req-customer-name').value.trim();
+    const phoneModel   = document.getElementById('req-phone-model').value.trim();
+    const notes        = document.getElementById('req-notes').value.trim();
+
+    if (!partName || !customerName || !phoneModel || !notes) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrfToken"]')?.getAttribute('content');
+    if (!csrfToken) { alert('Security error: CSRF token not found'); return; }
+
+    const btn = document.getElementById('req-submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    try {
+        const response = await fetch("<?= $this->Url->build('/parts/requestOrder') ?>", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
+            body: JSON.stringify({
+                part_name:     partName,
+                quantity:      quantity,
+                customer_name: customerName,
+                phone_model:   phoneModel,
+                notes:         notes
+            })
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert('✓ Part request submitted! It has been logged as a Pending order.');
+            closePartRequestModal();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to submit request'));
+        }
+    } catch (err) {
+        alert('Network error. Please try again.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '📋 Submit Request';
+    }
+}
+
+async function deleteOrder(id) {
+    if (!confirm("Are you sure you want to delete this order?")) return;
+
+    const tokenElement = document.querySelector('meta[name="csrfToken"]');
+
+    if (!tokenElement) {
+        alert("CSRF token not found!");
+        return;
+    }
+
+    const csrfToken = tokenElement.getAttribute('content');
+
+    try {
+        const response = await fetch("<?= $this->Url->build('/parts/deleteOrder') ?>", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
+            body: JSON.stringify({
+                id: id
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("✓ Order deleted!");
+
+            // 🔥 Better UX (no reload)
+            document.querySelector(`button[onclick="deleteOrder(${id})"]`)
+                .closest("tr").remove();
+
+        } else {
+            alert("Error deleting order");
+        }
+
+    } catch (err) {
+        alert("Network error");
+    }
 }
 
 // Init on load

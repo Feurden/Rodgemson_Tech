@@ -1,16 +1,26 @@
 """
-main.py - UPGRADED WITH NLP (Windows Compatible)
+main.py - UPGRADED WITH NLP v2 (False-Positive Fix)
 ---------------------------------------------------
 Drop-in replacement for your current keyword-based system.
 Fixed for Windows Unicode issues.
 
-Changes:
+Changes from v1:
 - Replaces KEYWORD_MAP with semantic NLP matching
 - Uses sentence-transformers for embedding-based similarity
 - Keeps same API structure (DiagnoseRequest/Response)
 - Keeps same data structures (SYMPTOM, SINGLE_SYMPTOM_MAP, REPLACEMENT_MAP)
 - Same ML model loading and confidence scoring
 - Better accuracy (85-95% vs 60-70% with keywords)
+
+Changes in v2 (False-Positive Fix):
+- Global NLP threshold raised from 0.50 → 0.62
+- Per-symptom thresholds added for high-bleed symptoms:
+    phone_freezing       → 0.68
+    battery_drains_fast  → 0.65
+    battery_issue_natural→ 0.65
+- phone_freezing descriptions tightened: removed thermal-adjacent
+  phrases ("phone shuts off", "random restart") that caused false
+  positives when input only mentioned overheating/charging
 
 To use:
 1. Replace your current main.py with this
@@ -77,6 +87,15 @@ SYMPTOMS = [
 #   - Prefer concrete hardware/behavior terms over generic ones ("speaker grille", not "audio")
 SYMPTOM_DESCRIPTIONS = {
     "not_charging": [
+        # Short-input anchors (exact user phrases)
+        "not charging",
+        "phone not charging",
+        "won't charge",
+        "not charging at all",
+        "slow charging",
+        "charging very slowly",
+        "charges slower than normal",
+        # Descriptive phrases for semantic matching
         "usb port not accepting power",
         "charging port is loose or broken",
         "charger plug not detected by phone",
@@ -85,26 +104,34 @@ SYMPTOM_DESCRIPTIONS = {
         "cable connected but battery percentage not rising",
         "phone only charges with certain angle",
         "charging port physically damaged",
-        "not charging",
-        "charging very slowly",
-        "slow charging",
-        "charges slower than normal",
         "battery charges at 5 watts instead of fast charge",
     ],
     "overheating": [
+        # Short-input anchors
+        "overheating",
+        "phone overheating",
+        "phone is hot",
+        "phone getting too hot",
+        "device overheating",
+        # Descriptive phrases
         "phone body gets extremely hot",
         "back of phone is burning hot to touch",
         "thermal throttling due to high temperature",
         "device temperature warning appears",
-        "phone shuts off due to heat",
         "unusually hot near the battery area",
         "hot to the touch near charging port",
         "overheating during calls or gaming",
         "overheating while charging",
         "overheating even when not in use",
-        "overheating"
     ],
     "no_signal": [
+        # Short-input anchors
+        "no signal",
+        "no mobile signal",
+        "no network",
+        "no reception",
+        "SIM not detected",
+        # Descriptive phrases
         "no cellular bars showing",
         "SIM card not detected",
         "emergency calls only mode",
@@ -114,6 +141,13 @@ SYMPTOM_DESCRIPTIONS = {
         "mobile data completely unavailable",
     ],
     "battery_drains_fast": [
+        # Short-input anchors
+        "battery drains fast",
+        "battery draining fast",
+        "battery dies quickly",
+        "battery drains quickly",
+        "battery percentage drops fast",
+        # Descriptive phrases
         "battery percentage falling rapidly while idle",
         "full charge only lasts one to two hours",
         "battery depletes faster than normal usage",
@@ -122,6 +156,14 @@ SYMPTOM_DESCRIPTIONS = {
         "charge level drops even when screen is off",
     ],
     "stuck_on_logo": [
+        # Short-input anchors
+        "stuck on logo",
+        "phone stuck on boot screen",
+        "bootloop",
+        "boot loop",
+        "keeps restarting",
+        "stuck on startup",
+        # Descriptive phrases
         "phone stuck on manufacturer boot logo",
         "bootloop cycling through startup repeatedly",
         "phone restarts and never reaches home screen",
@@ -130,6 +172,14 @@ SYMPTOM_DESCRIPTIONS = {
         "cannot get past the startup animation",
     ],
     "screen_black": [
+        # Short-input anchors
+        "screen black",
+        "black screen",
+        "screen not turning on",
+        "display not working",
+        "screen is dark",
+        "screen won't turn on",
+        # Descriptive phrases
         "display shows nothing but is powered on",
         "backlight not turning on",
         "screen completely unlit and unresponsive to power button",
@@ -142,35 +192,53 @@ SYMPTOM_DESCRIPTIONS = {
         "screen completely dead and shows nothing",
     ],
     "touch_not_working": [
+        # Short-input anchors
+        "touch not working",
+        "touchscreen not working",
+        "screen not responding to touch",
+        "touch unresponsive",
+        "ghost touch",
+        # Descriptive phrases
         "finger taps not registering on glass",
         "touchscreen digitizer unresponsive",
         "swipe gestures not detected",
         "phantom touches appearing by themselves",
-        "ghost touch",
         "ghost touching by itself",
         "screen touches itself randomly",
         "touch input delayed or inaccurate",
         "screen does not respond to finger press",
     ],
     "speaker_no_sound": [
+        # Short-input anchors
+        "speaker not working",
+        "no sound from speaker",
+        "speaker no sound",
+        "no audio",
+        "can't hear anything",
+        "earpiece not working",
+        "ear speaker no sound",
+        # Descriptive phrases
         "loudspeaker grille producing no audio",
         "ringtone plays silently through bottom speaker",
         "speakerphone mode has zero output volume",
         "music and videos have no sound from speaker",
         "external speaker blown or dead",
         "notification sounds not coming from speaker",
-        "speaker is not working",
         "phone speaker completely silent",
-        "no sound coming out of the speaker",
         "bottom speaker stopped working",
         "speaker stopped producing any sound",
-        "audio output from speaker not working",
-        "earpiece has no sound during calls",
         "cannot hear caller through earpiece",
-        "ear speaker not working",
         "call audio not audible through earpiece",
     ],
     "mic_not_work": [
+        # Short-input anchors
+        "microphone not working",
+        "mic not working",
+        "mic issue",
+        "microphone issue",
+        "people can't hear me",
+        "caller can't hear me",
+        # Descriptive phrases
         "caller on other end cannot hear my voice",
         "microphone not picking up speech",
         "voice recordings are completely silent",
@@ -179,32 +247,49 @@ SYMPTOM_DESCRIPTIONS = {
         "other party says they hear nothing",
     ],
     "screen_flickering": [
+        # Short-input anchors
+        "screen flickering",
+        "screen flashing",
+        "display flickering",
+        "lines on screen",
+        "screen has lines",
+        "screen glitching",
+        # Descriptive phrases
         "display flashing on and off rapidly",
         "LCD backlight strobing or pulsing",
         "horizontal lines appearing across display",
         "vertical lines on the screen",
         "colored lines running down the LCD",
-        "lines on screen",
         "green or pink lines across display",
-        "screen has lines",
         "screen brightness fluctuating by itself",
         "visual glitches and artifacts on screen",
         "display unstable and flickering during use",
         "LCD showing colored lines or streaks",
     ],
     "wifi_not_working": [
+        # Short-input anchors
+        "wifi not working",
+        "no wifi",
+        "can't connect to wifi",
+        "wifi issue",
+        "wifi problem",
+        "wifi keeps disconnecting",
+        # Descriptive phrases
         "wifi toggle not finding any networks",
         "cannot join any wireless access point",
         "wifi connects then immediately drops",
         "wireless router visible but authentication fails",
         "wifi symbol with exclamation showing",
         "internet unavailable despite wifi being on",
-        "no wifi connection",
-        "wifi not working",
-        "cannot connect to wifi",
-        "wifi keeps disconnecting",
     ],
     "bluetooth_issue": [
+        # Short-input anchors
+        "bluetooth not working",
+        "bluetooth issue",
+        "bluetooth problem",
+        "can't pair bluetooth",
+        "bluetooth not connecting",
+        # Descriptive phrases
         "bluetooth pairing with other devices fails",
         "paired headphones not connecting via bluetooth",
         "bluetooth toggle not discovering nearby devices",
@@ -212,22 +297,36 @@ SYMPTOM_DESCRIPTIONS = {
         "cannot send files over bluetooth",
     ],
     "phone_freezing": [
+        # Short-input anchors
+        "phone freezing",
+        "phone frozen",
+        "phone keeps freezing",
+        "phone lagging",
+        "phone hanging",
+        "phone keeps restarting",
+        "phone restarts randomly",
+        # Descriptive phrases — kept thermally neutral
         "phone completely unresponsive to any input",
         "app crashes and brings down entire system",
         "UI stutters and becomes permanently frozen",
         "touch and buttons stop responding mid-use",
         "forced reboot required due to system hang",
         "home screen freezes and will not animate",
-        "phone lagging badly",
-        "apps lagging and stuttering",
         "phone is very slow and laggy",
         "phone hangs and becomes unresponsive",
         "device hangs randomly",
-        "phone randomly restarts by itself",
-        "random restart without warning",
-        "phone reboots on its own",
+        "phone randomly restarts by itself unrelated to heat",
+        "phone freezes and needs a manual restart",
+        "screen becomes unresponsive and stuck",
     ],
     "water_damage": [
+        # Short-input anchors
+        "water damage",
+        "phone got wet",
+        "dropped in water",
+        "liquid damage",
+        "phone fell in water",
+        # Descriptive phrases
         "phone submerged in water or liquid",
         "liquid got inside the device",
         "corrosion visible on charging port or SIM tray",
@@ -236,6 +335,14 @@ SYMPTOM_DESCRIPTIONS = {
         "internal components wet from rain or spill",
     ],
     "screen_physically_damaged": [
+        # Short-input anchors
+        "cracked screen",
+        "broken screen",
+        "shattered screen",
+        "screen cracked",
+        "screen broken",
+        "black spots on screen",
+        # Descriptive phrases
         "glass cracked or shattered from drop",
         "dark spots spreading across LCD panel",
         "green or purple lines burned into display",
@@ -245,6 +352,14 @@ SYMPTOM_DESCRIPTIONS = {
         "LCD bleed visible as bright patches on edges",
     ],
     "battery_issue_natural": [
+        # Short-input anchors
+        "battery swollen",
+        "swollen battery",
+        "battery bulging",
+        "battery problem",
+        "battery health low",
+        "phone shuts off randomly",
+        # Descriptive phrases
         "battery swollen or bulging physically",
         "phone shuts down unexpectedly at 30 percent",
         "battery health degraded below 80 percent",
@@ -368,34 +483,89 @@ def clean_text(text: str) -> str:
     return text
 
 
+
+# ── Per-symptom NLP thresholds ────────────────────────────────────────────────
+# Raised selectively for symptoms that semantically bleed into common inputs
+# (e.g. "phone_freezing" descriptions like "phone shuts off due to heat" fire
+# falsely when the user only says "overheating").  All others use DEFAULT_THRESHOLD.
+DEFAULT_NLP_THRESHOLD = 0.62
+
+SYMPTOM_THRESHOLDS = {
+    # These three have descriptions that share vocabulary with overheating /
+    # charging inputs — keep them stricter to prevent false positives.
+    "phone_freezing":       0.68,
+    "battery_drains_fast":  0.65,
+    "battery_issue_natural": 0.65,
+    # Everything else inherits DEFAULT_NLP_THRESHOLD (0.62)
+}
+
+
+def split_input_segments(text: str) -> List[str]:
+    """
+    Split user input into individual symptom segments.
+
+    Handles inputs like:
+      "not charging, overheating, and screen black"
+      "phone not charging and battery drains fast"
+      "screen flickering; touch not working"
+
+    Each segment is matched independently so that a long comma-separated
+    list doesn't dilute the similarity score of any single symptom phrase.
+    Returns the full original text as a fallback segment as well.
+    """
+    # Split on comma, semicolon, or standalone " and " / " or "
+    parts = re.split(r",|;|\band\b|\bor\b", text, flags=re.IGNORECASE)
+    segments = [p.strip() for p in parts if p.strip()]
+    # Always include the full text too — some phrases span a natural split
+    if len(segments) > 1:
+        segments.append(text)
+    return segments if segments else [text]
+
+
 def detect_symptoms_nlp(
     user_text: str,
-    threshold: float = 0.50
+    threshold: float = DEFAULT_NLP_THRESHOLD
 ) -> Tuple[List[str], List[float]]:
     """
     Detect symptoms using NLP semantic similarity.
 
     Symptom embeddings are pre-computed once at startup and reused here —
-    only the user input is encoded per request (1 encode call instead of 17).
+    only the user input is encoded per request.
+
+    Multi-symptom inputs (e.g. "not charging, overheating, and freezing") are
+    split into segments first so that each symptom phrase is matched
+    independently — preventing score dilution in comma-separated lists.
+
+    Per-symptom thresholds (SYMPTOM_THRESHOLDS) override the global threshold
+    for symptoms that are prone to semantic bleed from unrelated inputs.
     """
     if nlp_model is None or symptom_embeddings is None:
         raise RuntimeError("Models not loaded — did startup complete?")
 
-    # Only encode the user input (symptom embeddings are already cached)
-    user_embedding = nlp_model.encode(user_text, convert_to_numpy=True)
+    segments = split_input_segments(user_text)
+
+    # Encode all segments in one batch call
+    segment_embeddings = nlp_model.encode(segments, convert_to_numpy=True)
 
     detected_symptoms = []
-    scores = []
+    best_scores: dict = {}
 
     for symptom_id in SYMPTOMS:
+        effective_threshold = SYMPTOM_THRESHOLDS.get(symptom_id, threshold)
         cached_embeddings = symptom_embeddings[symptom_id]
-        # Take the MAX similarity across all individual descriptions
-        sims = [util.pytorch_cos_sim(user_embedding, emb)[0][0].item() for emb in cached_embeddings]
-        similarity = max(sims)
-        if similarity >= threshold:
-            detected_symptoms.append(symptom_id)
-            scores.append(similarity)
 
+        # For each segment, take the max similarity across all descriptions
+        # Then take the max across all segments — best segment wins
+        max_sim = 0.0
+        for seg_emb in segment_embeddings:
+            sims = [util.pytorch_cos_sim(seg_emb, emb)[0][0].item() for emb in cached_embeddings]
+            max_sim = max(max_sim, max(sims))
+
+        best_scores[symptom_id] = max_sim
+        if max_sim >= effective_threshold:
+            detected_symptoms.append(symptom_id)
+
+    scores = [best_scores[s] for s in detected_symptoms]
     return detected_symptoms, scores
 
 
@@ -409,7 +579,7 @@ def text_to_features(user_text: str) -> Tuple[pd.DataFrame, int, List[str]]:
     - Names of detected symptoms
     """
     # Use NLP to detect symptoms
-    detected_symptoms, scores = detect_symptoms_nlp(user_text, threshold=0.50)
+    detected_symptoms, scores = detect_symptoms_nlp(user_text, threshold=DEFAULT_NLP_THRESHOLD)
     
     # Build feature vector
     features = {s: 0 for s in SYMPTOMS}
@@ -507,7 +677,7 @@ def diagnose(request: DiagnoseRequest):
     text = request.description.strip()
     
     # CHANGED: Use NLP instead of keyword matching
-    detected_symptoms, symptom_scores = detect_symptoms_nlp(text, threshold=0.50)
+    detected_symptoms, symptom_scores = detect_symptoms_nlp(text, threshold=DEFAULT_NLP_THRESHOLD)
     
     if not detected_symptoms:
         return DiagnoseResponse(

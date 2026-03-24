@@ -103,7 +103,11 @@ return function (RouteBuilder $routes): void {
         'action'     => 'checkFeedback',
     ]);
 
+    // -------------------------------------------------------
+    // API — Parts usage (for repair parts selection)
+    // -------------------------------------------------------
     $routes->post('/parts-usage/get-by-names', ['controller' => 'PartsUsage', 'action' => 'getByNames']);
+    $routes->post('/parts-usage/get-by-diagnosis', ['controller' => 'PartsUsage', 'action' => 'getByDiagnosis']);  // ← NEW ROUTE
     $routes->post('/parts-usage/deduct',        ['controller' => 'PartsUsage', 'action' => 'deduct']);
     $routes->post('/parts-usage/return',        ['controller' => 'PartsUsage', 'action' => 'returnParts']);
     $routes->post('/parts-usage/get-used',      ['controller' => 'PartsUsage', 'action' => 'getUsed']);

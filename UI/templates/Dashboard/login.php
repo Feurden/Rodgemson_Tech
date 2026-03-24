@@ -8,7 +8,7 @@
             </svg>
         </div>
 
-        <h1 class="title">Technician Portal</h1>
+        <h1 class="title">Rodgemson Repair Shop</h1>
 
         <p class="subtitle">Sign in to manage repairs, stock &amp; analytics</p>
 

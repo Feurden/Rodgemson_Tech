@@ -504,6 +504,21 @@ async function runDiagnosis() {
     return;
   }
 
+  // IMPORTANT: Get ALL unique diagnoses from symptom_diagnoses
+  const allDiagnoses = data.symptom_diagnoses 
+    ? [...new Set(Object.values(data.symptom_diagnoses))]
+    : [];
+  
+  // Combine multiple diagnoses with " + " separator
+  const combinedDiagnosis = allDiagnoses.length > 0 
+    ? allDiagnoses.join(' + ') 
+    : data.diagnosis;
+  
+  // Get all unique parts from all symptoms
+  const allParts = data.symptom_parts 
+    ? [...new Set(Object.values(data.symptom_parts).flat())]
+    : data.replacement_parts || [];
+
   const detectedSymptoms = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
   
   // FIXED: Convert confidence from decimal (0-1) to percentage (0-100)
@@ -596,7 +611,7 @@ async function runDiagnosis() {
           <span style="font-size:28px;">✓</span>
           <div>
             <strong style="color:#1e293b; font-size:18px; display:block;">${isMlOverride && uniqueSymptomDiagnoses.length > 1 ? 'ML Diagnosis (Override)' : 'Combined Diagnosis'}</strong>
-            <div style="font-size:16px; color:${borderColor}; font-weight:700; margin-top:4px;">${data.diagnosis}</div>
+            <div style="font-size:16px; color:${borderColor}; font-weight:700; margin-top:4px;">${combinedDiagnosis}</div>
             ${isMlOverride && uniqueSymptomDiagnoses.length > 1 ? `<div style="font-size:12px; color:#64748b; margin-top:6px;">Overrides rule-based: <span style="color:#6366f1; font-weight:600;">${uniqueSymptomDiagnoses.join(' + ')}</span></div>` : ''}
           </div>
         </div>
@@ -616,13 +631,12 @@ async function runDiagnosis() {
       ${symptomPartsHtml}
     </div>`;
 
-  document.getElementById('aiDiagnosis').value      = data.diagnosis;
-  document.getElementById('aiSuggestedParts').value = data.symptom_parts
-    ? Object.values(data.symptom_parts).flat().join(', ') : '';
+  // STORE THE COMBINED DIAGNOSIS (not just the first one)
+  document.getElementById('aiDiagnosis').value      = combinedDiagnosis;
+  document.getElementById('aiSuggestedParts').value = allParts.join(', ');
 }
 
 /* ── AI Re-Diagnosis (Edit Modal) ────────────────────────────────────────── */
-
 async function runEditDiagnosis() {
   const description = document.getElementById('edit-issue').value.trim();
   if (!description) { showModal('error', 'Please describe the issue first.'); return; }
@@ -665,8 +679,23 @@ async function runEditDiagnosis() {
     return;
   }
 
+  // Get ALL unique diagnoses
+  const allDiagnoses = data.symptom_diagnoses 
+    ? [...new Set(Object.values(data.symptom_diagnoses))]
+    : [];
+  
+  // Combine multiple diagnoses
+  const combinedDiagnosis = allDiagnoses.length > 0 
+    ? allDiagnoses.join(' + ') 
+    : data.diagnosis;
+  
+  // Get all unique parts
+  const allParts = data.symptom_parts 
+    ? [...new Set(Object.values(data.symptom_parts).flat())]
+    : data.replacement_parts || [];
+
   const detectedSymptoms = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
-  const parts    = data.symptom_parts ? Object.values(data.symptom_parts).flat() : [];
+  const parts    = allParts;
   const partTags = parts.map(p =>
     `<span style="display:inline-block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:3px 8px;border-radius:12px;font-size:11px;margin:2px;">🔩 ${p}</span>`
   ).join('');
@@ -680,16 +709,16 @@ async function runEditDiagnosis() {
   box.innerHTML = `
     <div style="margin-bottom:8px;">
       <span style="font-size:11px; color:#6366f1; font-weight:700; text-transform:uppercase;">🤖 ${editIsMlOverride && editUniqueSymptomDiagnoses.length > 1 ? 'ML Override' : 'AI Diagnosis'}</span>
-      <p style="font-size:15px; font-weight:700; color:#1e293b; margin:4px 0 0;">${data.diagnosis}</p>
+      <p style="font-size:15px; font-weight:700; color:#1e293b; margin:4px 0 0;">${combinedDiagnosis}</p>
       ${editIsMlOverride && editUniqueSymptomDiagnoses.length > 1 ? `<p style="font-size:11px; color:#64748b; margin:4px 0 0;">Overrides: <span style="color:#6366f1; font-weight:600;">${editUniqueSymptomDiagnoses.join(' + ')}</span></p>` : ''}
     </div>
     <p style="font-size:11px; color:#64748b; margin:0 0 6px;"><strong>Symptoms:</strong> ${detectedSymptoms}</p>
     <div style="display:flex; flex-wrap:wrap; gap:4px;">${partTags}</div>`;
 
-  document.getElementById('edit-ai-diagnosis').value = data.diagnosis;
+  // STORE THE COMBINED DIAGNOSIS
+  document.getElementById('edit-ai-diagnosis').value = combinedDiagnosis;
   document.getElementById('edit-ai-parts').value     = parts.join(', ');
 }
-
 /* ── Feedback Modal ──────────────────────────────────────────────────────── */
 
 let currentFeedbackData = {};
