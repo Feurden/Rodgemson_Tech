@@ -1,24 +1,6 @@
 <?php
 /**
  * Routes configuration.
- *
- * In this file, you set up routes to your controllers and their actions.
- * Routes are very important mechanism that allows you to freely connect
- * different URLs to chosen controllers and their actions (functions).
- *
- * It's loaded within the context of `Application::routes()` method which
- * receives a `RouteBuilder` instance `$routes` as method argument.
- *
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 use Cake\Routing\Route\DashedRoute;
@@ -35,9 +17,7 @@ return function (RouteBuilder $routes): void {
 
         $builder->connect('/pages/*', 'Pages::display');
 
-        // -------------------------------------------------------
         // Dashboard routes
-        // -------------------------------------------------------
         $builder->connect('/dashboard/login',          ['controller' => 'Dashboard', 'action' => 'login']);
         $builder->connect('/dashboard/signup',         ['controller' => 'Dashboard', 'action' => 'signup']);
         $builder->connect('/dashboard/logout',         ['controller' => 'Dashboard', 'action' => 'logout']);
@@ -54,9 +34,7 @@ return function (RouteBuilder $routes): void {
         $builder->fallbacks();
     });
 
-    // -------------------------------------------------------
     // API — Device management
-    // -------------------------------------------------------
     $routes->post('/devices/add', [
         'controller' => 'Devices',
         'action'     => 'add',
@@ -72,9 +50,7 @@ return function (RouteBuilder $routes): void {
         'action'     => 'update',
     ]);
 
-    // -------------------------------------------------------
     // API — Parts management
-    // -------------------------------------------------------
     $routes->post('/parts/add', [
         'controller' => 'Parts',
         'action'     => 'add',
@@ -85,9 +61,7 @@ return function (RouteBuilder $routes): void {
         'action'     => 'restock',
     ]);
 
-    // -------------------------------------------------------
     // API — AI diagnosis
-    // -------------------------------------------------------
     $routes->post('/ai/diagnose', [
         'controller' => 'Ai',
         'action'     => 'diagnose',
@@ -103,12 +77,26 @@ return function (RouteBuilder $routes): void {
         'action'     => 'checkFeedback',
     ]);
 
-    // -------------------------------------------------------
     // API — Parts usage (for repair parts selection)
-    // -------------------------------------------------------
     $routes->post('/parts-usage/get-by-names', ['controller' => 'PartsUsage', 'action' => 'getByNames']);
-    $routes->post('/parts-usage/get-by-diagnosis', ['controller' => 'PartsUsage', 'action' => 'getByDiagnosis']);  // ← NEW ROUTE
-    $routes->post('/parts-usage/deduct',        ['controller' => 'PartsUsage', 'action' => 'deduct']);
-    $routes->post('/parts-usage/return',        ['controller' => 'PartsUsage', 'action' => 'returnParts']);
-    $routes->post('/parts-usage/get-used',      ['controller' => 'PartsUsage', 'action' => 'getUsed']);
+    $routes->post('/parts-usage/get-by-diagnosis', ['controller' => 'PartsUsage', 'action' => 'getByDiagnosis']);
+    $routes->post('/parts-usage/deduct', ['controller' => 'PartsUsage', 'action' => 'deduct']);
+    $routes->post('/parts-usage/return', ['controller' => 'PartsUsage', 'action' => 'returnParts']);
+    $routes->post('/parts-usage/get-used', ['controller' => 'PartsUsage', 'action' => 'getUsed']);
+
+    // API — Repair services usage
+    $routes->post('/repair-services-usage/get-by-diagnosis', [
+        'controller' => 'RepairServicesUsage',
+        'action'     => 'getByDiagnosis',
+    ]);
+
+    $routes->post('/repair-services-usage/get-used', [
+        'controller' => 'RepairServicesUsage',
+        'action'     => 'getUsed',
+    ]);
+
+    $routes->post('/repair-services-usage/add', [
+        'controller' => 'RepairServicesUsage',
+        'action'     => 'add',
+    ]);
 };

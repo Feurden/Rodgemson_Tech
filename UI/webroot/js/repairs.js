@@ -1,13 +1,11 @@
 /* ── repairs.js ──────────────────────────────────────────────────────────────
    JavaScript for the Repair Dashboard page (repairs.php)
-   FIXED: Confidence percentage conversion (decimal to percentage)
-   URLs are injected by PHP via window.REPAIRS_CONFIG before this script loads.
+   FIXED: Parts return now correctly calls returnParts endpoint
+   NEW:   After returning parts, a modal asks to set status Completed or keep In Progress
+   NEW:   Parts Modal now includes a Services tab for selecting services to perform
    ──────────────────────────────────────────────────────────────────────────── */
 
-/* ── Helper: Convert confidence decimal to percentage ────────────────────── */
-
-
-/* ── Result modal (replaces all alert() calls) ───────────────────────────── */
+/* ── Result modal ────────────────────────────────────────────────────────── */
 
 function showModal(type, message) {
   let overlay = document.getElementById('resultModal');
@@ -50,10 +48,10 @@ function showModal(type, message) {
   const msg       = overlay.querySelector('#resultModalMsg');
   const box       = overlay.querySelector('#resultModalBox');
 
-  icon.textContent    = isSuccess ? '✓' : '✕';
+  icon.textContent       = isSuccess ? '✓' : '✕';
   icon.style.background  = isSuccess ? '#dcfce7' : '#fee2e2';
   icon.style.color       = isSuccess ? '#16a34a' : '#dc2626';
-  msg.textContent     = message;
+  msg.textContent        = message;
 
   overlay.style.display = 'flex';
   requestAnimationFrame(() => {
@@ -73,15 +71,8 @@ function closeResultModal() {
 
 function convertConfidenceToPercentage(confidence) {
   if (confidence === null || confidence === undefined) return 0;
-  
   let value = parseFloat(confidence);
-  
-  // If it's a decimal (0-1), convert to percentage (0-100)
-  if (value > 0 && value <= 1) {
-    value = value * 100;
-  }
-  
-  // Ensure it's in valid 0-100 range
+  if (value > 0 && value <= 1) value = value * 100;
   return Math.min(100, Math.max(0, value));
 }
 
@@ -111,20 +102,20 @@ function badge(s) {
 /* ── Symptom label map ───────────────────────────────────────────────────── */
 
 const symptomLabels = {
-  'not_charging'      : 'Not charging',
-  'overheating'       : 'Overheating',
-  'no_signal'         : 'No signal',
-  'battery_drains_fast': 'Battery drains fast',
-  'stuck_on_logo'     : 'Stuck on logo',
-  'screen_black'      : 'Black screen',
-  'touch_not_working' : 'Touch screen not responding',
-  'speaker_no_sound'  : 'No speaker sound',
-  'mic_not_work'      : 'Microphone not working',
-  'screen_flickering' : 'Screen flickering',
-  'wifi_not_working'  : 'WiFi not working',
-  'bluetooth_issue'   : 'Bluetooth issues',
-  'phone_freezing'    : 'Phone freezing/restarting',
-  'water_damage'            : 'Water damage',
+  'not_charging'             : 'Not charging',
+  'overheating'              : 'Overheating',
+  'no_signal'                : 'No signal',
+  'battery_drains_fast'      : 'Battery drains fast',
+  'stuck_on_logo'            : 'Stuck on logo',
+  'screen_black'             : 'Black screen',
+  'touch_not_working'        : 'Touch screen not responding',
+  'speaker_no_sound'         : 'No speaker sound',
+  'mic_not_work'             : 'Microphone not working',
+  'screen_flickering'        : 'Screen flickering',
+  'wifi_not_working'         : 'WiFi not working',
+  'bluetooth_issue'          : 'Bluetooth issues',
+  'phone_freezing'           : 'Phone freezing/restarting',
+  'water_damage'             : 'Water damage',
   'screen_physically_damaged': 'Cracked / physical screen damage',
   'battery_issue_natural'    : 'Battery issue',
 };
@@ -237,9 +228,9 @@ async function saveNewRepair() {
   isSavingRepair = true;
   const saveBtn = document.getElementById('newRepairModal')
     .querySelector('button[onclick*="saveNewRepair"]');
-  saveBtn.disabled     = true;
+  saveBtn.disabled      = true;
   saveBtn.style.opacity = '0.6';
-  saveBtn.textContent  = 'Saving...';
+  saveBtn.textContent   = 'Saving...';
 
   const response = await fetch(REPAIRS_CONFIG.addUrl, {
     method: 'POST',
@@ -275,16 +266,9 @@ async function saveNewRepair() {
 async function openView(i) {
   const r = repairs[i];
 
-  const partTags = r.suggested_parts
-    ? r.suggested_parts.split(',').map(p => p.trim()).filter(Boolean)
-        .map(p => `<span style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:500;">🔩 ${p}</span>`)
-        .join('')
-    : '<span style="color:#94a3b8; font-size:13px;">No parts recorded</span>';
-
-  // Fetch used parts for this device
   let usedPartsHtml = '<span style="color:#94a3b8; font-size:13px;">Loading parts...</span>';
   const csrfToken = getCsrf();
-  
+
   try {
     const usedRes = await fetch(REPAIRS_CONFIG.partsGetUsedUrl, {
       method: 'POST',
@@ -292,12 +276,12 @@ async function openView(i) {
       body: JSON.stringify({ device_id: r.device_id }),
     });
     const usedData = await usedRes.json();
-    
+
     if (usedData.used_parts && usedData.used_parts.length > 0) {
       usedPartsHtml = usedData.used_parts.map(u => `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#ffffff; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:6px;">
           <div>
-            <span style="font-size:13px; font-weight:600; color:#1e293b;">${u.part_name}</span>
+            <span style="font-size:13px; font-weight:600; color:#1e293b;">🔩 ${u.part_name}</span>
             <span style="font-size:11px; color:#64748b; margin-left:8px;">${u.category || ''}</span>
           </div>
           <span style="background:#dbeafe; color:#1d4ed8; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">x${u.quantity}</span>
@@ -307,13 +291,70 @@ async function openView(i) {
       usedPartsHtml = '<span style="color:#94a3b8; font-size:13px;">No parts used yet</span>';
     }
   } catch (e) {
-    console.error('Failed to fetch used parts:', e);
     usedPartsHtml = '<span style="color:#94a3b8; font-size:13px;">Unable to load parts</span>';
   }
 
-  document.getElementById('viewContent').innerHTML = `
+  let usedServicesHtml = '<span style="color:#94a3b8; font-size:13px;">Loading services...</span>';
 
-    <!-- Header: Device + Status -->
+  try {
+    const servicesRes = await fetch(REPAIRS_CONFIG.servicesGetUsedUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body: JSON.stringify({ device_id: r.device_id }),
+    });
+    const servicesData = await servicesRes.json();
+
+    if (servicesData.used_services && servicesData.used_services.length > 0) {
+      usedServicesHtml = servicesData.used_services.map(s => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#ffffff; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:6px;">
+          <div>
+            <span style="font-size:13px; font-weight:600; color:#1e293b;">💻 ${s.service_name}</span>
+            <span style="font-size:11px; color:#64748b; margin-left:8px;">${s.category || ''}</span>
+          </div>
+          <span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;">${s.price ? '₱' + s.price : ''}</span>
+        </div>
+      `).join('');
+    } else {
+      usedServicesHtml = '<span style="color:#94a3b8; font-size:13px;">No services performed yet</span>';
+    }
+  } catch (e) {
+    usedServicesHtml = '<span style="color:#94a3b8; font-size:13px;">Unable to load services</span>';
+  }
+
+  const suggestedParts = r.suggested_parts
+    ? r.suggested_parts.split(',').map(p => p.trim()).filter(Boolean)
+        .map(p => `<span style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:500;">🔩 ${p}</span>`)
+        .join('')
+    : '<span style="color:#94a3b8; font-size:13px;">No parts suggested</span>';
+
+  let suggestedServicesHtml = '<span style="color:#94a3b8; font-size:13px;">Loading services...</span>';
+
+  if (r.diagnostic) {
+    try {
+      const diagnoses = r.diagnostic.split('+').map(d => d.trim()).filter(Boolean);
+      const allServices = new Set();
+
+      for (const diag of diagnoses) {
+        const servicesRes = await fetch(REPAIRS_CONFIG.servicesGetByDiagUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+          body: JSON.stringify({ diagnosis: diag }),
+        });
+        const servicesData = await servicesRes.json();
+        if (servicesData.services && servicesData.services.length > 0) {
+          servicesData.services.forEach(s => allServices.add(s));
+        }
+      }
+
+      suggestedServicesHtml = allServices.size > 0
+        ? [...allServices].map(s => `<span style="display:inline-block; background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:500;">💻 ${s}</span>`).join('')
+        : '<span style="color:#94a3b8; font-size:13px;">No services suggested</span>';
+    } catch (e) {
+      suggestedServicesHtml = '<span style="color:#94a3b8; font-size:13px;">Unable to load services</span>';
+    }
+  }
+
+  document.getElementById('viewContent').innerHTML = `
     <div style="display:flex; align-items:center; justify-content:space-between; padding:16px; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border-radius:10px; margin-bottom:16px;">
       <div>
         <p style="font-size:11px; color:#0284c7; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin:0 0 4px;">Device</p>
@@ -326,7 +367,6 @@ async function openView(i) {
       </div>
     </div>
 
-    <!-- Customer + Technician -->
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
       <div style="padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;">
         <p style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; margin:0 0 4px;">👤 Customer</p>
@@ -340,31 +380,36 @@ async function openView(i) {
       </div>
     </div>
 
-    <!-- Issue -->
     <div style="padding:12px; background:#fff7ed; border-radius:8px; border-left:4px solid #f97316; margin-bottom:12px;">
       <p style="font-size:11px; color:#c2410c; font-weight:700; text-transform:uppercase; margin:0 0 4px;">⚠️ Issue Reported</p>
       <p style="font-size:14px; color:#1e293b; margin:0; line-height:1.6;">${r.issue}</p>
     </div>
 
-    <!-- AI Diagnosis -->
     <div style="padding:12px; background:#eef2ff; border-radius:8px; border-left:4px solid #6366f1; margin-bottom:12px;">
       <p style="font-size:11px; color:#4338ca; font-weight:700; text-transform:uppercase; margin:0 0 4px;">🤖 AI Diagnosis</p>
       <p style="font-size:15px; font-weight:700; color:#1e293b; margin:0;">${r.diagnostic || '—'}</p>
     </div>
 
-    <!-- Parts Used (Actually Deducted from Stock) -->
     <div style="padding:12px; background:#f0fdf4; border-radius:8px; border-left:4px solid #16a34a; margin-bottom:12px;">
-      <p style="font-size:11px; color:#15803d; font-weight:700; text-transform:uppercase; margin:0 0 10px;">✅ Parts Used (In Stock)</p>
+      <p style="font-size:11px; color:#15803d; font-weight:700; text-transform:uppercase; margin:0 0 10px;">✅ Physical Parts Used</p>
       <div style="max-height:150px; overflow-y:auto;">${usedPartsHtml}</div>
     </div>
 
-    <!-- Possible Parts -->
-    <div style="padding:12px; background:#f8fafc; border-radius:8px; border-left:4px solid #64748b; margin-bottom:12px;">
-      <p style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; margin:0 0 10px;">🔩 Suggested Parts (AI Recommendation)</p>
-      <div style="display:flex; flex-wrap:wrap; gap:6px;">${partTags}</div>
+    <div style="padding:12px; background:#fef3c7; border-radius:8px; border-left:4px solid #f59e0b; margin-bottom:12px;">
+      <p style="font-size:11px; color:#92400e; font-weight:700; text-transform:uppercase; margin:0 0 10px;">💻 Services Performed</p>
+      <div style="max-height:150px; overflow-y:auto;">${usedServicesHtml}</div>
     </div>
 
-    <!-- Notes -->
+    <div style="padding:12px; background:#f8fafc; border-radius:8px; border-left:4px solid #64748b; margin-bottom:12px;">
+      <p style="font-size:11px; color:#64748b; font-weight:700; text-transform:uppercase; margin:0 0 10px;">🔩 Suggested Physical Parts</p>
+      <div style="display:flex; flex-wrap:wrap; gap:6px;">${suggestedParts}</div>
+    </div>
+
+    <div style="padding:12px; background:#f8fafc; border-radius:8px; border-left:4px solid #8b5cf6; margin-bottom:12px;">
+      <p style="font-size:11px; color:#6d28d9; font-weight:700; text-transform:uppercase; margin:0 0 10px;">💻 Suggested Services</p>
+      <div style="display:flex; flex-wrap:wrap; gap:6px;">${suggestedServicesHtml}</div>
+    </div>
+
     <div style="padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;">
       <p style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin:0 0 6px;">📝 Notes</p>
       <p style="font-size:13px; color:#475569; margin:0; line-height:1.6;">${r.notes || 'No notes added yet.'}</p>
@@ -373,21 +418,74 @@ async function openView(i) {
   openModal('viewModal');
 }
 
+/* ── Edit Modal Suggested Services ───────────────────────────────────────── */
+
+async function loadEditSuggestedServices(diagnosis, status = '') {
+  const wrap = document.getElementById('editSuggestedServicesWrap');
+  const list = document.getElementById('editSuggestedServicesList');
+
+  if (!wrap || !list) return;
+
+  const normalizedStatus = (status || '').toLowerCase().trim();
+
+  if (normalizedStatus !== 'in progress') {
+    wrap.style.display = 'none';
+    list.innerHTML = '<span style="color:#94a3b8; font-size:13px;">No services suggested</span>';
+    return;
+  }
+
+  wrap.style.display = 'block';
+
+  if (!diagnosis || !diagnosis.trim()) {
+    list.innerHTML = '<span style="color:#94a3b8; font-size:13px;">No diagnosis available</span>';
+    return;
+  }
+
+  list.innerHTML = '<span style="color:#94a3b8; font-size:13px;">Loading services...</span>';
+
+  try {
+    const csrfToken = getCsrf();
+    const diagnoses = diagnosis.split('+').map(d => d.trim()).filter(Boolean);
+    const allServices = new Set();
+
+    for (const diag of diagnoses) {
+      const response = await fetch(REPAIRS_CONFIG.servicesGetByDiagUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+        body: JSON.stringify({ diagnosis: diag }),
+      });
+      const data = await response.json();
+      if (data.success && Array.isArray(data.services)) {
+        data.services.forEach(service => allServices.add(service));
+      }
+    }
+
+    list.innerHTML = allServices.size === 0
+      ? '<span style="color:#94a3b8; font-size:13px;">No services suggested</span>'
+      : [...allServices].map(service => `
+          <span style="display:inline-block; background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:500;">
+            💻 ${service}
+          </span>`).join('');
+  } catch (e) {
+    list.innerHTML = '<span style="color:#94a3b8; font-size:13px;">Unable to load services</span>';
+  }
+}
+
 /* ── Edit Modal ──────────────────────────────────────────────────────────── */
 
-function openEdit(i) {
+async function openEdit(i) {
   const r = repairs[i];
-  document.getElementById('edit-idx').value                   = i;
-  document.getElementById('edit-jobid').value                 = r.id;
-  document.getElementById('edit-device').value                = r.device;
-  document.getElementById('edit-jobid-display').textContent   = r.id;
-  document.getElementById('edit-device-display').textContent  = r.device;
-  document.getElementById('edit-tech').value                  = r.technician || '';
-  document.getElementById('edit-issue').value                 = r.issue || '';
-  document.getElementById('edit-notes').value                 = r.notes || '';
-  document.getElementById('edit-ai-diagnosis').value          = r.diagnostic || '';
-  document.getElementById('edit-ai-parts').value              = r.suggested_parts || '';
-  document.getElementById('editAiResultBox').style.display    = 'none';
+  document.getElementById('edit-idx').value                  = i;
+  document.getElementById('edit-jobid').value                = r.id;
+  document.getElementById('edit-device').value               = r.device;
+  document.getElementById('edit-jobid-display').textContent  = r.id;
+  document.getElementById('edit-device-display').textContent = r.device;
+  document.getElementById('edit-tech').value                 = r.technician || '';
+  document.getElementById('edit-issue').value                = r.issue || '';
+  document.getElementById('edit-notes').value                = r.notes || '';
+  document.getElementById('edit-ai-diagnosis').value         = r.diagnostic || '';
+  document.getElementById('edit-ai-parts').value             = r.suggested_parts || '';
+  document.getElementById('editAiResultBox').style.display   = 'none';
 
   const statusMap = {
     'pending'      : 'Pending',
@@ -404,26 +502,33 @@ function openEdit(i) {
       const p  = n => String(n).padStart(2, '0');
       document.getElementById('edit-finished').value =
         `${dt.getFullYear()}-${p(dt.getMonth()+1)}-${p(dt.getDate())}T${p(dt.getHours())}:${p(dt.getMinutes())}`;
-    } catch { document.getElementById('edit-finished').value = ''; }
+    } catch {
+      document.getElementById('edit-finished').value = '';
+    }
   } else {
     document.getElementById('edit-finished').value = '';
   }
+
+  await loadEditSuggestedServices(
+    document.getElementById('edit-ai-diagnosis').value,
+    normalizedStatus
+  );
+
   openModal('editModal');
 }
 
 async function saveEdit() {
-  const idx        = parseInt(document.getElementById('edit-idx').value);
-  const repair     = repairs[idx];
-  const deviceId   = repair.device_id;
-  const technician = document.getElementById('edit-tech').value.trim();
-  const statusDisplay = document.getElementById('edit-status').value;
-  const finished   = document.getElementById('edit-finished').value;
-  const notes      = document.getElementById('edit-notes').value.trim();
-  const issue      = document.getElementById('edit-issue').value.trim();
-  const diagnostic = document.getElementById('edit-ai-diagnosis').value.trim();
+  const idx            = parseInt(document.getElementById('edit-idx').value);
+  const repair         = repairs[idx];
+  const deviceId       = repair.device_id;
+  const technician     = document.getElementById('edit-tech').value.trim();
+  const statusDisplay  = document.getElementById('edit-status').value;
+  const finished       = document.getElementById('edit-finished').value;
+  const notes          = document.getElementById('edit-notes').value.trim();
+  const issue          = document.getElementById('edit-issue').value.trim();
+  const diagnostic     = document.getElementById('edit-ai-diagnosis').value.trim();
   const suggestedParts = document.getElementById('edit-ai-parts').value.trim();
 
-  // ✅ CRITICAL FIX: Normalize status back to lowercase for database
   const statusMap = {
     'Pending'      : 'pending',
     'In Progress'  : 'in progress',
@@ -504,47 +609,27 @@ async function runDiagnosis() {
     return;
   }
 
-  // IMPORTANT: Get ALL unique diagnoses from symptom_diagnoses
-  const allDiagnoses = data.symptom_diagnoses 
+  const allDiagnoses = data.symptom_diagnoses
     ? [...new Set(Object.values(data.symptom_diagnoses))]
     : [];
-  
-  // Combine multiple diagnoses with " + " separator
-  const combinedDiagnosis = allDiagnoses.length > 0 
-    ? allDiagnoses.join(' + ') 
+
+  const combinedDiagnosis = allDiagnoses.length > 0
+    ? allDiagnoses.join(' + ')
     : data.diagnosis;
-  
-  // Get all unique parts from all symptoms
-  const allParts = data.symptom_parts 
+
+  const allParts = data.symptom_parts
     ? [...new Set(Object.values(data.symptom_parts).flat())]
     : data.replacement_parts || [];
 
   const detectedSymptoms = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
-  
-  // FIXED: Convert confidence from decimal (0-1) to percentage (0-100)
-  const confidenceValue = convertConfidenceToPercentage(data.confidence);
-  const confidenceText = data.confidence !== null ? confidenceValue.toFixed(1) + '%' : 'Rule-Based';
-
-  // Determine color based on confidence percentage
-  const confidenceColor = confidenceValue >= 80 ? '#22c55e'  // Green for high
-                        : confidenceValue >= 60 ? '#f59e0b'  // Orange for good
-                        : confidenceValue >= 40 ? '#f97316'  // Orange-red for moderate
-                        : '#ef4444';  // Red for low
-
-  const confidenceLabel = confidenceValue >= 80 ? 'High confidence'
-                        : confidenceValue >= 60 ? 'Good confidence'
-                        : confidenceValue >= 50 ? 'Moderate confidence' 
-                        : 'Low confidence';
-
-  const isRuleBased = data.rule_suggestion !== null;
-  const isUncertain = !isRuleBased && confidenceValue < 50;
-  const isMlOverride = data.mode === 'ml_override';
-  const borderColor = isRuleBased ? '#6366f1' : isUncertain ? '#f59e0b' : confidenceColor;
-
-  // When ML overrides, collect the unique rule-based diagnoses for display
-  const uniqueSymptomDiagnoses = data.symptom_diagnoses
-    ? [...new Set(Object.values(data.symptom_diagnoses))]
-    : [];
+  const confidenceValue  = convertConfidenceToPercentage(data.confidence);
+  const confidenceText   = data.confidence !== null ? confidenceValue.toFixed(1) + '%' : 'Rule-Based';
+  const confidenceColor  = confidenceValue >= 80 ? '#22c55e' : confidenceValue >= 60 ? '#f59e0b' : confidenceValue >= 40 ? '#f97316' : '#ef4444';
+  const confidenceLabel  = confidenceValue >= 80 ? 'High confidence' : confidenceValue >= 60 ? 'Good confidence' : confidenceValue >= 50 ? 'Moderate confidence' : 'Low confidence';
+  const isRuleBased      = data.confidence === null;
+  const isUncertain      = !isRuleBased && confidenceValue < 50;
+  const isMlOverride     = data.mode === 'ml_override';
+  const borderColor      = isRuleBased ? '#6366f1' : isUncertain ? '#f59e0b' : confidenceColor;
 
   const confidenceBar = isRuleBased ? '' : `
     <div style="background:rgba(255,255,255,0.6); padding:10px; border-radius:6px; margin-bottom:12px;">
@@ -560,7 +645,6 @@ async function runDiagnosis() {
   const uncertainBadge   = isUncertain ? '<span style="font-size:11px; color:#d97706; background:#fef3c7; padding:4px 10px; border-radius:4px; font-weight:600;">⚠ Uncertain</span>' : '';
   const uncertainWarning = isUncertain ? '<div style="background:#fef3c7; border:1px solid #fcd34d; padding:10px 12px; border-radius:6px; margin:14px 0; font-size:12px; color:#92400e; line-height:1.5;"><strong>⚠ Low Confidence:</strong> Confidence is below 50%. Verify with technician expertise or request more details from customer.</div>' : '';
 
-  // Individual symptom diagnoses (multi-symptom only)
   let individualDiagnosesHtml = '';
   if (data.detected_symptoms.length > 1 && data.symptom_diagnoses) {
     individualDiagnosesHtml = '<div style="margin-bottom:16px; padding:14px; background:#f0fdf4; border-radius:8px; border-left:4px solid #16a34a;"><p style="font-size:11px; font-weight:700; color:#166534; margin:0 0 12px; text-transform:uppercase; letter-spacing:0.5px;">Individual Symptom Diagnoses</p>';
@@ -586,22 +670,14 @@ async function runDiagnosis() {
     individualDiagnosesHtml += '</div>';
   }
 
-  // Parts by symptom
-  let symptomPartsHtml = '';
-  if (data.symptom_parts && Object.keys(data.symptom_parts).length > 0) {
-    symptomPartsHtml = '<div style="margin-top:16px; padding-top:16px; border-top:1px solid #e2e8f0;"><p style="font-size:11px; font-weight:700; color:#64748b; margin:0 0 12px; text-transform:uppercase; letter-spacing:0.5px;">Possible Replacement Parts</p>';
-    for (const [symptom, parts] of Object.entries(data.symptom_parts)) {
-      const label = symptomLabels[symptom] || symptom.replace(/_/g, ' ');
-      symptomPartsHtml += `<div style="margin-bottom:12px;">
-        <span style="font-size:12px; color:#0f766e; font-weight:600; display:block; margin-bottom:6px;">→ ${label}</span>
-        <div style="font-size:12px; color:#475569; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px;">`;
-      parts.forEach(part => {
-        symptomPartsHtml += `<div style="background:#f8fafc; padding:6px 10px; border-radius:4px; border-left:2px solid #0f766e;">◦ ${part}</div>`;
-      });
-      symptomPartsHtml += '</div></div>';
-    }
-    symptomPartsHtml += '</div>';
-  }
+  const suggestedPartsHtml = allParts.length > 0
+    ? `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(0,0,0,0.06);">
+        <p style="font-size:11px; font-weight:700; color:#64748b; margin:0 0 8px; text-transform:uppercase; letter-spacing:0.5px;">🔩 Suggested Parts</p>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${allParts.map(p => `<span style="display:inline-block; background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:500;">🔩 ${p}</span>`).join('')}
+        </div>
+      </div>`
+    : '';
 
   box.style.display = 'block';
   box.innerHTML = `
@@ -610,9 +686,8 @@ async function runDiagnosis() {
         <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:8px;">
           <span style="font-size:28px;">✓</span>
           <div>
-            <strong style="color:#1e293b; font-size:18px; display:block;">${isMlOverride && uniqueSymptomDiagnoses.length > 1 ? 'ML Diagnosis (Override)' : 'Combined Diagnosis'}</strong>
+            <strong style="color:#1e293b; font-size:18px; display:block;">${isMlOverride ? 'ML Diagnosis (Override)' : 'Combined Diagnosis'}</strong>
             <div style="font-size:16px; color:${borderColor}; font-weight:700; margin-top:4px;">${combinedDiagnosis}</div>
-            ${isMlOverride && uniqueSymptomDiagnoses.length > 1 ? `<div style="font-size:12px; color:#64748b; margin-top:6px;">Overrides rule-based: <span style="color:#6366f1; font-weight:600;">${uniqueSymptomDiagnoses.join(' + ')}</span></div>` : ''}
           </div>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
@@ -628,20 +703,20 @@ async function runDiagnosis() {
         <p style="font-size:14px; color:#1e293b; margin:0; line-height:1.6;">${detectedSymptoms}</p>
       </div>
       ${individualDiagnosesHtml}
-      ${symptomPartsHtml}
+      ${suggestedPartsHtml}
     </div>`;
 
-  // STORE THE COMBINED DIAGNOSIS (not just the first one)
-  document.getElementById('aiDiagnosis').value      = combinedDiagnosis;
+  document.getElementById('aiDiagnosis').value = combinedDiagnosis;
   document.getElementById('aiSuggestedParts').value = allParts.join(', ');
 }
 
 /* ── AI Re-Diagnosis (Edit Modal) ────────────────────────────────────────── */
+
 async function runEditDiagnosis() {
   const description = document.getElementById('edit-issue').value.trim();
   if (!description) { showModal('error', 'Please describe the issue first.'); return; }
 
-  const csrfToken = getCsrf();
+  const csrfToken   = getCsrf();
   const editDiagBtn = document.querySelector('#editModal button[onclick*="runEditDiagnosis"]');
   const box         = document.getElementById('editAiResultBox');
 
@@ -679,31 +754,27 @@ async function runEditDiagnosis() {
     return;
   }
 
-  // Get ALL unique diagnoses
-  const allDiagnoses = data.symptom_diagnoses 
+  const allDiagnoses = data.symptom_diagnoses
     ? [...new Set(Object.values(data.symptom_diagnoses))]
     : [];
-  
-  // Combine multiple diagnoses
-  const combinedDiagnosis = allDiagnoses.length > 0 
-    ? allDiagnoses.join(' + ') 
+
+  const combinedDiagnosis = allDiagnoses.length > 0
+    ? allDiagnoses.join(' + ')
     : data.diagnosis;
-  
-  // Get all unique parts
-  const allParts = data.symptom_parts 
+
+  const allParts = data.symptom_parts
     ? [...new Set(Object.values(data.symptom_parts).flat())]
     : data.replacement_parts || [];
 
-  const detectedSymptoms = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
-  const parts    = allParts;
-  const partTags = parts.map(p =>
-    `<span style="display:inline-block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:3px 8px;border-radius:12px;font-size:11px;margin:2px;">🔩 ${p}</span>`
-  ).join('');
-
-  const editIsMlOverride = data.mode === 'ml_override';
+  const detectedSymptoms         = data.detected_symptoms.map(s => symptomLabels[s] || s).join(', ');
+  const editIsMlOverride         = data.mode === 'ml_override';
   const editUniqueSymptomDiagnoses = data.symptom_diagnoses
     ? [...new Set(Object.values(data.symptom_diagnoses))]
     : [];
+
+  const partTags = allParts.map(p =>
+    `<span style="display:inline-block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:3px 8px;border-radius:12px;font-size:11px;margin:2px;">🔩 ${p}</span>`
+  ).join('');
 
   box.style.display = 'block';
   box.innerHTML = `
@@ -715,10 +786,13 @@ async function runEditDiagnosis() {
     <p style="font-size:11px; color:#64748b; margin:0 0 6px;"><strong>Symptoms:</strong> ${detectedSymptoms}</p>
     <div style="display:flex; flex-wrap:wrap; gap:4px;">${partTags}</div>`;
 
-  // STORE THE COMBINED DIAGNOSIS
   document.getElementById('edit-ai-diagnosis').value = combinedDiagnosis;
-  document.getElementById('edit-ai-parts').value     = parts.join(', ');
+  document.getElementById('edit-ai-parts').value     = allParts.join(', ');
+
+  const currentStatus = document.getElementById('edit-status').value;
+  await loadEditSuggestedServices(combinedDiagnosis, currentStatus);
 }
+
 /* ── Feedback Modal ──────────────────────────────────────────────────────── */
 
 let currentFeedbackData = {};
@@ -726,25 +800,23 @@ let currentFeedbackData = {};
 async function openFeedback(i) {
   const r = repairs[i];
 
-  // Reset modal state
-  document.getElementById('feedback-jobid').value          = r.id;
-  document.getElementById('feedback-ai-diagnosis').value   = r.diagnostic || r.issue || '';
-  document.getElementById('feedback-ai-confidence').value  = r.ai_confidence ?? '';
+  document.getElementById('feedback-jobid').value            = r.id;
+  document.getElementById('feedback-ai-diagnosis').value     = r.diagnostic || r.issue || '';
+  document.getElementById('feedback-ai-confidence').value    = r.ai_confidence ?? '';
   document.getElementById('feedback-ai-display').textContent = r.diagnostic || '— No AI diagnosis on record —';
   document.getElementById('feedback-incorrect-section').style.display = 'none';
   document.getElementById('feedback-already-submitted').style.display = 'none';
   document.getElementById('feedback-actual-diagnosis').value = '';
-  document.getElementById('feedback-root-cause').value      = '';
-  document.getElementById('feedback-notes').value           = '';
-  document.getElementById('feedback-msg').style.display     = 'none';
+  document.getElementById('feedback-root-cause').value       = '';
+  document.getElementById('feedback-notes').value            = '';
+  document.getElementById('feedback-msg').style.display      = 'none';
 
   const saveBtn = document.getElementById('feedback-save-btn');
-  saveBtn.disabled      = false;
-  saveBtn.textContent   = 'Save Feedback';
-  saveBtn.style.opacity = '1';
+  saveBtn.disabled         = false;
+  saveBtn.textContent      = 'Save Feedback';
+  saveBtn.style.opacity    = '1';
   saveBtn.style.background = 'linear-gradient(135deg,#38bdf8,#0284c7)';
 
-  // Reset correct/incorrect button states
   document.getElementById('btn-correct').style.opacity   = '1';
   document.getElementById('btn-correct').style.border    = '2px solid transparent';
   document.getElementById('btn-incorrect').style.opacity = '1';
@@ -752,23 +824,14 @@ async function openFeedback(i) {
 
   currentFeedbackData = { jobid: r.id, aiDiagnosis: r.diagnostic || r.issue || '', correct: undefined };
 
-  // Show confidence bar if available
   const confWrap = document.getElementById('feedback-confidence-bar-wrap');
-  // FIXED: Convert confidence properly
   let conf = r.ai_confidence;
   if (conf !== null && conf !== undefined && conf !== '') {
     conf = convertConfidenceToPercentage(conf);
     conf = Math.round(conf);
-    
-    const color = conf >= 80 ? '#22c55e' 
-                : conf >= 60 ? '#f59e0b' 
-                : conf >= 40 ? '#f97316' 
-                : '#ef4444';
-    const label = conf >= 80 ? 'High confidence' 
-                : conf >= 60 ? 'Good confidence' 
-                : conf >= 50 ? 'Moderate confidence' 
-                : 'Low confidence';
-    
+    const color = conf >= 80 ? '#22c55e' : conf >= 60 ? '#f59e0b' : conf >= 40 ? '#f97316' : '#ef4444';
+    const label = conf >= 80 ? 'High confidence' : conf >= 60 ? 'Good confidence' : conf >= 50 ? 'Moderate confidence' : 'Low confidence';
+
     document.getElementById('feedback-confidence-bar').style.background = color;
     document.getElementById('feedback-confidence-bar').style.width = conf + '%';
     document.getElementById('feedback-confidence-text').textContent = conf + '%';
@@ -779,10 +842,8 @@ async function openFeedback(i) {
     confWrap.style.display = 'none';
   }
 
-  // Load parts checklist from inventory
   loadFeedbackPartsChecklist(r.diagnostic || '');
 
-  // Check if feedback already exists for this job
   try {
     const csrfToken = getCsrf();
     const res  = await fetch(REPAIRS_CONFIG.checkFeedbackUrl, {
@@ -794,11 +855,10 @@ async function openFeedback(i) {
     if (data.exists) {
       document.getElementById('feedback-already-submitted').style.display = 'block';
     }
-  } catch (e) { /* non-critical — don't block modal open */ }
+  } catch (e) {}
 
   openModal('feedbackModal');
 }
-
 
 async function loadFeedbackPartsChecklist(diagnosis) {
   const container = document.getElementById('feedback-parts-checklist');
@@ -880,7 +940,6 @@ async function saveFeedback() {
     return;
   }
 
-  // Collect checked parts
   const checkedParts = [...document.querySelectorAll('input[name="feedback-part"]:checked')]
     .map(cb => cb.value).join(', ');
 
@@ -930,24 +989,28 @@ async function saveFeedback() {
 
 function showFeedbackMsg(text, type) {
   const el = document.getElementById('feedback-msg');
-  el.textContent          = text;
-  el.style.display        = 'block';
-  el.style.background     = type === 'success' ? '#f0fdf4' : '#fef2f2';
-  el.style.color          = type === 'success' ? '#166534'  : '#991b1b';
-  el.style.borderLeft     = type === 'success' ? '4px solid #22c55e' : '4px solid #ef4444';
+  el.textContent      = text;
+  el.style.display    = 'block';
+  el.style.background = type === 'success' ? '#f0fdf4' : '#fef2f2';
+  el.style.color      = type === 'success' ? '#166534' : '#991b1b';
+  el.style.borderLeft = type === 'success' ? '4px solid #22c55e' : '4px solid #ef4444';
 }
 
-/* ── Parts Selection Modal ───────────────────────────────────────────────── */
+/* ── Parts & Services Selection Modal ────────────────────────────────────── */
 
-let pendingStatusChange = null; // holds { idx, newStatus } while parts modal is open
+let pendingStatusChange    = null;
+let activePartsModalTab    = 'parts'; // 'parts' | 'services'
 
-// Hook into the status dropdown in edit modal
 document.addEventListener('DOMContentLoaded', () => {
   const statusDropdown = document.getElementById('edit-status');
   if (statusDropdown) {
-    statusDropdown.addEventListener('change', function () {
+    statusDropdown.addEventListener('change', async function () {
+      const idx       = parseInt(document.getElementById('edit-idx').value);
+      const diagnosis = document.getElementById('edit-ai-diagnosis').value.trim();
+
+      await loadEditSuggestedServices(diagnosis, this.value);
+
       if (this.value === 'In Progress') {
-        const idx = parseInt(document.getElementById('edit-idx').value);
         pendingStatusChange = { idx, newStatus: 'In Progress' };
         openPartsModal(idx);
       }
@@ -956,8 +1019,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function cancelPartsModal() {
-  // If the parts modal was opened because the user switched status to "In Progress",
-  // revert the dropdown back to "Pending" since they cancelled.
   const statusDropdown = document.getElementById('edit-status');
   if (statusDropdown && statusDropdown.value === 'In Progress') {
     statusDropdown.value = 'Pending';
@@ -966,31 +1027,64 @@ function cancelPartsModal() {
   closeModal('partsModal');
 }
 
+/* Switch tabs in the parts modal */
+function switchPartsModalTab(tab) {
+  activePartsModalTab = tab;
+  const partsTab    = document.getElementById('pm-tab-parts');
+  const servicesTab = document.getElementById('pm-tab-services');
+  const partsPane   = document.getElementById('pm-pane-parts');
+  const servicesPane = document.getElementById('pm-pane-services');
+
+  const activeStyle   = 'padding:8px 18px; border-radius:6px; font-weight:700; font-size:13px; cursor:pointer; border:none; background:linear-gradient(135deg,#38bdf8,#0284c7); color:white;';
+  const inactiveStyle = 'padding:8px 18px; border-radius:6px; font-weight:600; font-size:13px; cursor:pointer; border:1px solid #e2e8f0; background:white; color:#64748b;';
+
+  if (tab === 'parts') {
+    partsTab.style.cssText    = activeStyle;
+    servicesTab.style.cssText = inactiveStyle;
+    partsPane.style.display   = 'block';
+    servicesPane.style.display = 'none';
+  } else {
+    servicesTab.style.cssText  = activeStyle;
+    partsTab.style.cssText     = inactiveStyle;
+    servicesPane.style.display = 'block';
+    partsPane.style.display    = 'none';
+  }
+}
+
 async function openPartsModal(idx) {
   const repair    = repairs[idx];
   const deviceId  = repair.device_id;
-  const diagnosis = repair.diagnostic || '';
+  const diagnosis = document.getElementById('edit-ai-diagnosis')?.value?.trim() || repair.diagnostic || '';
 
-  document.getElementById('parts-modal-device-id').value          = deviceId;
-  document.getElementById('parts-modal-diagnosis').textContent     = diagnosis || 'No AI diagnosis on record';
-  document.getElementById('parts-modal-loading').style.display     = 'block';
-  document.getElementById('parts-modal-list').style.display        = 'none';
-  document.getElementById('parts-modal-empty').style.display       = 'none';
-  document.getElementById('return-parts-section').style.display    = 'none';
+  document.getElementById('parts-modal-device-id').value       = deviceId;
+  document.getElementById('parts-modal-diagnosis').textContent = diagnosis || 'No AI diagnosis on record';
+
+  // Reset tabs
+  document.getElementById('pm-pane-parts').style.display    = 'block';
+  document.getElementById('pm-pane-services').style.display = 'none';
+  switchPartsModalTab('parts');
+
+  // Reset parts pane
+  document.getElementById('parts-modal-loading').style.display   = 'block';
+  document.getElementById('parts-modal-list').style.display      = 'none';
+  document.getElementById('parts-modal-empty').style.display     = 'none';
+  document.getElementById('return-parts-section').style.display  = 'none';
+
+  // Reset services pane
+  document.getElementById('services-modal-loading').style.display = 'block';
+  document.getElementById('services-modal-list').style.display    = 'none';
+  document.getElementById('services-modal-empty').style.display   = 'none';
 
   openModal('partsModal');
 
   const csrfToken = getCsrf();
 
-  // ── Fetch parts by diagnosis label ──────────────────────────────────────
+  /* ── Load Parts ── */
   let availableParts = [];
   if (diagnosis) {
-    // Split combined diagnosis (e.g., "Battery Issue + Touch Controller Issue") into individual diagnoses
-    const diagnoses = diagnosis.split('+').map(d => d.trim()).filter(Boolean);
-    
-    // Fetch parts for each individual diagnosis and combine
+    const diagnoses   = diagnosis.split('+').map(d => d.trim()).filter(Boolean);
     const allPartsMap = new Map();
-    
+
     for (const individualDiagnosis of diagnoses) {
       try {
         const res  = await fetch(REPAIRS_CONFIG.partsGetByDiagUrl, {
@@ -999,16 +1093,13 @@ async function openPartsModal(idx) {
           body   : JSON.stringify({ diagnosis: individualDiagnosis }),
         });
         const data = await res.json();
-        
+
         if (data.parts && data.parts.length > 0) {
           for (const part of data.parts) {
-            // Use part ID as key to avoid duplicates
             if (!allPartsMap.has(part.id)) {
               allPartsMap.set(part.id, part);
             } else {
-              // If already exists, add to stock quantity
-              const existing = allPartsMap.get(part.id);
-              existing.stock_quantity += part.stock_quantity;
+              allPartsMap.get(part.id).stock_quantity += part.stock_quantity;
             }
           }
         }
@@ -1016,12 +1107,10 @@ async function openPartsModal(idx) {
         console.error('Failed to fetch parts for diagnosis:', individualDiagnosis, e);
       }
     }
-    
     availableParts = Array.from(allPartsMap.values());
   }
 
   document.getElementById('parts-modal-loading').style.display = 'none';
-
   if (availableParts.length === 0) {
     document.getElementById('parts-modal-empty').style.display = 'block';
   } else {
@@ -1029,7 +1118,7 @@ async function openPartsModal(idx) {
     document.getElementById('parts-modal-list').style.display = 'block';
   }
 
-  // ── Check already-deducted parts (return section) ───────────────────────
+  /* ── Load Return Section ── */
   try {
     const usedRes  = await fetch(REPAIRS_CONFIG.partsGetUsedUrl, {
       method : 'POST',
@@ -1040,7 +1129,63 @@ async function openPartsModal(idx) {
     if (usedData.used_parts && usedData.used_parts.length > 0) {
       renderReturnSection(usedData.used_parts);
     }
-  } catch (e) { /* silent */ }
+  } catch (e) {}
+
+  /* ── Load Services ── */
+  await loadServicesForModal(diagnosis, csrfToken, deviceId);
+}
+
+async function loadServicesForModal(diagnosis, csrfToken, deviceId) {
+  document.getElementById('services-modal-loading').style.display = 'block';
+  document.getElementById('services-modal-list').style.display    = 'none';
+  document.getElementById('services-modal-empty').style.display   = 'none';
+
+  let availableServices = [];
+
+  if (diagnosis) {
+    const diagnoses   = diagnosis.split('+').map(d => d.trim()).filter(Boolean);
+    const allServices = new Set();
+
+    for (const diag of diagnoses) {
+      try {
+        const res  = await fetch(REPAIRS_CONFIG.servicesGetByDiagUrl, {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+          body   : JSON.stringify({ diagnosis: diag }),
+        });
+        const data = await res.json();
+        if (data.success && Array.isArray(data.services)) {
+          data.services.forEach(s => allServices.add(s));
+        }
+      } catch (e) {
+        console.error('Failed to fetch services for diagnosis:', diag, e);
+      }
+    }
+    availableServices = [...allServices];
+  }
+
+  document.getElementById('services-modal-loading').style.display = 'none';
+
+  if (availableServices.length === 0) {
+    document.getElementById('services-modal-empty').style.display = 'block';
+  } else {
+    renderServicesList(availableServices);
+    document.getElementById('services-modal-list').style.display = 'block';
+  }
+}
+
+function renderServicesList(services) {
+  const list = document.getElementById('services-modal-list');
+  list.innerHTML = services.map(s => `
+    <div style="display:flex; align-items:center; gap:12px; padding:12px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; background:#fff;">
+      <input type="checkbox"
+        id="service-check-${s.replace(/\s+/g, '-')}"
+        data-service-name="${s}"
+        style="width:16px; height:16px; cursor:pointer; accent-color:#8b5cf6;">
+      <div style="flex:1;">
+        <p style="margin:0; font-size:14px; font-weight:600; color:#1e293b;">💻 ${s}</p>
+      </div>
+    </div>`).join('');
 }
 
 function renderPartsList(parts) {
@@ -1096,85 +1241,177 @@ function renderReturnSection(usedParts) {
   section.style.display = 'block';
 }
 
+/* ── Post-Return Status Modal ────────────────────────────────────────────── */
+
+function showReturnStatusModal(deviceId, onChoice) {
+  let overlay = document.getElementById('returnStatusModal');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'returnStatusModal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:32px 28px;max-width:380px;width:90%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.2);">
+        <div style="width:60px;height:60px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;">↩️</div>
+        <h3 style="font-size:17px;font-weight:700;color:#1e293b;margin:0 0 8px;">Parts Returned to Stock</h3>
+        <p style="font-size:13px;color:#64748b;margin:0 0 24px;line-height:1.6;">Parts have been returned successfully. What should happen to this repair job's status?</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button id="rsmBtnComplete" style="padding:12px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:8px;color:white;font-weight:700;font-size:14px;cursor:pointer;">
+            ✅ Mark as Completed
+          </button>
+          <button id="rsmBtnKeep" style="padding:12px;background:white;border:2px solid #e2e8f0;border-radius:8px;color:#64748b;font-weight:600;font-size:14px;cursor:pointer;">
+            🔧 Keep as In Progress
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+
+  overlay.style.display = 'flex';
+
+  document.getElementById('rsmBtnComplete').onclick = () => {
+    overlay.style.display = 'none';
+    onChoice('completed');
+  };
+  document.getElementById('rsmBtnKeep').onclick = () => {
+    overlay.style.display = 'none';
+    onChoice('in progress');
+  };
+}
+
+/* ── Confirm Parts & Services Selection ──────────────────────────────────── */
+
 async function confirmPartsSelection() {
   const deviceId  = document.getElementById('parts-modal-device-id').value;
   const csrfToken = getCsrf();
   const btn       = document.getElementById('parts-confirm-btn');
 
-  // Gather selected parts
+  /* Collect selected parts */
   const checkedParts = [];
   document.querySelectorAll('#parts-modal-list input[type="checkbox"]:checked').forEach(cb => {
-    const partId  = cb.dataset.partId;
-    const qty     = parseInt(document.getElementById(`part-qty-${partId}`).value || 1);
+    const partId = cb.dataset.partId;
+    const qty    = parseInt(document.getElementById(`part-qty-${partId}`).value || 1);
     checkedParts.push({ part_id: partId, quantity: qty });
   });
 
-  // Gather parts to return
+  /* Collect parts to return — FIX: use usage_id correctly */
   const returnIds = [];
   document.querySelectorAll('#return-parts-list input[type="checkbox"]:checked').forEach(cb => {
     returnIds.push(cb.dataset.usageId);
   });
 
-  btn.disabled = true;
+  /* Collect selected services */
+  const checkedServices = [];
+  document.querySelectorAll('#services-modal-list input[type="checkbox"]:checked').forEach(cb => {
+    checkedServices.push(cb.dataset.serviceName);
+  });
+
+  btn.disabled    = true;
   btn.textContent = 'Processing...';
 
   try {
-    // Deduct selected parts
+    /* ── Deduct selected parts ── */
     if (checkedParts.length > 0) {
       const deductRes  = await fetch(REPAIRS_CONFIG.partsDeductUrl, {
-        method: 'POST',
+        method : 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-        body: JSON.stringify({ device_id: deviceId, parts_used: checkedParts }),
+        body   : JSON.stringify({ device_id: deviceId, parts_used: checkedParts }),
       });
       const deductData = await deductRes.json();
       if (!deductData.success) {
-        showModal('error', deductData.error);
-        btn.disabled = false;
-        btn.textContent = '✓ Confirm & Deduct Stock';
+        showModal('error', deductData.error || 'Failed to deduct parts.');
+        btn.disabled    = false;
+        btn.textContent = '✓ Confirm & Save';
         return;
       }
     }
 
-    // Return unchecked parts
-    if (returnIds.length > 0) {
-      await fetch(REPAIRS_CONFIG.partsReturnUrl, {
-        method: 'POST',
+    /* ── Return selected parts to stock ── */
+    const hasReturns = returnIds.length > 0;
+    if (hasReturns) {
+      const returnRes = await fetch(REPAIRS_CONFIG.partsReturnUrl, {
+        method : 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-        body: JSON.stringify({ device_id: deviceId, part_ids: returnIds }),
+        body   : JSON.stringify({ device_id: deviceId, part_ids: returnIds }),
       });
+      const returnData = await returnRes.json();
+      if (!returnData.success) {
+        showModal('error', returnData.error || 'Failed to return parts to stock.');
+        btn.disabled    = false;
+        btn.textContent = '✓ Confirm & Save';
+        return;
+      }
     }
 
-    // If there's a pending status change to "In Progress", update the repair
-    if (pendingStatusChange && pendingStatusChange.newStatus === 'In Progress') {
-      const idx = pendingStatusChange.idx;
-      const repair = repairs[idx];
-      
-      // Update the status via API (send as lowercase "in progress")
-      const updateRes = await fetch(REPAIRS_CONFIG.updateUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-        body: JSON.stringify({
-          id: repair.device_id,
-          status: 'in progress',
-        }),
+    /* ── Log selected services ── */
+    for (const serviceName of checkedServices) {
+      try {
+        await fetch(REPAIRS_CONFIG.servicesAddUrl, {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+          body   : JSON.stringify({ device_id: deviceId, service_name: serviceName }),
+        });
+      } catch (e) {
+        console.error('Failed to log service:', serviceName, e);
+      }
+    }
+
+    /* ── Handle status changes ── */
+    if (hasReturns && !pendingStatusChange) {
+      /* Returning parts without a new In Progress trigger → ask about status */
+      closeModal('partsModal');
+      showReturnStatusModal(deviceId, async (chosenStatus) => {
+        await updateRepairStatus(deviceId, chosenStatus, csrfToken);
+        showModal('success', `Parts returned and job marked as ${chosenStatus === 'completed' ? 'Completed' : 'In Progress'}!`);
+        setTimeout(() => location.reload(), 900);
       });
-      
+      return;
+    }
+
+    if (pendingStatusChange && pendingStatusChange.newStatus === 'In Progress') {
+      const idx    = pendingStatusChange.idx;
+      const repair = repairs[idx];
+
+      const updateRes  = await fetch(REPAIRS_CONFIG.updateUrl, {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+        body   : JSON.stringify({ id: repair.device_id, status: 'in progress' }),
+      });
       const updateData = await updateRes.json();
       if (!updateData.success) {
-        console.warn('Status updated but failed to sync:', updateData.error);
+        console.warn('Status update failed:', updateData.error);
       }
     }
 
     closeModal('partsModal');
-    showModal('success', 'Parts updated and status changed to In Progress!');
+    const summaryParts    = checkedParts.length;
+    const summaryReturns  = returnIds.length;
+    const summaryServices = checkedServices.length;
+    const parts = [
+      summaryParts    > 0 ? `${summaryParts} part(s) deducted`    : '',
+      summaryReturns  > 0 ? `${summaryReturns} part(s) returned`  : '',
+      summaryServices > 0 ? `${summaryServices} service(s) logged` : '',
+    ].filter(Boolean).join(', ');
+    showModal('success', parts ? `Done! ${parts}.` : 'No changes made.');
     setTimeout(() => location.reload(), 900);
 
   } catch (e) {
     showModal('error', e.message);
-    btn.disabled = false;
-    btn.textContent = '✓ Confirm & Deduct Stock';
+    btn.disabled    = false;
+    btn.textContent = '✓ Confirm & Save';
   } finally {
     pendingStatusChange = null;
+  }
+}
+
+async function updateRepairStatus(deviceId, status, csrfToken) {
+  try {
+    await fetch(REPAIRS_CONFIG.updateUrl, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      body   : JSON.stringify({ id: deviceId, status }),
+    });
+  } catch (e) {
+    console.error('Failed to update repair status:', e);
   }
 }
 
