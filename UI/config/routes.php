@@ -25,7 +25,9 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/dashboard/repairs',        ['controller' => 'Dashboard', 'action' => 'repairs']);
         $builder->connect('/dashboard/stocks',         ['controller' => 'Dashboard', 'action' => 'stocks']);
         $builder->connect('/dashboard/profile',        ['controller' => 'Dashboard', 'action' => 'profile']);
-
+        $builder->get('/dashboard/getIncomeDay',   ['controller' => 'Dashboard', 'action' => 'getIncomeDay']);
+        $builder->get('/dashboard/getIncomeWeek',  ['controller' => 'Dashboard', 'action' => 'getIncomeWeek']);
+        $builder->get('/dashboard/getIncomeMonth', ['controller' => 'Dashboard', 'action' => 'getIncomeMonth']);
         // POST-only — save profile edits from the Edit modal
         $builder->connect('/dashboard/update-profile', ['controller' => 'Dashboard', 'action' => 'updateProfile'],
             ['_method' => 'POST']

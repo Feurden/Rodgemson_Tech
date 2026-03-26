@@ -8,93 +8,383 @@ Ini Path:
 -------------------------------------------------------------------------------
 php server is running at http://localhost:8765/
 You can exit with `CTRL-C`
-[Tue Mar 24 22:20:23 2026] PHP 8.2.12 Development Server (http://localhost:8765) started
-[Tue Mar 24 22:20:25 2026] [::1]:62217 Accepted
-[Tue Mar 24 22:20:25 2026] [::1]:53830 Accepted
-[Tue Mar 24 22:20:25 2026] [::1]:62217 Closing
-[Tue Mar 24 22:20:26 2026] [::1]:53830 Closing
-[Tue Mar 24 22:20:26 2026] [::1]:49241 Accepted
-[Tue Mar 24 22:20:26 2026] [::1]:49241 [200]: GET /css/dashboard.css
-[Tue Mar 24 22:20:26 2026] [::1]:49241 Closing
-[Tue Mar 24 22:20:26 2026] [::1]:59380 Accepted
-[Tue Mar 24 22:20:26 2026] [::1]:59380 Closing
-[Tue Mar 24 22:20:30 2026] [::1]:62822 Accepted
-[Tue Mar 24 22:20:30 2026] [::1]:62822 Closing
-[Tue Mar 24 22:20:30 2026] [::1]:63542 Accepted
-[Tue Mar 24 22:20:31 2026] [::1]:63542 Closing
-[Tue Mar 24 22:20:31 2026] [::1]:60645 Accepted
-[Tue Mar 24 22:20:31 2026] [::1]:60645 [200]: GET /css/dashboard.css
-[Tue Mar 24 22:20:31 2026] [::1]:60645 Closing
-[Tue Mar 24 22:20:31 2026] [::1]:54559 Accepted
-[Tue Mar 24 22:20:31 2026] [::1]:54559 Closing
-[Tue Mar 24 22:21:02 2026] [::1]:52777 Accepted
-[Tue Mar 24 22:21:02 2026] [::1]:52777 Closing
-[Tue Mar 24 22:21:02 2026] [::1]:64502 Accepted
-[Tue Mar 24 22:21:02 2026] [::1]:64502 [200]: GET /css/dashboard.css
-[Tue Mar 24 22:21:02 2026] [::1]:61675 Accepted
-[Tue Mar 24 22:21:02 2026] [::1]:62147 Accepted
-[Tue Mar 24 22:21:02 2026] [::1]:61675 [200]: GET /css/repairs.css
-[Tue Mar 24 22:21:02 2026] [::1]:62147 [200]: GET /js/repairs.js
-[Tue Mar 24 22:21:02 2026] [::1]:64502 Closing
-[Tue Mar 24 22:21:02 2026] [::1]:61675 Closing
-[Tue Mar 24 22:21:02 2026] [::1]:62147 Closing
-[Tue Mar 24 22:21:03 2026] [::1]:55815 Accepted
-[Tue Mar 24 22:21:03 2026] [::1]:55815 Closing
-[Tue Mar 24 22:21:03 2026] [::1]:52834 Accepted
-[Tue Mar 24 22:21:04 2026] [::1]:55152 Accepted
-[Tue Mar 24 22:21:04 2026] [::1]:52834 Closing
-[Tue Mar 24 22:21:04 2026] [::1]:55152 [200]: GET /css/dashboard.css
-[Tue Mar 24 22:21:04 2026] [::1]:55152 Closing
-[Tue Mar 24 22:21:04 2026] [::1]:52052 Accepted
-[Tue Mar 24 22:21:04 2026] [::1]:52052 Closing
-[Tue Mar 24 22:21:04 2026] [::1]:49670 Accepted
-[Tue Mar 24 22:21:04 2026] [::1]:61664 Accepted
-[Tue Mar 24 22:21:05 2026] [::1]:49670 Closing
-[Tue Mar 24 22:21:05 2026] [::1]:61664 [200]: GET /css/dashboard.css
-[Tue Mar 24 22:21:05 2026] [::1]:58978 Accepted
-[Tue Mar 24 22:21:05 2026] [::1]:53821 Accepted
-[Tue Mar 24 22:21:05 2026] [::1]:58978 [200]: GET /css/repairs.css
-[Tue Mar 24 22:21:05 2026] [::1]:53821 [200]: GET /js/repairs.js
-[Tue Mar 24 22:21:05 2026] [::1]:61664 Closing
-[Tue Mar 24 22:21:05 2026] [::1]:58978 Closing
-[Tue Mar 24 22:21:05 2026] [::1]:53821 Closing
-[Tue Mar 24 22:21:05 2026] [::1]:57211 Accepted
-[Tue Mar 24 22:21:05 2026] [::1]:57211 Closing
-[Tue Mar 24 22:21:15 2026] [::1]:54725 Accepted
-[Tue Mar 24 22:21:18 2026] [::1]:54725 Closing
-[Tue Mar 24 22:21:19 2026] [::1]:61752 Accepted
-[Tue Mar 24 22:21:21 2026] [::1]:61752 Closing
-[Tue Mar 24 22:22:07 2026] [::1]:60671 Accepted
-[Tue Mar 24 22:22:07 2026] [::1]:60671 Closing
-[Tue Mar 24 22:22:15 2026] [::1]:58740 Accepted
-[Tue Mar 24 22:22:16 2026] [::1]:58740 Closing
-[Tue Mar 24 22:22:22 2026] [::1]:60724 Accepted
-[Tue Mar 24 22:22:22 2026] [::1]:60724 Closing
-[Tue Mar 24 22:23:23 2026] [::1]:61208 Accepted
-[Tue Mar 24 22:23:23 2026] [::1]:61208 Closing
-[Tue Mar 24 22:23:37 2026] [::1]:59175 Accepted
-[Tue Mar 24 22:23:38 2026] [::1]:59175 Closing
-[Tue Mar 24 22:27:23 2026] [::1]:52684 Accepted
-[Tue Mar 24 22:27:23 2026] [::1]:52684 Closing
-[Tue Mar 24 22:27:29 2026] [::1]:60172 Accepted
-[Tue Mar 24 22:27:30 2026] [::1]:60172 Closing
-[Tue Mar 24 22:27:39 2026] [::1]:62491 Accepted
-[Tue Mar 24 22:27:39 2026] [::1]:62491 Closing
-[Tue Mar 24 22:27:51 2026] [::1]:64065 Accepted
-[Tue Mar 24 22:27:51 2026] [::1]:64065 Closing
-[Tue Mar 24 22:28:20 2026] [::1]:50399 Accepted
-[Tue Mar 24 22:28:20 2026] [::1]:50399 Closing
-[Tue Mar 24 22:28:33 2026] [::1]:60704 Accepted
-[Tue Mar 24 22:28:34 2026] [::1]:60704 Closing
-[Tue Mar 24 22:28:52 2026] [::1]:54741 Accepted
-[Tue Mar 24 22:28:52 2026] [::1]:54741 Closing
-[Tue Mar 24 22:28:55 2026] [::1]:53034 Accepted
-[Tue Mar 24 22:28:55 2026] [::1]:53034 Closing
-[Tue Mar 24 22:29:15 2026] [::1]:49401 Accepted
-[Tue Mar 24 22:29:15 2026] [::1]:49401 Closing
-[Tue Mar 24 22:31:24 2026] [::1]:59920 Accepted
-[Tue Mar 24 22:32:02 2026] [::1]:58114 Accepted
-[Tue Mar 24 22:32:02 2026] [::1]:58114 Closing
-[Tue Mar 24 22:32:25 2026] [::1]:59920 Closed without sending a request; it was probably just an unused speculative preconnection
-[Tue Mar 24 22:32:25 2026] [::1]:59920 Closing
-^C^C
+[Thu Mar 26 14:38:54 2026] PHP 8.2.12 Development Server (http://localhost:8765) started
+[Thu Mar 26 14:38:59 2026] [::1]:63021 Accepted
+[Thu Mar 26 14:38:59 2026] [::1]:63021 Closing
+[Thu Mar 26 14:38:59 2026] [::1]:60435 Accepted
+[Thu Mar 26 14:38:59 2026] [::1]:60435 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:38:59 2026] [::1]:59925 Accepted
+[Thu Mar 26 14:38:59 2026] [::1]:64129 Accepted
+[Thu Mar 26 14:38:59 2026] [::1]:59925 [200]: GET /css/repairs.css
+[Thu Mar 26 14:38:59 2026] [::1]:60435 Closing
+[Thu Mar 26 14:38:59 2026] [::1]:64129 [200]: GET /js/repairs.js
+[Thu Mar 26 14:38:59 2026] [::1]:59925 Closing
+[Thu Mar 26 14:38:59 2026] [::1]:64129 Closing
+[Thu Mar 26 14:38:59 2026] [::1]:62467 Accepted
+[Thu Mar 26 14:39:00 2026] [::1]:62467 Closing
+[Thu Mar 26 14:39:02 2026] [::1]:55170 Accepted
+[Thu Mar 26 14:39:02 2026] [::1]:55170 Closing
+[Thu Mar 26 14:39:02 2026] [::1]:56681 Accepted
+[Thu Mar 26 14:39:02 2026] [::1]:56681 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:39:02 2026] [::1]:56681 Closing
+[Thu Mar 26 14:39:02 2026] [::1]:59420 Accepted
+[Thu Mar 26 14:39:02 2026] [::1]:59420 Closing
+[Thu Mar 26 14:39:02 2026] [::1]:49891 Accepted
+[Thu Mar 26 14:39:03 2026] [::1]:49891 Closing
+[Thu Mar 26 14:39:05 2026] [::1]:54837 Accepted
+[Thu Mar 26 14:39:06 2026] [::1]:54837 Closing
+[Thu Mar 26 14:39:06 2026] [::1]:54049 Accepted
+[Thu Mar 26 14:39:06 2026] [::1]:54049 Closing
+[Thu Mar 26 14:39:06 2026] [::1]:51240 Accepted
+[Thu Mar 26 14:39:07 2026] [::1]:51240 Closing
+[Thu Mar 26 14:39:18 2026] [::1]:58902 Accepted
+[Thu Mar 26 14:39:18 2026] [::1]:58902 Closing
+[Thu Mar 26 14:39:18 2026] [::1]:51067 Accepted
+[Thu Mar 26 14:39:18 2026] [::1]:51067 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:39:18 2026] [::1]:56892 Accepted
+[Thu Mar 26 14:39:18 2026] [::1]:56892 Closing
+[Thu Mar 26 14:39:18 2026] [::1]:51067 Closing
+[Thu Mar 26 14:39:18 2026] [::1]:55446 Accepted
+[Thu Mar 26 14:39:19 2026] [::1]:55446 Closing
+[Thu Mar 26 14:39:19 2026] [::1]:54226 Accepted
+[Thu Mar 26 14:39:19 2026] [::1]:54226 Closing
+[Thu Mar 26 14:39:19 2026] [::1]:50299 Accepted
+[Thu Mar 26 14:39:19 2026] [::1]:59624 Accepted
+[Thu Mar 26 14:39:19 2026] [::1]:62659 Accepted
+[Thu Mar 26 14:39:19 2026] [::1]:64442 Accepted
+[Thu Mar 26 14:39:19 2026] [::1]:64172 Accepted
+[Thu Mar 26 14:39:19 2026] [::1]:50299 Closing
+[Thu Mar 26 14:39:19 2026] [::1]:59624 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:62659 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:64442 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:64172 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:50586 Accepted
+[Thu Mar 26 14:39:20 2026] [::1]:59111 Accepted
+[Thu Mar 26 14:39:20 2026] [::1]:50586 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:56513 Accepted
+[Thu Mar 26 14:39:20 2026] [::1]:59111 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:62993 Accepted
+[Thu Mar 26 14:39:20 2026] [::1]:56513 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:65222 Accepted
+[Thu Mar 26 14:39:20 2026] [::1]:62993 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:56668 Accepted
+[Thu Mar 26 14:39:20 2026] [::1]:65222 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:53782 Accepted
+[Thu Mar 26 14:39:20 2026] [::1]:56668 Closing
+[Thu Mar 26 14:39:20 2026] [::1]:63730 Accepted
+[Thu Mar 26 14:39:21 2026] [::1]:53782 Closing
+[Thu Mar 26 14:39:21 2026] [::1]:61496 Accepted
+[Thu Mar 26 14:39:21 2026] [::1]:63730 Closing
+[Thu Mar 26 14:39:21 2026] [::1]:64317 Accepted
+[Thu Mar 26 14:39:21 2026] [::1]:61496 Closing
+[Thu Mar 26 14:39:21 2026] [::1]:52455 Accepted
+[Thu Mar 26 14:39:21 2026] [::1]:64317 Closing
+[Thu Mar 26 14:39:21 2026] [::1]:52455 Closing
+[Thu Mar 26 14:39:21 2026] [::1]:60127 Accepted
+[Thu Mar 26 14:39:21 2026] [::1]:62452 Accepted
+[Thu Mar 26 14:39:21 2026] [::1]:60127 [200]: GET /favicon.ico
+[Thu Mar 26 14:39:22 2026] [::1]:62452 Closing
+[Thu Mar 26 14:39:22 2026] [::1]:60127 Closing
+[Thu Mar 26 14:39:24 2026] [::1]:60031 Accepted
+[Thu Mar 26 14:39:24 2026] [::1]:60031 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:39:24 2026] [::1]:60031 Closing
+[Thu Mar 26 14:39:24 2026] [::1]:57166 Accepted
+[Thu Mar 26 14:39:25 2026] [::1]:57166 Closing
+[Thu Mar 26 14:39:27 2026] [::1]:58823 Accepted
+[Thu Mar 26 14:39:27 2026] [::1]:58823 Closing
+[Thu Mar 26 14:39:38 2026] [::1]:55723 Accepted
+[Thu Mar 26 14:39:38 2026] [::1]:55723 Closing
+[Thu Mar 26 14:39:38 2026] [::1]:62063 Accepted
+[Thu Mar 26 14:39:38 2026] [::1]:62063 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:39:38 2026] [::1]:55012 Accepted
+[Thu Mar 26 14:39:38 2026] [::1]:56656 Accepted
+[Thu Mar 26 14:39:38 2026] [::1]:55012 [200]: GET /css/repairs.css
+[Thu Mar 26 14:39:38 2026] [::1]:56656 [200]: GET /js/repairs.js
+[Thu Mar 26 14:39:38 2026] [::1]:62063 Closing
+[Thu Mar 26 14:39:38 2026] [::1]:55012 Closing
+[Thu Mar 26 14:39:38 2026] [::1]:56656 Closing
+[Thu Mar 26 14:39:38 2026] [::1]:62153 Accepted
+[Thu Mar 26 14:39:39 2026] [::1]:62153 Closing
+[Thu Mar 26 14:39:39 2026] [::1]:53981 Accepted
+[Thu Mar 26 14:39:39 2026] [::1]:53981 Closing
+[Thu Mar 26 14:39:53 2026] [::1]:49419 Accepted
+[Thu Mar 26 14:39:54 2026] [::1]:49419 Closing
+[Thu Mar 26 14:39:55 2026] [::1]:59608 Accepted
+[Thu Mar 26 14:39:55 2026] Device add data: {"customer_name":"Test 2","contact_no":"2","brand":"Test","model":"2","issue_description":"not charging","technician":"Rodel Baclig","diagnostic":"Charging Port Issue","suggested_part_replacement":"Charging Port, USB Connector, Charging Flex Cable, Charging IC, Power IC","status":"Pending","priority_level":"Medium"}
+[Thu Mar 26 14:39:56 2026] Device entity: {"customer_id":2,"brand":"Test","model":"2","issue_description":"not charging","technician":"Rodel Baclig","status":"Pending","priority_level":"Medium"}
+[Thu Mar 26 14:39:56 2026] [::1]:59608 Closing
+[Thu Mar 26 14:39:57 2026] [::1]:62849 Accepted
+[Thu Mar 26 14:39:57 2026] [::1]:62849 Closing
+[Thu Mar 26 14:39:57 2026] [::1]:55475 Accepted
+[Thu Mar 26 14:39:57 2026] [::1]:55475 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:39:57 2026] [::1]:61727 Accepted
+[Thu Mar 26 14:39:57 2026] [::1]:62409 Accepted
+[Thu Mar 26 14:39:57 2026] [::1]:61727 [200]: GET /css/repairs.css
+[Thu Mar 26 14:39:57 2026] [::1]:62409 [200]: GET /js/repairs.js
+[Thu Mar 26 14:39:57 2026] [::1]:55475 Closing
+[Thu Mar 26 14:39:57 2026] [::1]:61727 Closing
+[Thu Mar 26 14:39:57 2026] [::1]:62409 Closing
+[Thu Mar 26 14:39:57 2026] [::1]:49209 Accepted
+[Thu Mar 26 14:39:57 2026] [::1]:49209 Closing
+[Thu Mar 26 14:39:57 2026] [::1]:65037 Accepted
+[Thu Mar 26 14:39:58 2026] [::1]:65037 Closing
+[Thu Mar 26 14:39:58 2026] [::1]:53469 Accepted
+[Thu Mar 26 14:39:58 2026] [::1]:53469 [200]: GET /favicon.ico
+[Thu Mar 26 14:39:58 2026] [::1]:53469 Closing
+[Thu Mar 26 14:39:59 2026] [::1]:64276 Accepted
+[Thu Mar 26 14:39:59 2026] [::1]:64276 Closing
+[Thu Mar 26 14:39:59 2026] [::1]:53756 Accepted
+[Thu Mar 26 14:40:00 2026] [::1]:53756 Closing
+[Thu Mar 26 14:40:00 2026] [::1]:64553 Accepted
+[Thu Mar 26 14:40:00 2026] [::1]:64553 Closing
+[Thu Mar 26 14:40:00 2026] [::1]:58758 Accepted
+[Thu Mar 26 14:40:00 2026] [::1]:58758 Closing
+[Thu Mar 26 14:40:08 2026] [::1]:65525 Accepted
+[Thu Mar 26 14:40:08 2026] [::1]:65525 Closing
+[Thu Mar 26 14:40:08 2026] [::1]:53719 Accepted
+[Thu Mar 26 14:40:09 2026] [::1]:53719 Closing
+[Thu Mar 26 14:40:09 2026] [::1]:60509 Accepted
+[Thu Mar 26 14:40:09 2026] [::1]:60509 Closing
+[Thu Mar 26 14:40:09 2026] [::1]:60480 Accepted
+[Thu Mar 26 14:40:09 2026] [::1]:60480 Closing
+[Thu Mar 26 14:40:10 2026] [::1]:61595 Accepted
+[Thu Mar 26 14:40:10 2026] [::1]:61595 Closing
+[Thu Mar 26 14:40:10 2026] [::1]:65245 Accepted
+[Thu Mar 26 14:40:10 2026] [::1]:65245 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:40:10 2026] [::1]:53166 Accepted
+[Thu Mar 26 14:40:10 2026] [::1]:50045 Accepted
+[Thu Mar 26 14:40:10 2026] [::1]:53166 [200]: GET /css/repairs.css
+[Thu Mar 26 14:40:10 2026] [::1]:50045 [200]: GET /js/repairs.js
+[Thu Mar 26 14:40:10 2026] [::1]:65245 Closing
+[Thu Mar 26 14:40:10 2026] [::1]:53166 Closing
+[Thu Mar 26 14:40:10 2026] [::1]:50045 Closing
+[Thu Mar 26 14:40:10 2026] [::1]:51519 Accepted
+[Thu Mar 26 14:40:11 2026] [::1]:51519 Closing
+[Thu Mar 26 14:40:11 2026] [::1]:51585 Accepted
+[Thu Mar 26 14:40:11 2026] [::1]:51585 Closing
+[Thu Mar 26 14:40:11 2026] [::1]:60889 Accepted
+[Thu Mar 26 14:40:11 2026] [::1]:60889 [200]: GET /favicon.ico
+[Thu Mar 26 14:40:11 2026] [::1]:60889 Closing
+[Thu Mar 26 14:40:12 2026] [::1]:55152 Accepted
+[Thu Mar 26 14:40:12 2026] [::1]:55152 Closing
+[Thu Mar 26 14:40:15 2026] [::1]:57161 Accepted
+[Thu Mar 26 14:40:16 2026] [::1]:57161 Closing
+[Thu Mar 26 14:40:17 2026] [::1]:52450 Accepted
+[Thu Mar 26 14:40:17 2026] [::1]:52450 Closing
+[Thu Mar 26 14:40:17 2026] [::1]:60999 Accepted
+[Thu Mar 26 14:40:17 2026] [::1]:60999 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:40:17 2026] [::1]:60440 Accepted
+[Thu Mar 26 14:40:17 2026] [::1]:50926 Accepted
+[Thu Mar 26 14:40:17 2026] [::1]:60440 [200]: GET /css/repairs.css
+[Thu Mar 26 14:40:17 2026] [::1]:50926 [200]: GET /js/repairs.js
+[Thu Mar 26 14:40:17 2026] [::1]:60999 Closing
+[Thu Mar 26 14:40:17 2026] [::1]:60440 Closing
+[Thu Mar 26 14:40:17 2026] [::1]:50926 Closing
+[Thu Mar 26 14:40:17 2026] [::1]:52533 Accepted
+[Thu Mar 26 14:40:17 2026] [::1]:52533 Closing
+[Thu Mar 26 14:40:17 2026] [::1]:60366 Accepted
+[Thu Mar 26 14:40:17 2026] [::1]:60366 Closing
+[Thu Mar 26 14:40:17 2026] [::1]:62817 Accepted
+[Thu Mar 26 14:40:17 2026] [::1]:62817 [200]: GET /favicon.ico
+[Thu Mar 26 14:40:17 2026] [::1]:62817 Closing
+[Thu Mar 26 14:40:18 2026] [::1]:64749 Accepted
+[Thu Mar 26 14:40:18 2026] [::1]:64749 Closing
+[Thu Mar 26 14:40:18 2026] [::1]:62336 Accepted
+[Thu Mar 26 14:40:19 2026] [::1]:62336 Closing
+[Thu Mar 26 14:40:19 2026] [::1]:58089 Accepted
+[Thu Mar 26 14:40:19 2026] [::1]:58089 Closing
+[Thu Mar 26 14:40:25 2026] [::1]:50309 Accepted
+[Thu Mar 26 14:40:26 2026] [::1]:50309 Closing
+[Thu Mar 26 14:40:26 2026] [::1]:55362 Accepted
+[Thu Mar 26 14:40:26 2026] [::1]:55362 Closing
+[Thu Mar 26 14:40:26 2026] [::1]:63091 Accepted
+[Thu Mar 26 14:40:26 2026] [::1]:63091 Closing
+[Thu Mar 26 14:40:33 2026] [::1]:60890 Accepted
+[Thu Mar 26 14:40:34 2026] [::1]:60890 Closing
+[Thu Mar 26 14:40:34 2026] [::1]:63034 Accepted
+[Thu Mar 26 14:40:35 2026] [::1]:63034 Closing
+[Thu Mar 26 14:40:35 2026] [::1]:54360 Accepted
+[Thu Mar 26 14:40:35 2026] [::1]:54360 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:40:35 2026] [::1]:64190 Accepted
+[Thu Mar 26 14:40:35 2026] [::1]:54160 Accepted
+[Thu Mar 26 14:40:35 2026] [::1]:64190 [200]: GET /css/repairs.css
+[Thu Mar 26 14:40:35 2026] [::1]:54160 [200]: GET /js/repairs.js
+[Thu Mar 26 14:40:35 2026] [::1]:54360 Closing
+[Thu Mar 26 14:40:35 2026] [::1]:64190 Closing
+[Thu Mar 26 14:40:35 2026] [::1]:54160 Closing
+[Thu Mar 26 14:40:35 2026] [::1]:59658 Accepted
+[Thu Mar 26 14:40:35 2026] [::1]:59658 Closing
+[Thu Mar 26 14:40:35 2026] [::1]:62309 Accepted
+[Thu Mar 26 14:40:35 2026] [::1]:62309 Closing
+[Thu Mar 26 14:40:35 2026] [::1]:50089 Accepted
+[Thu Mar 26 14:40:35 2026] [::1]:50089 [200]: GET /favicon.ico
+[Thu Mar 26 14:40:35 2026] [::1]:50089 Closing
+[Thu Mar 26 14:40:36 2026] [::1]:59765 Accepted
+[Thu Mar 26 14:40:37 2026] [::1]:59765 Closing
+[Thu Mar 26 14:40:37 2026] [::1]:62469 Accepted
+[Thu Mar 26 14:40:37 2026] [::1]:62469 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:40:37 2026] [::1]:62469 Closing
+[Thu Mar 26 14:40:37 2026] [::1]:50813 Accepted
+[Thu Mar 26 14:40:37 2026] [::1]:50813 Closing
+[Thu Mar 26 14:40:37 2026] [::1]:58893 Accepted
+[Thu Mar 26 14:40:37 2026] [::1]:60283 Accepted
+[Thu Mar 26 14:40:37 2026] [::1]:58893 Closing
+[Thu Mar 26 14:40:38 2026] [::1]:60283 Closing
+[Thu Mar 26 14:40:39 2026] [::1]:60293 Accepted
+[Thu Mar 26 14:40:39 2026] [::1]:60293 Closing
+[Thu Mar 26 14:40:40 2026] [::1]:59690 Accepted
+[Thu Mar 26 14:40:40 2026] [::1]:59690 Closing
+[Thu Mar 26 14:40:41 2026] [::1]:53701 Accepted
+[Thu Mar 26 14:40:42 2026] [::1]:53701 Closing
+[Thu Mar 26 14:40:42 2026] [::1]:59126 Accepted
+[Thu Mar 26 14:40:42 2026] [::1]:59126 Closing
+[Thu Mar 26 14:43:52 2026] [::1]:60322 Accepted
+[Thu Mar 26 14:43:53 2026] [::1]:60322 Closing
+[Thu Mar 26 14:43:53 2026] [::1]:49723 Accepted
+[Thu Mar 26 14:43:53 2026] [::1]:49723 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:43:53 2026] [::1]:64206 Accepted
+[Thu Mar 26 14:43:53 2026] [::1]:64206 Closing
+[Thu Mar 26 14:43:53 2026] [::1]:62046 Accepted
+[Thu Mar 26 14:43:53 2026] [::1]:49723 Closing
+[Thu Mar 26 14:43:54 2026] [::1]:62046 Closing
+[Thu Mar 26 14:43:54 2026] [::1]:63839 Accepted
+[Thu Mar 26 14:43:54 2026] [::1]:57129 Accepted
+[Thu Mar 26 14:43:54 2026] [::1]:63839 Closing
+[Thu Mar 26 14:43:54 2026] [::1]:57129 Closing
+[Thu Mar 26 14:43:54 2026] [::1]:65089 Accepted
+[Thu Mar 26 14:43:54 2026] [::1]:52749 Accepted
+[Thu Mar 26 14:43:54 2026] [::1]:52109 Accepted
+[Thu Mar 26 14:43:54 2026] [::1]:65089 Closing
+[Thu Mar 26 14:43:54 2026] [::1]:59626 Accepted
+[Thu Mar 26 14:43:54 2026] [::1]:52749 Closing
+[Thu Mar 26 14:43:54 2026] [::1]:52109 Closing
+[Thu Mar 26 14:43:54 2026] [::1]:55334 Accepted
+[Thu Mar 26 14:43:54 2026] [::1]:59626 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:55334 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:60369 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:52331 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:52362 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:55954 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:61148 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:60369 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:54723 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:52331 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:52362 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:55954 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:61148 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:63869 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:54723 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:52078 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:63869 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:49573 Accepted
+[Thu Mar 26 14:43:55 2026] [::1]:52078 Closing
+[Thu Mar 26 14:43:55 2026] [::1]:62708 Accepted
+[Thu Mar 26 14:43:56 2026] [::1]:49573 Closing
+[Thu Mar 26 14:43:56 2026] [::1]:62708 Closing
+[Thu Mar 26 14:43:56 2026] [::1]:62631 Accepted
+[Thu Mar 26 14:43:56 2026] [::1]:62631 [200]: GET /favicon.ico
+[Thu Mar 26 14:43:56 2026] [::1]:62631 Closing
+[Thu Mar 26 14:43:56 2026] [::1]:64538 Accepted
+[Thu Mar 26 14:43:56 2026] [::1]:64538 Closing
+[Thu Mar 26 14:43:57 2026] [::1]:61332 Accepted
+[Thu Mar 26 14:43:57 2026] [::1]:61332 Closing
+[Thu Mar 26 14:44:17 2026] [::1]:55464 Accepted
+[Thu Mar 26 14:44:17 2026] [::1]:55464 Closing
+[Thu Mar 26 14:44:17 2026] [::1]:61747 Accepted
+[Thu Mar 26 14:44:17 2026] [::1]:61747 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:44:17 2026] [::1]:59967 Accepted
+[Thu Mar 26 14:44:17 2026] [::1]:60143 Accepted
+[Thu Mar 26 14:44:17 2026] [::1]:59967 [200]: GET /css/repairs.css
+[Thu Mar 26 14:44:17 2026] [::1]:60143 [200]: GET /js/repairs.js
+[Thu Mar 26 14:44:17 2026] [::1]:61747 Closing
+[Thu Mar 26 14:44:17 2026] [::1]:59967 Closing
+[Thu Mar 26 14:44:17 2026] [::1]:60143 Closing
+[Thu Mar 26 14:44:17 2026] [::1]:53923 Accepted
+[Thu Mar 26 14:44:17 2026] [::1]:53923 Closing
+[Thu Mar 26 14:44:18 2026] [::1]:57946 Accepted
+[Thu Mar 26 14:44:18 2026] [::1]:57946 Closing
+[Thu Mar 26 14:44:18 2026] [::1]:49750 Accepted
+[Thu Mar 26 14:44:18 2026] [::1]:49750 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:44:18 2026] [::1]:49750 Closing
+[Thu Mar 26 14:44:19 2026] [::1]:64146 Accepted
+[Thu Mar 26 14:44:19 2026] [::1]:64146 Closing
+[Thu Mar 26 14:46:34 2026] [::1]:63095 Accepted
+[Thu Mar 26 14:46:35 2026] [::1]:63095 Closing
+[Thu Mar 26 14:46:35 2026] [::1]:55996 Accepted
+[Thu Mar 26 14:46:35 2026] [::1]:55996 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:46:35 2026] [::1]:53951 Accepted
+[Thu Mar 26 14:46:35 2026] [::1]:58790 Accepted
+[Thu Mar 26 14:46:35 2026] [::1]:53951 [200]: GET /css/repairs.css
+[Thu Mar 26 14:46:35 2026] [::1]:58790 [200]: GET /js/repairs.js
+[Thu Mar 26 14:46:35 2026] [::1]:55996 Closing
+[Thu Mar 26 14:46:35 2026] [::1]:53951 Closing
+[Thu Mar 26 14:46:35 2026] [::1]:58790 Closing
+[Thu Mar 26 14:46:35 2026] [::1]:53122 Accepted
+[Thu Mar 26 14:46:35 2026] [::1]:53122 Closing
+[Thu Mar 26 14:46:36 2026] [::1]:62578 Accepted
+[Thu Mar 26 14:46:36 2026] [::1]:62578 Closing
+[Thu Mar 26 14:46:36 2026] [::1]:61639 Accepted
+[Thu Mar 26 14:46:36 2026] [::1]:61639 Closing
+[Thu Mar 26 14:46:36 2026] [::1]:63906 Accepted
+[Thu Mar 26 14:46:37 2026] [::1]:63906 Closing
+[Thu Mar 26 14:46:41 2026] [::1]:61841 Accepted
+[Thu Mar 26 14:46:41 2026] [::1]:61841 Closing
+[Thu Mar 26 14:46:41 2026] [::1]:62498 Accepted
+[Thu Mar 26 14:46:41 2026] [::1]:62498 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:46:41 2026] [::1]:62498 Closing
+[Thu Mar 26 14:46:41 2026] [::1]:53170 Accepted
+[Thu Mar 26 14:46:42 2026] [::1]:53170 Closing
+[Thu Mar 26 14:47:45 2026] [::1]:50931 Accepted
+[Thu Mar 26 14:47:45 2026] [::1]:50931 Closing
+[Thu Mar 26 14:47:45 2026] [::1]:51098 Accepted
+[Thu Mar 26 14:47:45 2026] [::1]:51098 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:47:45 2026] [::1]:51485 Accepted
+[Thu Mar 26 14:47:45 2026] [::1]:61226 Accepted
+[Thu Mar 26 14:47:45 2026] [::1]:51485 [200]: GET /css/repairs.css
+[Thu Mar 26 14:47:45 2026] [::1]:61226 [200]: GET /js/repairs.js
+[Thu Mar 26 14:47:45 2026] [::1]:51098 Closing
+[Thu Mar 26 14:47:45 2026] [::1]:51485 Closing
+[Thu Mar 26 14:47:45 2026] [::1]:61226 Closing
+[Thu Mar 26 14:47:45 2026] [::1]:63801 Accepted
+[Thu Mar 26 14:47:45 2026] [::1]:63801 Closing
+[Thu Mar 26 14:47:46 2026] [::1]:63490 Accepted
+[Thu Mar 26 14:47:47 2026] [::1]:63490 Closing
+[Thu Mar 26 14:47:47 2026] [::1]:65311 Accepted
+[Thu Mar 26 14:47:47 2026] [::1]:65311 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:47:47 2026] [::1]:65311 Closing
+[Thu Mar 26 14:47:47 2026] [::1]:65322 Accepted
+[Thu Mar 26 14:47:47 2026] [::1]:65322 Closing
+[Thu Mar 26 14:48:18 2026] [::1]:50384 Accepted
+[Thu Mar 26 14:48:19 2026] [::1]:50384 Closing
+[Thu Mar 26 14:48:19 2026] [::1]:59813 Accepted
+[Thu Mar 26 14:48:19 2026] [::1]:59813 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:48:19 2026] [::1]:59813 Closing
+[Thu Mar 26 14:48:19 2026] [::1]:56048 Accepted
+[Thu Mar 26 14:48:19 2026] [::1]:56048 Closing
+[Thu Mar 26 14:48:19 2026] [::1]:61581 Accepted
+[Thu Mar 26 14:48:19 2026] [::1]:61581 Closing
+[Thu Mar 26 14:48:33 2026] [::1]:60127 Accepted
+[Thu Mar 26 14:48:34 2026] [::1]:60127 Closing
+[Thu Mar 26 14:48:34 2026] [::1]:54431 Accepted
+[Thu Mar 26 14:48:34 2026] [::1]:54431 [200]: GET /css/dashboard.css
+[Thu Mar 26 14:48:34 2026] [::1]:62762 Accepted
+[Thu Mar 26 14:48:34 2026] [::1]:57317 Accepted
+[Thu Mar 26 14:48:34 2026] [::1]:62762 [200]: GET /css/repairs.css
+[Thu Mar 26 14:48:34 2026] [::1]:57317 [200]: GET /js/repairs.js
+[Thu Mar 26 14:48:34 2026] [::1]:54431 Closing
+[Thu Mar 26 14:48:34 2026] [::1]:62762 Closing
+[Thu Mar 26 14:48:34 2026] [::1]:57317 Closing
+[Thu Mar 26 14:48:34 2026] [::1]:62573 Accepted
+[Thu Mar 26 14:48:34 2026] [::1]:62573 Closing
+[Thu Mar 26 14:48:36 2026] [::1]:64470 Accepted
+[Thu Mar 26 14:48:37 2026] [::1]:64470 Closing
+[Thu Mar 26 14:48:37 2026] [::1]:54705 Accepted
+[Thu Mar 26 14:48:37 2026] [::1]:54705 Closing
+[Thu Mar 26 14:48:37 2026] [::1]:54421 Accepted
+[Thu Mar 26 14:48:37 2026] [::1]:54421 Closing
+[Thu Mar 26 14:48:37 2026] [::1]:53980 Accepted
+[Thu Mar 26 14:48:38 2026] [::1]:53980 Closing
+[Thu Mar 26 14:48:38 2026] [::1]:57972 Accepted
+[Thu Mar 26 14:48:38 2026] [::1]:57972 Closing
+[Thu Mar 26 14:48:38 2026] [::1]:57183 Accepted
+[Thu Mar 26 14:48:38 2026] [::1]:57183 Closing

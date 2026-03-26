@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Http\Response;
+use Cake\Datasource\ConnectionManager;
 
 class DashboardController extends AppController
 {
@@ -148,13 +149,13 @@ class DashboardController extends AppController
             $pending    = $devicesTable->find()->where(['status' => 'Pending',     'DATE(date_received) >=' => $weekStart->format('Y-m-d'), 'DATE(date_received) <=' => $weekEnd->format('Y-m-d')])->count();
 
             $monthlyData[] = [
-                'week'       => $weekLabel,
-                'start'      => $weekStart->format('Y-m-d'),
-                'end'        => $weekEnd->format('Y-m-d'),
-                'count'      => $completed + $inProgress + $pending,
-                'completed'  => $completed,
-                'in_progress'=> $inProgress,
-                'pending'    => $pending,
+                'week'        => $weekLabel,
+                'start'       => $weekStart->format('Y-m-d'),
+                'end'         => $weekEnd->format('Y-m-d'),
+                'count'       => $completed + $inProgress + $pending,
+                'completed'   => $completed,
+                'in_progress' => $inProgress,
+                'pending'     => $pending,
             ];
         }
 
@@ -183,7 +184,6 @@ class DashboardController extends AppController
 
     /**
      * AJAX: daily breakdown for a specific month + year (Weekly tab)
-     * GET /dashboard/getWeeklyByMonth?month=3&year=2026
      */
     public function getWeeklyByMonth(): Response
     {
@@ -222,7 +222,6 @@ class DashboardController extends AppController
 
     /**
      * AJAX: week-by-week breakdown with status colors for a specific month + year (Monthly tab)
-     * GET /dashboard/getMonthlyByYear?month=3&year=2026
      */
     public function getMonthlyByYear(): Response
     {
@@ -320,7 +319,6 @@ class DashboardController extends AppController
             ];
         }
 
-        // Load all technician names from Users table for the dropdown
         $usersTable     = $this->fetchTable('Users');
         $techUsers      = $usersTable->find()
             ->where(['id !=' => $user['id']])
@@ -462,5 +460,211 @@ class DashboardController extends AppController
     {
         $this->getRequest()->getSession()->destroy();
         return $this->redirect(['action' => 'login']);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Income AJAX endpoints
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function getIncomeDay(): Response
+    {
+        $user = $this->getRequest()->getSession()->read('Auth.User');
+        if (empty($user)) {
+            return $this->response->withType('application/json')->withStatus(401)
+                ->withStringBody(json_encode(['success' => false, 'error' => 'Unauthenticated']));
+        }
+
+        $today = date('Y-m-d');
+        $conn  = ConnectionManager::get('default');
+
+        $partsRows = $conn->execute("
+            SELECT HOUR(d.date_received) AS hr,
+                   COALESCE(SUM(p.unit_price * rpu.quantity), 0) AS amount
+            FROM devices d
+            JOIN repair_parts_usage rpu ON rpu.device_id = d.id AND rpu.returned = 0
+            JOIN parts p ON p.id = rpu.part_id
+            WHERE DATE(d.date_received) = :today
+            GROUP BY HOUR(d.date_received)
+            ORDER BY hr
+        ", ['today' => $today])->fetchAll('assoc');
+
+        $servicesRows = $conn->execute("
+            SELECT HOUR(d.date_received) AS hr,
+                   COALESCE(SUM(s.price), 0) AS amount
+            FROM devices d
+            JOIN repair_services_usage rsu ON rsu.device_id = d.id
+            JOIN services s ON s.id = rsu.service_id
+            WHERE DATE(d.date_received) = :today
+            GROUP BY HOUR(d.date_received)
+            ORDER BY hr
+        ", ['today' => $today])->fetchAll('assoc');
+
+        $partsMap    = array_column($partsRows,    'amount', 'hr');
+        $servicesMap = array_column($servicesRows, 'amount', 'hr');
+
+        $bars          = [];
+        $totalParts    = 0;
+        $totalServices = 0;
+
+        for ($h = 0; $h <= 23; $h++) {
+            $p = (float)($partsMap[$h]    ?? 0);
+            $s = (float)($servicesMap[$h] ?? 0);
+            $totalParts    += $p;
+            $totalServices += $s;
+            $bars[] = [
+                'label'    => ($h % 3 === 0) ? $this->_formatHour($h) : '',
+                'parts'    => $p,
+                'services' => $s,
+                'total'    => $p + $s,
+            ];
+        }
+
+        return $this->response->withType('application/json')->withStringBody(json_encode([
+            'success'        => true,
+            'period'         => 'Today, ' . date('M d, Y'),
+            'total'          => number_format($totalParts + $totalServices, 2),
+            'parts_total'    => number_format($totalParts, 2),
+            'services_total' => number_format($totalServices, 2),
+            'bars'           => $bars,
+            'chart_label'    => 'Hourly Breakdown',
+        ]));
+    }
+
+    public function getIncomeWeek(): Response
+    {
+        $user = $this->getRequest()->getSession()->read('Auth.User');
+        if (empty($user)) {
+            return $this->response->withType('application/json')->withStatus(401)
+                ->withStringBody(json_encode(['success' => false, 'error' => 'Unauthenticated']));
+        }
+
+        $conn     = ConnectionManager::get('default');
+        $dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        $bars          = [];
+        $totalParts    = 0;
+        $totalServices = 0;
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date    = (new \DateTime("-{$i} days"))->format('Y-m-d');
+            $dayName = $dayNames[(int)(new \DateTime($date))->format('w')];
+
+            $p = (float)$conn->execute("
+                SELECT COALESCE(SUM(p.unit_price * rpu.quantity), 0)
+                FROM devices d
+                JOIN repair_parts_usage rpu ON rpu.device_id = d.id AND rpu.returned = 0
+                JOIN parts p ON p.id = rpu.part_id
+                WHERE DATE(d.date_received) = :date
+            ", ['date' => $date])->fetchColumn(0);
+
+            $s = (float)$conn->execute("
+                SELECT COALESCE(SUM(s.price), 0)
+                FROM devices d
+                JOIN repair_services_usage rsu ON rsu.device_id = d.id
+                JOIN services s ON s.id = rsu.service_id
+                WHERE DATE(d.date_received) = :date
+            ", ['date' => $date])->fetchColumn(0);
+
+            $totalParts    += $p;
+            $totalServices += $s;
+
+            $bars[] = [
+                'label'    => $dayName,
+                'parts'    => $p,
+                'services' => $s,
+                'total'    => $p + $s,
+            ];
+        }
+
+        $weekStart = (new \DateTime('-6 days'))->format('M d');
+        $weekEnd   = (new \DateTime())->format('M d, Y');
+
+        return $this->response->withType('application/json')->withStringBody(json_encode([
+            'success'        => true,
+            'period'         => "Week: {$weekStart} – {$weekEnd}",
+            'total'          => number_format($totalParts + $totalServices, 2),
+            'parts_total'    => number_format($totalParts, 2),
+            'services_total' => number_format($totalServices, 2),
+            'bars'           => $bars,
+            'chart_label'    => 'Daily Breakdown',
+        ]));
+    }
+
+    public function getIncomeMonth(): Response
+    {
+        $user = $this->getRequest()->getSession()->read('Auth.User');
+        if (empty($user)) {
+            return $this->response->withType('application/json')->withStatus(401)
+                ->withStringBody(json_encode(['success' => false, 'error' => 'Unauthenticated']));
+        }
+
+        $month       = (int)($this->request->getQuery('month') ?? date('n'));
+        $year        = (int)($this->request->getQuery('year')  ?? date('Y'));
+        $daysInMonth = (int)(new \DateTime("{$year}-{$month}-01"))->format('t');
+        $conn        = ConnectionManager::get('default');
+
+        $bars          = [];
+        $totalParts    = 0;
+        $totalServices = 0;
+        $weekNum       = 1;
+        $day           = 1;
+
+        while ($day <= $daysInMonth) {
+            $wStart = sprintf('%04d-%02d-%02d', $year, $month, $day);
+            $wEnd   = sprintf('%04d-%02d-%02d', $year, $month, min($day + 6, $daysInMonth));
+
+            $p = (float)$conn->execute("
+                SELECT COALESCE(SUM(p.unit_price * rpu.quantity), 0)
+                FROM devices d
+                JOIN repair_parts_usage rpu ON rpu.device_id = d.id AND rpu.returned = 0
+                JOIN parts p ON p.id = rpu.part_id
+                WHERE DATE(d.date_received) BETWEEN :wstart AND :wend
+            ", ['wstart' => $wStart, 'wend' => $wEnd])->fetchColumn(0);
+
+            $s = (float)$conn->execute("
+                SELECT COALESCE(SUM(s.price), 0)
+                FROM devices d
+                JOIN repair_services_usage rsu ON rsu.device_id = d.id
+                JOIN services s ON s.id = rsu.service_id
+                WHERE DATE(d.date_received) BETWEEN :wstart AND :wend
+            ", ['wstart' => $wStart, 'wend' => $wEnd])->fetchColumn(0);
+
+            $totalParts    += $p;
+            $totalServices += $s;
+
+            $bars[] = [
+                'label'    => 'Wk ' . $weekNum,
+                'parts'    => $p,
+                'services' => $s,
+                'total'    => $p + $s,
+            ];
+
+            $weekNum++;
+            $day += 7;
+        }
+
+        $monthNames = [1=>'January',2=>'February',3=>'March',4=>'April',
+                       5=>'May',6=>'June',7=>'July',8=>'August',
+                       9=>'September',10=>'October',11=>'November',12=>'December'];
+
+        return $this->response->withType('application/json')->withStringBody(json_encode([
+            'success'        => true,
+            'period'         => $monthNames[$month] . ' ' . $year,
+            'total'          => number_format($totalParts + $totalServices, 2),
+            'parts_total'    => number_format($totalParts, 2),
+            'services_total' => number_format($totalServices, 2),
+            'bars'           => $bars,
+            'chart_label'    => 'Weekly Breakdown',
+        ]));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Private helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private function _formatHour(int $h): string
+    {
+        if ($h === 0)  return '12am';
+        if ($h === 12) return '12pm';
+        return $h < 12 ? "{$h}am" : ($h - 12) . 'pm';
     }
 }

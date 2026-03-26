@@ -1,10 +1,10 @@
-INFO:     Started server process [5244]
+INFO:     Started server process [10744]
 INFO:     Waiting for application startup.
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
 [*] Loading ML model...
 [OK] ML model loaded
 [*] Loading NLP model (first time takes 30-60 seconds)...
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|##########| 103/103 [00:00<00:00, 7344.54it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|##########| 103/103 [00:00<00:00, 7910.01it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
 Key                     | Status     |  | 
 ------------------------+------------+--+-
@@ -17,25 +17,4 @@ INFO:     Uvicorn running on http://127.0.0.1:5000 (Press CTRL+C to quit)
 [OK] NLP model loaded
 [*] Pre-computing symptom embeddings...
 [OK] 16 symptom embeddings cached
-INFO:     127.0.0.1:60672 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58741 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60725 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52685 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60173 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62492 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:64066 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50400 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60705 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54742 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53035 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49402 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52613 - "GET /docs HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52613 - "GET /openapi.json HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58791 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58115 - "POST /diagnose HTTP/1.1" 200 OK
-forrtl: error (200): program aborting due to window-CLOSE event
-Image              PC                Routine            Line        Source             
-KERNELBASE.dll     00007FFF2F8C9DED  Unknown               Unknown  Unknown
-KERNEL32.DLL       00007FFF322CE8D7  Unknown               Unknown  Unknown
-ntdll.dll          00007FFF32E2C48C  Unknown               Unknown  Unknown
-^C
+INFO:     127.0.0.1:63255 - "POST /diagnose HTTP/1.1" 200 OK

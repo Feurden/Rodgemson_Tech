@@ -7,7 +7,7 @@
         <!-- Grid Layout -->
         <div class="analytics-grid">
 
-            <!-- DIV 1: Repair Status Breakdown (left tall panel) -->
+            <!-- DIV 1: Repair Status Breakdown -->
             <div class="analytics-panel div1">
                 <h3 class="panel-title">🔧 Repair Status</h3>
                 <p class="panel-sub">All time overview</p>
@@ -24,27 +24,22 @@
                         $progDash   = $total > 0 ? round(($inProgress / $total) * $circumference) : 0;
                         $pendDash   = $circumference - $compDash - $progDash;
 
-                        // stroke-dashoffset positions each segment after the previous
                         $compOffset = 0;
                         $progOffset = -$compDash;
                         $pendOffset = -($compDash + $progDash);
                     ?>
                     <svg viewBox="0 0 120 120" width="160" height="160">
-                        <!-- Track -->
                         <circle cx="60" cy="60" r="40" fill="none" stroke="#e2e8f0" stroke-width="18"/>
-                        <!-- Completed: green -->
                         <circle cx="60" cy="60" r="40" fill="none" stroke="#16a34a" stroke-width="18"
                             stroke-dasharray="<?= $compDash ?> <?= $circumference ?>"
                             stroke-dashoffset="<?= $compOffset ?>"
                             stroke-linecap="round"
                             transform="rotate(-90 60 60)"/>
-                        <!-- In Progress: yellow -->
                         <circle cx="60" cy="60" r="40" fill="none" stroke="#f59e0b" stroke-width="18"
                             stroke-dasharray="<?= $progDash ?> <?= $circumference ?>"
                             stroke-dashoffset="<?= $progOffset ?>"
                             stroke-linecap="round"
                             transform="rotate(-90 60 60)"/>
-                        <!-- Pending: red -->
                         <circle cx="60" cy="60" r="40" fill="none" stroke="#ef4444" stroke-width="18"
                             stroke-dasharray="<?= $pendDash ?> <?= $circumference ?>"
                             stroke-dashoffset="<?= $pendOffset ?>"
@@ -86,13 +81,12 @@
                 </div>
             </div>
 
-            <!-- DIV 2: Weekly & Monthly Reports (middle tall panel) -->
+            <!-- DIV 2: Weekly & Monthly Reports -->
             <div class="analytics-panel div2">
                 <h3 class="panel-title">📅 Repair Reports</h3>
 
-                <!-- Month + Year picker -->
                 <div style="display:flex; gap:6px; margin-bottom:10px;">
-                    <select id="report-month" class="specific-select" style="flex:2;" onchange="loadReport()">
+                    <select id="report-month" class="specific-select" style="flex:2;" onchange="loadReport(); loadIncome();">
                         <?php
                             $monthNames = [1=>'January',2=>'February',3=>'March',4=>'April',
                                           5=>'May',6=>'June',7=>'July',8=>'August',
@@ -104,7 +98,7 @@
                         <option value="<?= $num ?>" <?= $num === $curMonth ? 'selected' : '' ?>><?= $name ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <select id="report-year" class="specific-select" style="flex:1;" onchange="loadReport()">
+                    <select id="report-year" class="specific-select" style="flex:1;" onchange="loadReport(); loadIncome();">
                         <?php for ($y = $curYear; $y >= $curYear - 4; $y--): ?>
                         <option value="<?= $y ?>" <?= $y === $curYear ? 'selected' : '' ?>><?= $y ?></option>
                         <?php endfor; ?>
@@ -157,7 +151,6 @@
                 <div id="monthly" class="report-content" style="display:none;">
                     <p class="panel-sub" id="monthly-sub" style="margin-bottom:8px;">This month's repair activity</p>
 
-                    <!-- Color legend -->
                     <div style="display:flex; gap:12px; margin-bottom:10px; flex-wrap:wrap;">
                         <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:#475569;">
                             <span style="width:10px;height:10px;border-radius:2px;background:#16a34a;display:inline-block;"></span> Completed
@@ -175,15 +168,13 @@
                             $weeks   = $monthlyData ?? [];
                             $mmax    = max(array_map(fn($w) => $w['count'], $weeks) ?: [1]);
                             foreach ($weeks as $wk):
-                                $totalH     = $mmax > 0 ? round(($wk['count']       / $mmax) * 100) : 0;
-                                $compH      = $mmax > 0 ? round(($wk['completed']   / $mmax) * 100) : 0;
-                                $progH      = $mmax > 0 ? round(($wk['in_progress'] / $mmax) * 100) : 0;
-                                $pendH      = $mmax > 0 ? round(($wk['pending']     / $mmax) * 100) : 0;
+                                $compH = $mmax > 0 ? round(($wk['completed']   / $mmax) * 100) : 0;
+                                $progH = $mmax > 0 ? round(($wk['in_progress'] / $mmax) * 100) : 0;
+                                $pendH = $mmax > 0 ? round(($wk['pending']     / $mmax) * 100) : 0;
                         ?>
                         <div class="bar-col">
                             <span class="bar-val"><?= $wk['count'] ?></span>
                             <div class="bar-body">
-                                <!-- Stacked bar: pending (bottom) → in progress → completed (top) -->
                                 <div style="width:100%; height:100%; display:flex; flex-direction:column; justify-content:flex-end; gap:1px;">
                                     <?php if ($wk['completed'] > 0): ?>
                                     <div style="height:<?= $compH ?>%; background:#16a34a; border-radius:3px 3px 0 0; min-height:3px;"></div>
@@ -222,34 +213,81 @@
                 </div>
             </div>
 
-          <!-- DIV 4: Stock Levels -->
-        <div class="analytics-panel div4">
-            <h3 class="panel-title">📦 Stock Levels</h3>
-            <p class="panel-sub">Current inventory breakdown</p>
+            <!-- DIV 3: Income Overview (NEW) -->
+            <div class="analytics-panel div3">
+                <h3 class="panel-title">💰 Income</h3>
+                <p class="panel-sub">Revenue from parts &amp; services</p>
 
-            <div style="display:flex; flex-direction:column; gap:14px; flex:1; overflow-y:auto;">
+                <!-- Period tabs -->
+                <div class="report-tabs" style="margin-bottom:10px;">
+                    <button class="report-tab active" id="income-tab-day"   onclick="switchIncomeTab('day', this)">Today</button>
+                    <button class="report-tab"        id="income-tab-week"  onclick="switchIncomeTab('week', this)">Weekly</button>
+                    <button class="report-tab"        id="income-tab-month" onclick="switchIncomeTab('month', this)">Monthly</button>
+                </div>
 
-                <?php
-                    $stocks = $stockLevels ?? [];
+                <!-- Big total -->
+                <div style="text-align:center; padding:10px 0 8px;">
+                    <span style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;">Total Income</span>
+                    <div style="font-size:1.75rem; font-weight:800; color:#1e293b; margin-top:3px; line-height:1;">
+                        ₱<span id="income-total">—</span>
+                    </div>
+                    <span id="income-period-label" style="font-size:11px; color:#64748b; margin-top:3px; display:block;"></span>
+                </div>
 
-                    foreach ($stocks as $stock):
-                        $pct = round(($stock['current'] / $stock['total']) * 100);
-                        $warn = $pct <= 30 ? '#ef4444' : ($pct <= 60 ? '#f59e0b' : $stock['color']);
-                ?>
-                    <div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <span style="font-size:13px; font-weight:600; color:#1e293b;"><?= $stock['name'] ?></span>
-                            <span style="font-size:12px; color:#64748b;">
-                                <?= $stock['current'] ?> / <?= $stock['total'] ?>
-                                <strong style="color:<?= $warn ?>; margin-left:4px;"><?= $pct ?>%</strong>
+                <!-- Breakdown mini-cards -->
+                <div style="display:flex; gap:6px; margin-bottom:12px;">
+                    <div style="flex:1; background:#f0fdf4; border-radius:8px; padding:8px 10px; border-left:3px solid #16a34a;">
+                        <span style="font-size:9px; font-weight:700; color:#15803d; text-transform:uppercase; display:block; margin-bottom:3px;">Parts</span>
+                        <span style="font-size:13px; font-weight:700; color:#166534;">₱<span id="income-parts">—</span></span>
+                    </div>
+                    <div style="flex:1; background:#eef2ff; border-radius:8px; padding:8px 10px; border-left:3px solid #6366f1;">
+                        <span style="font-size:9px; font-weight:700; color:#4338ca; text-transform:uppercase; display:block; margin-bottom:3px;">Services</span>
+                        <span style="font-size:13px; font-weight:700; color:#3730a3;">₱<span id="income-services">—</span></span>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <span style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;" id="income-chart-label">Hourly Breakdown</span>
+                        <div style="display:flex; gap:8px;">
+                            <span style="display:flex; align-items:center; gap:3px; font-size:10px; color:#475569;">
+                                <span style="width:7px;height:7px;border-radius:2px;background:#16a34a;display:inline-block;"></span> Parts
+                            </span>
+                            <span style="display:flex; align-items:center; gap:3px; font-size:10px; color:#475569;">
+                                <span style="width:7px;height:7px;border-radius:2px;background:#6366f1;display:inline-block;"></span> Services
                             </span>
                         </div>
-                        <div class="bar-track">
-                            <div class="bar-fill" style="width:<?= $pct ?>%; background:<?= $warn ?>;"></div>
-                        </div>
                     </div>
-                    <?php endforeach; ?>
+                    <div class="bar-chart" id="income-chart" style="height:110px; align-items:flex-end; gap:2px;"></div>
+                </div>
+            </div>
 
+            <!-- DIV 4: Stock Levels -->
+            <div class="analytics-panel div4">
+                <h3 class="panel-title">📦 Stock Levels</h3>
+                <p class="panel-sub">Current inventory breakdown</p>
+
+                <div style="display:flex; flex-direction:column; gap:14px; flex:1; overflow-y:auto;">
+                    <?php
+                        $stocks = $stockLevels ?? [];
+                        foreach ($stocks as $stock):
+                            $pct = round(($stock['current'] / $stock['total']) * 100);
+                            $warn = $pct <= 30 ? '#ef4444' : ($pct <= 60 ? '#f59e0b' : $stock['color']);
+                    ?>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <span style="font-size:13px; font-weight:600; color:#1e293b;"><?= $stock['name'] ?></span>
+                                <span style="font-size:12px; color:#64748b;">
+                                    <?= $stock['current'] ?> / <?= $stock['total'] ?>
+                                    <strong style="color:<?= $warn ?>; margin-left:4px;"><?= $pct ?>%</strong>
+                                </span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:<?= $pct ?>%; background:<?= $warn ?>;"></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
@@ -257,7 +295,38 @@
     </div>
 </div>
 
+<style>
+/* ── Updated grid: 6 columns to fit the income panel ── */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(5, 90px);
+    gap: 16px;
+}
+
+.div1 { grid-column: span 2 / span 2; grid-column-start: 1; grid-row: span 5 / span 5; }
+.div2 { grid-column: span 2 / span 2; grid-column-start: 3; grid-row: span 5 / span 5; }
+.div3 { grid-column: span 1 / span 1; grid-column-start: 5; grid-row: span 5 / span 5; grid-row-start: 1; }
+.div4 { grid-column: span 1 / span 1; grid-column-start: 6; grid-row: span 5 / span 5; grid-row-start: 1; }
+
+/* Income stacked bar segments */
+.income-bar-stack {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 1px;
+}
+.income-seg-parts    { background: #16a34a; min-height: 2px; border-radius: 3px 3px 0 0; }
+.income-seg-services { background: #6366f1; min-height: 2px; border-radius: 0 0 3px 3px; }
+.income-seg-only     { border-radius: 3px !important; }
+</style>
+
 <script>
+/* ══════════════════════════════════════════════════
+   Existing report tab logic (unchanged)
+   ══════════════════════════════════════════════════ */
 const _MONTHS = ['','January','February','March','April','May','June',
                  'July','August','September','October','November','December'];
 
@@ -300,7 +369,6 @@ function loadReport() {
     }
 }
 
-/* Weekly: plain blue bars */
 function renderWeeklyChart(containerId, items) {
     const container = document.getElementById(containerId);
     if (!container || !items?.length) return;
@@ -315,21 +383,17 @@ function renderWeeklyChart(containerId, items) {
     }).join('');
 }
 
-/* Monthly: stacked bars — completed (green) / in progress (yellow) / pending (red) */
 function renderMonthlyChart(containerId, items) {
     const container = document.getElementById(containerId);
     if (!container || !items?.length) return;
     const max = Math.max(...items.map(i => i.count), 1);
-
     container.innerHTML = items.map(item => {
         const compH = Math.round((item.completed   / max) * 100);
         const progH = Math.round((item.in_progress / max) * 100);
         const pendH = Math.round((item.pending     / max) * 100);
-
         const compSeg = item.completed   > 0 ? `<div style="height:${compH}%;background:#16a34a;border-radius:3px 3px 0 0;min-height:3px;"></div>` : '';
         const progSeg = item.in_progress > 0 ? `<div style="height:${progH}%;background:#f59e0b;min-height:3px;"></div>` : '';
         const pendSeg = item.pending     > 0 ? `<div style="height:${pendH}%;background:#ef4444;border-radius:0 0 3px 3px;min-height:3px;"></div>` : '';
-
         return `<div class="bar-col">
             <span class="bar-val">${item.count}</span>
             <div class="bar-body">
@@ -341,4 +405,93 @@ function renderMonthlyChart(containerId, items) {
         </div>`;
     }).join('');
 }
+
+/* ══════════════════════════════════════════════════
+   Income Panel Logic (NEW)
+   ══════════════════════════════════════════════════ */
+let _incomeTab = 'day';
+
+window.switchIncomeTab = function (tab, btn) {
+    _incomeTab = tab;
+    document.querySelectorAll('#income-tab-day, #income-tab-week, #income-tab-month')
+        .forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadIncome();
+};
+
+window.loadIncome = function () {
+    const month = document.getElementById('report-month')?.value ?? new Date().getMonth() + 1;
+    const year  = document.getElementById('report-year')?.value  ?? new Date().getFullYear();
+
+    let url;
+    if (_incomeTab === 'day')        url = '/dashboard/getIncomeDay';
+    else if (_incomeTab === 'week')  url = '/dashboard/getIncomeWeek';
+    else                             url = `/dashboard/getIncomeMonth?month=${month}&year=${year}`;
+
+    // Show loading state
+    document.getElementById('income-total').textContent        = '…';
+    document.getElementById('income-parts').textContent        = '…';
+    document.getElementById('income-services').textContent     = '…';
+    document.getElementById('income-period-label').textContent = '';
+
+    fetch(url)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) { _incomeError(); return; }
+            document.getElementById('income-total').textContent        = data.total;
+            document.getElementById('income-parts').textContent        = data.parts_total;
+            document.getElementById('income-services').textContent     = data.services_total;
+            document.getElementById('income-period-label').textContent = data.period ?? '';
+            document.getElementById('income-chart-label').textContent  = data.chart_label ?? '';
+            _renderIncomeChart(data.bars ?? []);
+        })
+        .catch(_incomeError);
+};
+
+function _incomeError() {
+    document.getElementById('income-total').textContent        = '—';
+    document.getElementById('income-parts').textContent        = '—';
+    document.getElementById('income-services').textContent     = '—';
+    document.getElementById('income-period-label').textContent = 'Could not load';
+    document.getElementById('income-chart').innerHTML          = '';
+}
+
+function _renderIncomeChart(bars) {
+    const container = document.getElementById('income-chart');
+    if (!container) return;
+    const maxVal = Math.max(...bars.map(b => b.total), 1);
+
+    container.innerHTML = bars.map(bar => {
+        const partsH    = Math.round((bar.parts    / maxVal) * 100);
+        const servicesH = Math.round((bar.services / maxVal) * 100);
+        const hasP      = bar.parts > 0;
+        const hasS      = bar.services > 0;
+
+        // Value label: ₱1.2k or ₱500
+        const valLabel = bar.total >= 1000
+            ? '₱' + (bar.total / 1000).toFixed(1) + 'k'
+            : (bar.total > 0 ? '₱' + Math.round(bar.total) : '0');
+
+        let inner = '';
+        if (hasP && hasS) {
+            inner = `<div class="income-seg-parts"    style="height:${partsH}%;"></div>
+                     <div class="income-seg-services" style="height:${servicesH}%;"></div>`;
+        } else if (hasP) {
+            inner = `<div class="income-seg-parts income-seg-only" style="height:${partsH}%;"></div>`;
+        } else if (hasS) {
+            inner = `<div class="income-seg-services income-seg-only" style="height:${servicesH}%;"></div>`;
+        }
+
+        return `<div class="bar-col">
+            <span class="bar-val" style="font-size:9px;">${valLabel}</span>
+            <div class="bar-body">
+                <div class="income-bar-stack">${inner}</div>
+            </div>
+            <span class="bar-label" style="font-size:9px;">${bar.label ?? ''}</span>
+        </div>`;
+    }).join('');
+}
+
+// Load income on page ready
+document.addEventListener('DOMContentLoaded', () => loadIncome());
 </script>
