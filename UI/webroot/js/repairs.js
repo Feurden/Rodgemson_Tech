@@ -294,6 +294,7 @@ async function openView(i) {
     usedPartsHtml = '<span style="color:#94a3b8; font-size:13px;">Unable to load parts</span>';
   }
 
+  // FIXED: Properly fetch and display used services
   let usedServicesHtml = '<span style="color:#94a3b8; font-size:13px;">Loading services...</span>';
 
   try {
@@ -304,7 +305,7 @@ async function openView(i) {
     });
     const servicesData = await servicesRes.json();
 
-    if (servicesData.used_services && servicesData.used_services.length > 0) {
+    if (servicesData.success && servicesData.used_services && servicesData.used_services.length > 0) {
       usedServicesHtml = servicesData.used_services.map(s => `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#ffffff; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:6px;">
           <div>
@@ -318,6 +319,7 @@ async function openView(i) {
       usedServicesHtml = '<span style="color:#94a3b8; font-size:13px;">No services performed yet</span>';
     }
   } catch (e) {
+    console.error('Error loading services:', e);
     usedServicesHtml = '<span style="color:#94a3b8; font-size:13px;">Unable to load services</span>';
   }
 

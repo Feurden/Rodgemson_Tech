@@ -213,10 +213,10 @@
                 </div>
             </div>
 
-            <!-- DIV 3: Income Overview (NEW) -->
+            <!-- DIV 3: Income Overview -->
             <div class="analytics-panel div3">
-                <h3 class="panel-title">💰 Income</h3>
-                <p class="panel-sub">Revenue from parts &amp; services</p>
+                <h3 class="panel-title">💰 Income Overview</h3>
+                <p class="panel-sub">Total revenue from completed repairs</p>
 
                 <!-- Period tabs -->
                 <div class="report-tabs" style="margin-bottom:10px;">
@@ -234,30 +234,16 @@
                     <span id="income-period-label" style="font-size:11px; color:#64748b; margin-top:3px; display:block;"></span>
                 </div>
 
-                <!-- Breakdown mini-cards -->
-                <div style="display:flex; gap:6px; margin-bottom:12px;">
-                    <div style="flex:1; background:#f0fdf4; border-radius:8px; padding:8px 10px; border-left:3px solid #16a34a;">
-                        <span style="font-size:9px; font-weight:700; color:#15803d; text-transform:uppercase; display:block; margin-bottom:3px;">Parts</span>
-                        <span style="font-size:13px; font-weight:700; color:#166534;">₱<span id="income-parts">—</span></span>
-                    </div>
-                    <div style="flex:1; background:#eef2ff; border-radius:8px; padding:8px 10px; border-left:3px solid #6366f1;">
-                        <span style="font-size:9px; font-weight:700; color:#4338ca; text-transform:uppercase; display:block; margin-bottom:3px;">Services</span>
-                        <span style="font-size:13px; font-weight:700; color:#3730a3;">₱<span id="income-services">—</span></span>
-                    </div>
+                <!-- Repair count card -->
+                <div style="background:#f0f9ff; border-radius:8px; padding:8px 12px; margin-bottom:12px; text-align:center;">
+                    <span style="font-size:9px; font-weight:700; color:#0284c7; text-transform:uppercase; display:block; margin-bottom:3px;">Repairs Completed</span>
+                    <span style="font-size:18px; font-weight:700; color:#0c4a6e;" id="income-repairs">—</span>
                 </div>
 
                 <!-- Chart -->
                 <div style="flex:1; min-height:0; display:flex; flex-direction:column;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                        <span style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;" id="income-chart-label">Hourly Breakdown</span>
-                        <div style="display:flex; gap:8px;">
-                            <span style="display:flex; align-items:center; gap:3px; font-size:10px; color:#475569;">
-                                <span style="width:7px;height:7px;border-radius:2px;background:#16a34a;display:inline-block;"></span> Parts
-                            </span>
-                            <span style="display:flex; align-items:center; gap:3px; font-size:10px; color:#475569;">
-                                <span style="width:7px;height:7px;border-radius:2px;background:#6366f1;display:inline-block;"></span> Services
-                            </span>
-                        </div>
+                        <span style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;" id="income-chart-label">Daily Breakdown</span>
                     </div>
                     <div class="bar-chart" id="income-chart" style="height:110px; align-items:flex-end; gap:2px;"></div>
                 </div>
@@ -296,7 +282,7 @@
 </div>
 
 <style>
-/* ── Updated grid: 6 columns to fit the income panel ── */
+/* Grid Layout */
 .analytics-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -309,23 +295,96 @@
 .div3 { grid-column: span 1 / span 1; grid-column-start: 5; grid-row: span 5 / span 5; grid-row-start: 1; }
 .div4 { grid-column: span 1 / span 1; grid-column-start: 6; grid-row: span 5 / span 5; grid-row-start: 1; }
 
-/* Income stacked bar segments */
-.income-bar-stack {
+/* Ensure bar chart has proper height */
+.bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 120px;
+    min-height: 100px;
     width: 100%;
-    height: 100%;
+}
+
+.bar-col {
+    flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: flex-end;
-    gap: 1px;
+    text-align: center;
+    min-width: 0; /* Prevent overflow */
 }
-.income-seg-parts    { background: #16a34a; min-height: 2px; border-radius: 3px 3px 0 0; }
-.income-seg-services { background: #6366f1; min-height: 2px; border-radius: 0 0 3px 3px; }
-.income-seg-only     { border-radius: 3px !important; }
-</style>
 
+.bar-body {
+    width: 100%;
+    height: 80px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.bar-fill-v {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: height 0.3s ease;
+}
+
+.bar-val {
+    font-size: 9px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
+.bar-label {
+    font-size: 9px;
+    color: #64748b;
+    margin-top: 4px;
+    white-space: nowrap;
+}
+.bar-track {
+    background: #e2e8f0;
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+}
+.bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Report tabs */
+.report-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.report-tab {
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.report-tab.active {
+    background: linear-gradient(135deg, #38bdf8, #0284c7);
+    color: white;
+    border: none;
+}
+</style>
 <script>
 /* ══════════════════════════════════════════════════
-   Existing report tab logic (unchanged)
+   Report Tab Logic
    ══════════════════════════════════════════════════ */
 const _MONTHS = ['','January','February','March','April','May','June',
                  'July','August','September','October','November','December'];
@@ -339,12 +398,12 @@ function switchTab(btn, tab) {
 }
 
 function loadReport() {
-    const month    = document.getElementById('report-month').value;
-    const year     = document.getElementById('report-year').value;
-    const label    = _MONTHS[month] + ' ' + year;
+    const month = document.getElementById('report-month').value;
+    const year = document.getElementById('report-year').value;
+    const label = _MONTHS[month] + ' ' + year;
     const isWeekly = document.getElementById('weekly').style.display !== 'none';
 
-    document.getElementById('weekly-sub').textContent  = label + ' — daily activity';
+    document.getElementById('weekly-sub').textContent = label + ' — daily activity';
     document.getElementById('monthly-sub').textContent = label + ' — weekly breakdown';
 
     if (isWeekly) {
@@ -352,19 +411,19 @@ function loadReport() {
             .then(r => r.json())
             .then(data => {
                 renderWeeklyChart('weekly-chart', data.days);
-                document.getElementById('w-total').textContent     = data.total     ?? '—';
+                document.getElementById('w-total').textContent = data.total ?? '—';
                 document.getElementById('w-completed').textContent = data.completed ?? '—';
-                document.getElementById('w-pending').textContent   = data.pending   ?? '—';
+                document.getElementById('w-pending').textContent = data.pending ?? '—';
             }).catch(console.error);
     } else {
         fetch(`/dashboard/getMonthlyByYear?month=${month}&year=${year}`)
             .then(r => r.json())
             .then(data => {
                 renderMonthlyChart('monthly-chart', data.weeks);
-                document.getElementById('m-total').textContent      = data.total       ?? '—';
-                document.getElementById('m-completed').textContent  = data.completed   ?? '—';
+                document.getElementById('m-total').textContent = data.total ?? '—';
+                document.getElementById('m-completed').textContent = data.completed ?? '—';
                 document.getElementById('m-inprogress').textContent = data.in_progress ?? '—';
-                document.getElementById('m-pending').textContent    = data.pending     ?? '—';
+                document.getElementById('m-pending').textContent = data.pending ?? '—';
             }).catch(console.error);
     }
 }
@@ -388,12 +447,12 @@ function renderMonthlyChart(containerId, items) {
     if (!container || !items?.length) return;
     const max = Math.max(...items.map(i => i.count), 1);
     container.innerHTML = items.map(item => {
-        const compH = Math.round((item.completed   / max) * 100);
+        const compH = Math.round((item.completed / max) * 100);
         const progH = Math.round((item.in_progress / max) * 100);
-        const pendH = Math.round((item.pending     / max) * 100);
-        const compSeg = item.completed   > 0 ? `<div style="height:${compH}%;background:#16a34a;border-radius:3px 3px 0 0;min-height:3px;"></div>` : '';
+        const pendH = Math.round((item.pending / max) * 100);
+        const compSeg = item.completed > 0 ? `<div style="height:${compH}%;background:#16a34a;border-radius:3px 3px 0 0;min-height:3px;"></div>` : '';
         const progSeg = item.in_progress > 0 ? `<div style="height:${progH}%;background:#f59e0b;min-height:3px;"></div>` : '';
-        const pendSeg = item.pending     > 0 ? `<div style="height:${pendH}%;background:#ef4444;border-radius:0 0 3px 3px;min-height:3px;"></div>` : '';
+        const pendSeg = item.pending > 0 ? `<div style="height:${pendH}%;background:#ef4444;border-radius:0 0 3px 3px;min-height:3px;"></div>` : '';
         return `<div class="bar-col">
             <span class="bar-val">${item.count}</span>
             <div class="bar-body">
@@ -407,91 +466,137 @@ function renderMonthlyChart(containerId, items) {
 }
 
 /* ══════════════════════════════════════════════════
-   Income Panel Logic (NEW)
+   Income Panel Logic
    ══════════════════════════════════════════════════ */
 let _incomeTab = 'day';
 
-window.switchIncomeTab = function (tab, btn) {
+function switchIncomeTab(tab, btn) {
     _incomeTab = tab;
-    document.querySelectorAll('#income-tab-day, #income-tab-week, #income-tab-month')
-        .forEach(b => b.classList.remove('active'));
+    
+    // Update tab styling
+    const tabs = document.querySelectorAll('#income-tab-day, #income-tab-week, #income-tab-month');
+    tabs.forEach(b => {
+        b.classList.remove('active');
+        b.style.background = 'white';
+        b.style.color = '#64748b';
+        b.style.border = '1px solid #e2e8f0';
+    });
+    
     btn.classList.add('active');
+    btn.style.background = 'linear-gradient(135deg, #38bdf8, #0284c7)';
+    btn.style.color = 'white';
+    btn.style.border = 'none';
+    
     loadIncome();
-};
-
-window.loadIncome = function () {
-    const month = document.getElementById('report-month')?.value ?? new Date().getMonth() + 1;
-    const year  = document.getElementById('report-year')?.value  ?? new Date().getFullYear();
+}
+function loadIncome() {
+    const monthSelect = document.getElementById('report-month');
+    const yearSelect = document.getElementById('report-year');
+    
+    const month = monthSelect ? monthSelect.value : new Date().getMonth() + 1;
+    const year = yearSelect ? yearSelect.value : new Date().getFullYear();
 
     let url;
-    if (_incomeTab === 'day')        url = '/dashboard/getIncomeDay';
-    else if (_incomeTab === 'week')  url = '/dashboard/getIncomeWeek';
-    else                             url = `/dashboard/getIncomeMonth?month=${month}&year=${year}`;
+    if (_incomeTab === 'day') {
+        url = '/dashboard/getIncomeDay';
+    } else if (_incomeTab === 'week') {
+        url = '/dashboard/getIncomeWeek';
+    } else {
+        url = `/dashboard/getIncomeMonth?month=${month}&year=${year}`;
+    }
 
     // Show loading state
-    document.getElementById('income-total').textContent        = '…';
-    document.getElementById('income-parts').textContent        = '…';
-    document.getElementById('income-services').textContent     = '…';
-    document.getElementById('income-period-label').textContent = '';
+    const totalEl = document.getElementById('income-total');
+    const repairsEl = document.getElementById('income-repairs');
+    const periodEl = document.getElementById('income-period-label');
+    const chartLabelEl = document.getElementById('income-chart-label');
+    
+    if (totalEl) totalEl.textContent = '…';
+    if (repairsEl) repairsEl.textContent = '…';
+    if (periodEl) periodEl.textContent = 'Loading...';
+    if (chartLabelEl) chartLabelEl.textContent = 'Loading...';
 
     fetch(url)
-        .then(r => r.json())
-        .then(data => {
-            if (!data.success) { _incomeError(); return; }
-            document.getElementById('income-total').textContent        = data.total;
-            document.getElementById('income-parts').textContent        = data.parts_total;
-            document.getElementById('income-services').textContent     = data.services_total;
-            document.getElementById('income-period-label').textContent = data.period ?? '';
-            document.getElementById('income-chart-label').textContent  = data.chart_label ?? '';
-            _renderIncomeChart(data.bars ?? []);
+        .then(r => {
+            if (!r.ok) {
+                throw new Error(`HTTP ${r.status}`);
+            }
+            return r.json();
         })
-        .catch(_incomeError);
-};
-
-function _incomeError() {
-    document.getElementById('income-total').textContent        = '—';
-    document.getElementById('income-parts').textContent        = '—';
-    document.getElementById('income-services').textContent     = '—';
-    document.getElementById('income-period-label').textContent = 'Could not load';
-    document.getElementById('income-chart').innerHTML          = '';
+        .then(data => {
+            console.log('Income data received:', data); // Debug log
+            
+            if (!data.success) {
+                incomeError();
+                return;
+            }
+            if (totalEl) totalEl.textContent = data.total.toLocaleString();
+            if (repairsEl) repairsEl.textContent = data.repairs || 0;
+            if (periodEl) periodEl.textContent = data.period ?? '';
+            if (chartLabelEl) chartLabelEl.textContent = data.chart_label ?? '';
+            
+            renderIncomeChart(data.bars ?? []);
+        })
+        .catch(error => {
+            console.error('Income fetch error:', error);
+            incomeError();
+        });
 }
 
-function _renderIncomeChart(bars) {
+function incomeError() {
+    const totalEl = document.getElementById('income-total');
+    const repairsEl = document.getElementById('income-repairs');
+    const periodEl = document.getElementById('income-period-label');
+    
+    if (totalEl) totalEl.textContent = '—';
+    if (repairsEl) repairsEl.textContent = '—';
+    if (periodEl) periodEl.textContent = 'Could not load';
+    
+    const chartContainer = document.getElementById('income-chart');
+    if (chartContainer) chartContainer.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:20px;">No income data available</div>';
+}
+function renderIncomeChart(bars) {
     const container = document.getElementById('income-chart');
     if (!container) return;
-    const maxVal = Math.max(...bars.map(b => b.total), 1);
-
-    container.innerHTML = bars.map(bar => {
-        const partsH    = Math.round((bar.parts    / maxVal) * 100);
-        const servicesH = Math.round((bar.services / maxVal) * 100);
-        const hasP      = bar.parts > 0;
-        const hasS      = bar.services > 0;
-
-        // Value label: ₱1.2k or ₱500
+    
+    if (!bars || bars.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:20px;">No income data available</div>';
+        return;
+    }
+    
+    // Filter out zero-value bars for better display, but keep at least one
+    let nonZeroBars = bars.filter(bar => bar.total > 0);
+    if (nonZeroBars.length === 0 && bars.length > 0) {
+        nonZeroBars = bars; // Show all bars even if zero
+    }
+    
+    const maxVal = Math.max(...nonZeroBars.map(b => b.total), 1);
+    
+    container.innerHTML = nonZeroBars.map(bar => {
+        const heightPct = bar.total > 0 ? Math.round((bar.total / maxVal) * 100) : 0;
         const valLabel = bar.total >= 1000
             ? '₱' + (bar.total / 1000).toFixed(1) + 'k'
-            : (bar.total > 0 ? '₱' + Math.round(bar.total) : '0');
-
-        let inner = '';
-        if (hasP && hasS) {
-            inner = `<div class="income-seg-parts"    style="height:${partsH}%;"></div>
-                     <div class="income-seg-services" style="height:${servicesH}%;"></div>`;
-        } else if (hasP) {
-            inner = `<div class="income-seg-parts income-seg-only" style="height:${partsH}%;"></div>`;
-        } else if (hasS) {
-            inner = `<div class="income-seg-services income-seg-only" style="height:${servicesH}%;"></div>`;
-        }
-
-        return `<div class="bar-col">
+            : (bar.total > 0 ? '₱' + Math.round(bar.total) : '₱0');
+        
+        // Create a tooltip with more info
+        const tooltip = `${bar.label}\nIncome: ${valLabel}\nRepairs: ${bar.repairs || 0}`;
+        
+        return `<div class="bar-col" style="cursor:pointer;" title="${tooltip}">
             <span class="bar-val" style="font-size:9px;">${valLabel}</span>
             <div class="bar-body">
-                <div class="income-bar-stack">${inner}</div>
+                <div style="width:100%; height:100%; display:flex; flex-direction:column; justify-content:flex-end;">
+                    ${bar.total > 0 ? `<div style="height:${heightPct}%; background: linear-gradient(180deg, #38bdf8, #0284c7); border-radius:3px;"></div>` : '<div style="height:2px; background:#e2e8f0; border-radius:3px;"></div>'}
+                </div>
             </div>
-            <span class="bar-label" style="font-size:9px;">${bar.label ?? ''}</span>
+            <span class="bar-label" style="font-size:9px;">${bar.label}</span>
+            ${bar.repairs > 0 ? `<span style="font-size:8px; color:#94a3b8; margin-top:2px;">${bar.repairs}</span>` : ''}
         </div>`;
     }).join('');
 }
 
-// Load income on page ready
-document.addEventListener('DOMContentLoaded', () => loadIncome());
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadReport();
+    loadIncome();
+});
 </script>
