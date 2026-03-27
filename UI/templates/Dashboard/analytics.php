@@ -220,7 +220,7 @@
 
                 <!-- Period tabs -->
                 <div class="report-tabs" style="margin-bottom:10px;">
-                    <button class="report-tab active" id="income-tab-day"   onclick="switchIncomeTab('day', this)">Today</button>
+                    <button class="report-tab active" id="income-tab-day"   onclick="switchIncomeTab('day', this)">Daily</button>
                     <button class="report-tab"        id="income-tab-week"  onclick="switchIncomeTab('week', this)">Weekly</button>
                     <button class="report-tab"        id="income-tab-month" onclick="switchIncomeTab('month', this)">Monthly</button>
                 </div>
@@ -252,21 +252,30 @@
             <!-- DIV 4: Stock Levels -->
             <div class="analytics-panel div4">
                 <h3 class="panel-title">📦 Stock Levels</h3>
-                <p class="panel-sub">Current inventory breakdown</p>
+                <p class="panel-sub">Parts inventory — minimum stock warnings</p>
 
                 <div style="display:flex; flex-direction:column; gap:14px; flex:1; overflow-y:auto;">
                     <?php
                         $stocks = $stockLevels ?? [];
                         foreach ($stocks as $stock):
-                            $pct = round(($stock['current'] / $stock['total']) * 100);
-                            $warn = $pct <= 30 ? '#ef4444' : ($pct <= 60 ? '#f59e0b' : $stock['color']);
+                            $current = $stock['current'];
+                            $min     = $stock['min'] ?? 1;
+                            $scale   = $stock['total'];  // = min * 3
+                            $pct     = min(100, round(($current / $scale) * 100));
+                            if ($current <= $min) {
+                                $warn = '#ef4444'; $statusText = '⚠ Low';
+                            } elseif ($current <= $min * 2) {
+                                $warn = '#f59e0b'; $statusText = '~ OK';
+                            } else {
+                                $warn = '#16a34a'; $statusText = '✓ Good';
+                            }
                     ?>
                         <div>
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                                <span style="font-size:13px; font-weight:600; color:#1e293b;"><?= $stock['name'] ?></span>
-                                <span style="font-size:12px; color:#64748b;">
-                                    <?= $stock['current'] ?> / <?= $stock['total'] ?>
-                                    <strong style="color:<?= $warn ?>; margin-left:4px;"><?= $pct ?>%</strong>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                <span style="font-size:12px; font-weight:600; color:#1e293b; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:55%;"><?= htmlspecialchars($stock['name']) ?></span>
+                                <span style="font-size:11px; color:#64748b; white-space:nowrap;">
+                                    <strong style="color:<?= $warn ?>;"><?= $current ?></strong><span style="color:#94a3b8;"> / min <?= $min ?></span>
+                                    <strong style="color:<?= $warn ?>; margin-left:4px;"><?= $statusText ?></strong>
                                 </span>
                             </div>
                             <div class="bar-track">

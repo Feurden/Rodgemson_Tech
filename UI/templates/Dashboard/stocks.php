@@ -47,7 +47,7 @@ $orders = $conn->query("SELECT * FROM orders ORDER BY created DESC");
 
         <div class="repair-stat-card" style="border-left:4px solid #ef4444;">
             <span class="repair-stat-label">Out of Stock</span>
-            <span class="repair-stat-value" style="color:#ef4444;">0</span>
+            <span class="repair-stat-value" style="color:#ef4444;"><?= count(array_filter($stocks ?? [], fn($s) => $s['status'] === 'out')) ?></span>
         </div>
 
     </div>
@@ -63,7 +63,7 @@ $orders = $conn->query("SELECT * FROM orders ORDER BY created DESC");
             <option value="all">All Levels</option>
             <option value="good">Well Stocked</option>
             <option value="low">Low Stock</option>
-            <option value="critical">Critical</option>
+            <option value="out">Out of Stock</option>
         </select>
     </div>
 
@@ -93,7 +93,12 @@ $orders = $conn->query("SELECT * FROM orders ORDER BY created DESC");
                 foreach ($stocks as $item):
                     $pct = $item['quantity'] > 0 ? round(($item['quantity'] / ($item['quantity'] + $item['minimum'])) * 100) : 0;
 
-                    if ($item['status'] === 'warning') {
+                    if ($item['status'] === 'out') {
+                        $level      = 'out';
+                        $barColor   = '#ef4444';
+                        $badgeClass = 'badge-out';
+                        $badgeText  = 'Out of Stock';
+                    } elseif ($item['status'] === 'warning') {
                         $level      = 'low';
                         $barColor   = '#f59e0b';
                         $badgeClass = 'badge-low';
@@ -438,6 +443,15 @@ $orders = $conn->query("SELECT * FROM orders ORDER BY created DESC");
 </div>
 
 <style>
+.badge-out {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
 .pg-btn {
     padding: 6px 12px;
     border: 1px solid #e2e8f0;
@@ -555,7 +569,13 @@ function filterStock(val) {
 }
 
 function filterStockStatus(val) {
-    filteredRows = allRows.filter(r => val === 'all' || r.dataset.level === val);
+    filteredRows = allRows.filter(r => {
+        if (val === 'all') return true;
+        if (val === 'out') return r.dataset.level === 'out';
+        if (val === 'low') return r.dataset.level === 'low';
+        if (val === 'good') return r.dataset.level === 'good';
+        return true;
+    });
     renderPage(1);
 }
 
@@ -571,7 +591,7 @@ function openStockView(item) {
         ${row('Current Stock', item.quantity + ' units')}
         ${row('Minimum Stock', item.minimum + ' units')}
         ${row('Unit Price', '₱' + (item.price ?? '0.00'))}
-        ${row('Status', item.status === 'warning' ? '⚠️ Low Stock' : '✓ Well Stocked')}
+        ${row('Status', item.status === 'out' ? '🔴 Out of Stock' : item.status === 'warning' ? '⚠️ Low Stock' : '✅ Well Stocked')}
         ${row('Last Updated', new Date().toLocaleDateString())}`;
     document.getElementById('stockViewModal').style.display = 'flex';
 }

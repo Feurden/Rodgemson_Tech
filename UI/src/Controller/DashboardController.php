@@ -159,16 +159,25 @@ class DashboardController extends AppController
             ];
         }
 
-        // Stock levels from parts table
+        // Stock levels from parts table (exclude services/unlimited stock items)
         $partsTable  = $this->getTableLocator()->get('Parts');
-        $parts       = $partsTable->find()->all();
+        $parts       = $partsTable->find()
+            ->where(['minimum_stock >' => 0])
+            ->orderBy(['part_name' => 'ASC'])
+            ->all();
         $stockLevels = [];
 
         foreach ($parts as $part) {
+            // Use minimum_stock as the threshold: total capacity = current + minimum as buffer scale
+            $minStock = max(1, $part->minimum_stock ?? 5);
+            // Scale: if current >= 3x minimum, treat as 100%; otherwise proportional
+            $scale = $minStock * 3;
+            $current = $part->stock_quantity;
             $stockLevels[] = [
                 'name'    => $part->part_name,
-                'current' => $part->stock_quantity,
-                'total'   => $part->minimum_stock ? $part->stock_quantity + 50 : 100,
+                'current' => $current,
+                'total'   => $scale,
+                'min'     => $minStock,
                 'color'   => '#38bdf8',
             ];
         }
@@ -390,17 +399,27 @@ class DashboardController extends AppController
         }
 
         $partsTable = $this->getTableLocator()->get('Parts');
-        $parts      = $partsTable->find()->orderBy(['Parts.part_name' => 'ASC'])->all();
+        $parts      = $partsTable->find()
+            ->where(['minimum_stock >' => 0])  // services have minimum_stock=0
+            ->orderBy(['Parts.part_name' => 'ASC'])
+            ->all();
 
         $stocks = [];
         foreach ($parts as $part) {
-            $status = $part->stock_quantity <= ($part->minimum_stock ?? 5) ? 'warning' : 'normal';
+            $minStock = $part->minimum_stock ?? 5;
+            if ($part->stock_quantity <= 0) {
+                $status = 'out';
+            } elseif ($part->stock_quantity < $minStock) {
+                $status = 'warning';  // strictly BELOW minimum
+            } else {
+                $status = 'normal';
+            }
             $stocks[] = [
                 'id'       => $part->id,
                 'part'     => $part->part_name,
                 'category' => $part->category ?? 'Uncategorized',
                 'quantity' => $part->stock_quantity,
-                'minimum'  => $part->minimum_stock ?? 5,
+                'minimum'  => $minStock,
                 'price'    => $part->unit_price,
                 'status'   => $status,
             ];
@@ -518,181 +537,162 @@ class DashboardController extends AppController
 // Income AJAX endpoints
 // ─────────────────────────────────────────────────────────────────────────
 /**
- * Get daily income (today only)
+ * Get daily income — today only, broken into hourly bars (6 slots)
  */
 public function getIncomeDay()
 {
     $this->request->allowMethod(['ajax', 'get']);
-    
+
     $conn = ConnectionManager::get('default');
-    
-    // Get today's completed repairs
+
     $today = date('Y-m-d');
-    
+
     $results = $conn->execute("
-        SELECT 
-            d.id,
-            COALESCE(
-                (SELECT COALESCE(SUM(s.price), 0) 
-                 FROM repair_services_usage rsu 
-                 JOIN services s ON rsu.service_id = s.id 
-                 WHERE rsu.device_id = d.id), 0
-            ) as services_total,
-            COALESCE(
-                (SELECT COALESCE(SUM(p.unit_price * rpu.quantity), 0) 
-                 FROM repair_parts_usage rpu 
-                 JOIN parts p ON rpu.part_id = p.id 
-                 WHERE rpu.device_id = d.id AND rpu.returned = 0), 0
-            ) as parts_total
+        SELECT
+            HOUR(d.date_released) as hour_slot,
+            COUNT(DISTINCT d.id) as repair_count,
+            COALESCE(SUM(
+                (SELECT COALESCE(SUM(s.price), 0)
+                 FROM repair_services_usage rsu
+                 JOIN services s ON rsu.service_id = s.id
+                 WHERE rsu.device_id = d.id) +
+                (SELECT COALESCE(SUM(p.unit_price * rpu.quantity), 0)
+                 FROM repair_parts_usage rpu
+                 JOIN parts p ON rpu.part_id = p.id
+                 WHERE rpu.device_id = d.id AND rpu.returned = 0)
+            ), 0) as total_income
         FROM devices d
-        WHERE d.status = 'Completed' 
+        WHERE d.status = 'Completed'
             AND d.date_released IS NOT NULL
             AND DATE(d.date_released) = :today
+        GROUP BY HOUR(d.date_released)
+        ORDER BY hour_slot
     ", ['today' => $today])->fetchAll('assoc');
-    
-    $total = 0;
+
+    // Build hourly data map
+    $hourlyData = [];
+    $totalIncome  = 0;
+    $totalRepairs = 0;
     foreach ($results as $row) {
-        $total += (float)$row['services_total'] + (float)$row['parts_total'];
+        $hourlyData[(int)$row['hour_slot']] = [
+            'income'  => (float)$row['total_income'],
+            'repairs' => (int)$row['repair_count'],
+        ];
+        $totalIncome  += (float)$row['total_income'];
+        $totalRepairs += (int)$row['repair_count'];
     }
-    
-    $repairCount = count($results);
-    
-    // Create bars for today - show hourly if available
+
+    // 6 time-of-day slots: Morning, Late Morning, Noon, Afternoon, Evening, Night
+    $slots = [
+        ['label' => 'Morn',  'hours' => [6,  7,  8,  9]],
+        ['label' => 'Late M','hours' => [10, 11]],
+        ['label' => 'Noon',  'hours' => [12, 13]],
+        ['label' => 'Aft',   'hours' => [14, 15, 16, 17]],
+        ['label' => 'Eve',   'hours' => [18, 19, 20]],
+        ['label' => 'Night', 'hours' => [21, 22, 23, 0, 1, 2, 3, 4, 5]],
+    ];
+
     $bars = [];
-    
-    // Get hourly breakdown if there are repairs
-    if ($repairCount > 0) {
-        $hourlyResults = $conn->execute("
-            SELECT 
-                HOUR(d.date_released) as hour,
-                COUNT(DISTINCT d.id) as repair_count,
-                COALESCE(SUM(
-                    (SELECT COALESCE(SUM(s.price), 0) 
-                     FROM repair_services_usage rsu 
-                     JOIN services s ON rsu.service_id = s.id 
-                     WHERE rsu.device_id = d.id) +
-                    (SELECT COALESCE(SUM(p.unit_price * rpu.quantity), 0) 
-                     FROM repair_parts_usage rpu 
-                     JOIN parts p ON rpu.part_id = p.id 
-                     WHERE rpu.device_id = d.id AND rpu.returned = 0)
-                ), 0) as total_income
-            FROM devices d
-            WHERE d.status = 'Completed' 
-                AND d.date_released IS NOT NULL
-                AND DATE(d.date_released) = :today
-            GROUP BY HOUR(d.date_released)
-            ORDER BY hour
-        ", ['today' => $today])->fetchAll('assoc');
-        
-        foreach ($hourlyResults as $hourly) {
-            $bars[] = [
-                'label' => sprintf('%02d:00', $hourly['hour']),
-                'total' => (float)$hourly['total_income'],
-                'repairs' => (int)$hourly['repair_count']
-            ];
+    foreach ($slots as $slot) {
+        $slotIncome  = 0;
+        $slotRepairs = 0;
+        foreach ($slot['hours'] as $h) {
+            $slotIncome  += $hourlyData[$h]['income']  ?? 0;
+            $slotRepairs += $hourlyData[$h]['repairs'] ?? 0;
         }
-    }
-    
-    // If no hourly data, show a single bar for today
-    if (empty($bars)) {
         $bars[] = [
-            'label' => 'Today',
-            'total' => $total,
-            'repairs' => $repairCount
+            'label'   => $slot['label'],
+            'total'   => $slotIncome,
+            'repairs' => $slotRepairs,
         ];
     }
-    
+
     return $this->response->withType('application/json')
         ->withStringBody(json_encode([
-            'success' => true,
-            'total' => $total,
-            'repairs' => $repairCount,
-            'period' => date('F j, Y'),
-            'chart_label' => $repairCount > 0 ? 'Hourly Breakdown' : 'Today\'s Income',
-            'bars' => $bars
+            'success'      => true,
+            'total'        => $totalIncome,
+            'repairs'      => $totalRepairs,
+            'period'       => date('F j, Y') . ' (Today)',
+            'chart_label'  => "Today's Income by Time of Day",
+            'bars'         => $bars,
         ]));
 }
+
 /**
- * Get weekly income (last 7 days)
+ * Get weekly income — current Mon–Sun week, one bar per day
  */
 public function getIncomeWeek()
 {
     $this->request->allowMethod(['ajax', 'get']);
-    
+
     $conn = ConnectionManager::get('default');
-    
-    $endDate = date('Y-m-d');
-    $startDate = date('Y-m-d', strtotime('-6 days'));
-    
+
+    // Find Monday of the current week
+    $mondayTs  = strtotime('monday this week');
+    // If today is Sunday, PHP 'monday this week' may jump forward; force it back
+    if (date('N') == 7) {
+        $mondayTs = strtotime('last monday');
+    }
+    $startDate = date('Y-m-d', $mondayTs);
+    $endDate   = date('Y-m-d', strtotime($startDate . ' +6 days')); // Sunday
+
     $results = $conn->execute("
-        SELECT 
+        SELECT
             DATE(d.date_released) as date,
-            DAYNAME(d.date_released) as day_name,
-            DAYOFWEEK(d.date_released) as day_of_week,
             COUNT(DISTINCT d.id) as repair_count,
             COALESCE(SUM(
-                (SELECT COALESCE(SUM(s.price), 0) 
-                 FROM repair_services_usage rsu 
-                 JOIN services s ON rsu.service_id = s.id 
+                (SELECT COALESCE(SUM(s.price), 0)
+                 FROM repair_services_usage rsu
+                 JOIN services s ON rsu.service_id = s.id
                  WHERE rsu.device_id = d.id) +
-                (SELECT COALESCE(SUM(p.unit_price * rpu.quantity), 0) 
-                 FROM repair_parts_usage rpu 
-                 JOIN parts p ON rpu.part_id = p.id 
+                (SELECT COALESCE(SUM(p.unit_price * rpu.quantity), 0)
+                 FROM repair_parts_usage rpu
+                 JOIN parts p ON rpu.part_id = p.id
                  WHERE rpu.device_id = d.id AND rpu.returned = 0)
             ), 0) as total_income
         FROM devices d
-        WHERE d.status = 'Completed' 
+        WHERE d.status = 'Completed'
             AND d.date_released IS NOT NULL
             AND DATE(d.date_released) BETWEEN :start_date AND :end_date
         GROUP BY DATE(d.date_released)
         ORDER BY d.date_released
     ", ['start_date' => $startDate, 'end_date' => $endDate])->fetchAll('assoc');
-    
-    $bars = [];
-    $totalIncome = 0;
+
+    $dailyData    = [];
+    $totalIncome  = 0;
     $totalRepairs = 0;
-    
-    // Create array for all 7 days
-    $dailyData = [];
     foreach ($results as $row) {
         $dailyData[$row['date']] = [
-            'income' => (float)$row['total_income'],
-            'repairs' => (int)$row['repair_count']
+            'income'  => (float)$row['total_income'],
+            'repairs' => (int)$row['repair_count'],
         ];
-        $totalIncome += (float)$row['total_income'];
+        $totalIncome  += (float)$row['total_income'];
         $totalRepairs += (int)$row['repair_count'];
     }
-    
-    // Generate last 7 days with correct order (Monday to Sunday)
+
+    // Build Mon → Sun bars
+    $bars = [];
+    $dayAbbr = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     $date = new \DateTime($startDate);
-    $dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    
     for ($i = 0; $i < 7; $i++) {
-        $dateKey = $date->format('Y-m-d');
-        $income = isset($dailyData[$dateKey]['income']) ? $dailyData[$dateKey]['income'] : 0;
-        $repairs = isset($dailyData[$dateKey]['repairs']) ? $dailyData[$dateKey]['repairs'] : 0;
-        
+        $key    = $date->format('Y-m-d');
         $bars[] = [
-            'label' => substr($dayNames[$i], 0, 3), // Mon, Tue, Wed, etc.
-            'full_label' => $dayNames[$i],
-            'date' => $dateKey,
-            'total' => $income,
-            'repairs' => $repairs
+            'label'   => $dayAbbr[$i],
+            'date'    => $key,
+            'total'   => $dailyData[$key]['income']  ?? 0,
+            'repairs' => $dailyData[$key]['repairs'] ?? 0,
         ];
         $date->modify('+1 day');
     }
-    
-    // Debug log (remove in production)
-    error_log('Weekly Income Data: ' . json_encode(['bars' => $bars, 'total' => $totalIncome, 'repairs' => $totalRepairs]));
-    
+
     return $this->response->withType('application/json')
         ->withStringBody(json_encode([
-            'success' => true,
-            'total' => $totalIncome,
-            'repairs' => $totalRepairs,
-            'period' => date('M j', strtotime($startDate)) . ' - ' . date('M j, Y'),
-            'chart_label' => 'Daily Income',
-            'bars' => $bars
+            'success'     => true,
+            'total'       => $totalIncome,
+            'repairs'     => $totalRepairs,
+            'period'      => date('M j', strtotime($startDate)) . ' – ' . date('M j, Y', strtotime($endDate)),
+            'chart_label' => 'This Week\'s Daily Income (Mon – Sun)',
+            'bars'        => $bars,
         ]));
 }
 
