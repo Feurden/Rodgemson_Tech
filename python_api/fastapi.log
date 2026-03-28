@@ -1,10 +1,10 @@
-INFO:     Started server process [11324]
+INFO:     Started server process [10892]
 INFO:     Waiting for application startup.
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
 [*] Loading ML model...
 [OK] ML model loaded
 [*] Loading NLP model (first time takes 30-60 seconds)...
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|##########| 103/103 [00:00<00:00, 3229.23it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|##########| 103/103 [00:00<00:00, 3298.32it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
 Key                     | Status     |  | 
 ------------------------+------------+--+-
@@ -17,17 +17,10 @@ INFO:     Uvicorn running on http://127.0.0.1:5000 (Press CTRL+C to quit)
 [OK] NLP model loaded
 [*] Pre-computing symptom embeddings...
 [OK] 16 symptom embeddings cached
-INFO:     127.0.0.1:65375 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57291 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59413 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60057 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52269 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58579 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59238 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49430 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57768 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55858 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62461 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58121 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54132 - "POST /diagnose HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63015 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58032 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59456 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51386 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53501 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63678 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57539 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61085 - "POST /diagnose HTTP/1.1" 200 OK

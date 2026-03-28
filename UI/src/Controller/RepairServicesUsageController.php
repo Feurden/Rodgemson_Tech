@@ -105,25 +105,29 @@ class RepairServicesUsageController extends AppController
                 ]));
         }
 
-        $usage = $this->fetchTable('RepairServicesUsage')
-            ->find()
-            ->contain(['Services'])
-            ->where(['RepairServicesUsage.device_id' => $deviceId])
-            ->all();
+        $conn = \Cake\Datasource\ConnectionManager::get('default');
+
+        $rows = $conn->execute(
+            'SELECT rsu.id, s.service_name, s.category, s.price
+             FROM repair_services_usage rsu
+             JOIN services s ON s.id = rsu.service_id
+             WHERE rsu.device_id = :device_id',
+            ['device_id' => $deviceId]
+        )->fetchAll('assoc');
 
         $usedServices = [];
-        foreach ($usage as $item) {
+        foreach ($rows as $row) {
             $usedServices[] = [
-                'id'           => $item->id,
-                'service_name' => $item->service->service_name,
-                'category'     => $item->service->category ?? '',
-                'price'        => $item->service->price ?? null,
+                'id'           => $row['id'],
+                'service_name' => $row['service_name'],
+                'category'     => $row['category'] ?? '',
+                'price'        => $row['price'] ?? null,
             ];
         }
 
         return $this->response->withType('application/json')
             ->withStringBody(json_encode([
-                'success'      => true,
+                'success'       => true,
                 'used_services' => $usedServices,
             ]));
     }

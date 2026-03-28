@@ -242,23 +242,26 @@ class PartsUsageController extends AppController
                 ]));
         }
 
-        $usage = $this->fetchTable('RepairPartsUsage')
-            ->find()
-            ->contain(['Parts'])
-            ->where([
-                'RepairPartsUsage.device_id' => $deviceId,
-                'RepairPartsUsage.returned'  => 0,
-            ])
-            ->all();
+        $conn = \Cake\Datasource\ConnectionManager::get('default');
+
+        $rows = $conn->execute(
+            'SELECT rpu.id AS usage_id, rpu.part_id, rpu.quantity,
+                    p.part_name, p.category, p.unit_price
+             FROM repair_parts_usage rpu
+             JOIN parts p ON p.id = rpu.part_id
+             WHERE rpu.device_id = :device_id AND rpu.returned = 0',
+            ['device_id' => $deviceId]
+        )->fetchAll('assoc');
 
         $usedParts = [];
-        foreach ($usage as $item) {
+        foreach ($rows as $row) {
             $usedParts[] = [
-                'usage_id'  => $item->id,
-                'part_id'   => $item->part_id,
-                'part_name' => $item->part->part_name,
-                'category'  => $item->part->category,
-                'quantity'  => $item->quantity,
+                'usage_id'   => $row['usage_id'],
+                'part_id'    => $row['part_id'],
+                'part_name'  => $row['part_name'],
+                'category'   => $row['category'] ?? '',
+                'quantity'   => $row['quantity'],
+                'unit_price' => $row['unit_price'],
             ];
         }
 

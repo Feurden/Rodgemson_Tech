@@ -38,11 +38,15 @@ class AppController extends Controller
     ];
 
     public function initialize(): void
-    {
-        parent::initialize();
+{
+    parent::initialize();
 
-        $this->loadComponent('Flash');
-    }
+    $this->loadComponent('Flash');
+
+    // ADD THIS LINE:
+    // This sends headers to the browser to prevent it from caching any page.
+    $this->setResponse($this->getResponse()->withDisabledCache());
+}
 
     /**
      * Runs before every action. Rejects unauthenticated requests before any

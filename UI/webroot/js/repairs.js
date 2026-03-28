@@ -269,13 +269,17 @@ async function openView(i) {
   let usedPartsHtml = '<span style="color:#94a3b8; font-size:13px;">Loading parts...</span>';
   const csrfToken = getCsrf();
 
+  // Hoisted so the cost block below can read them
+  let usedData     = { used_parts: [] };
+  let servicesData = { used_services: [] };
+
   try {
     const usedRes = await fetch(REPAIRS_CONFIG.partsGetUsedUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
       body: JSON.stringify({ device_id: r.device_id }),
     });
-    const usedData = await usedRes.json();
+    usedData = await usedRes.json();
 
     if (usedData.used_parts && usedData.used_parts.length > 0) {
       usedPartsHtml = usedData.used_parts.map(u => `
@@ -303,7 +307,7 @@ async function openView(i) {
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
       body: JSON.stringify({ device_id: r.device_id }),
     });
-    const servicesData = await servicesRes.json();
+    servicesData = await servicesRes.json();
 
     if (servicesData.success && servicesData.used_services && servicesData.used_services.length > 0) {
       usedServicesHtml = servicesData.used_services.map(s => `
@@ -342,9 +346,9 @@ async function openView(i) {
           headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
           body: JSON.stringify({ diagnosis: diag }),
         });
-        const servicesData = await servicesRes.json();
-        if (servicesData.services && servicesData.services.length > 0) {
-          servicesData.services.forEach(s => allServices.add(s));
+        const diagServicesData = await servicesRes.json();
+        if (diagServicesData.services && diagServicesData.services.length > 0) {
+          diagServicesData.services.forEach(s => allServices.add(s));
         }
       }
 
@@ -415,9 +419,77 @@ async function openView(i) {
     <div style="padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;">
       <p style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin:0 0 6px;">📝 Notes</p>
       <p style="font-size:13px; color:#475569; margin:0; line-height:1.6;">${r.notes || 'No notes added yet.'}</p>
-    </div>`;
+    </div>
+
+    ${(() => {
+      const st = (r.status || '').toLowerCase();
+      const isDone = st === 'completed';
+
+      let totalCost = 0;
+
+      if (isDone) {
+        // Sum actual used parts (unit_price × qty)
+        const partsArr = usedData.used_parts || [];
+        partsArr.forEach(u => {
+          totalCost += (parseFloat(u.unit_price) || 0) * (parseInt(u.quantity) || 1);
+        });
+        // Sum used services price
+        const svcArr = servicesData.used_services || [];
+        svcArr.forEach(s => {
+          totalCost += parseFloat(s.price) || 0;
+        });
+      }
+
+      const label  = isDone ? '💰 Total Cost'  : '💸 Estimated Cost';
+      const color  = isDone ? '#16a34a'         : '#f59e0b';
+      const bg     = isDone ? '#f0fdf4'         : '#fffbeb';
+      const border = isDone ? '#22c55e'         : '#f59e0b';
+      const icon   = isDone ? '✅'              : '🕐';
+      const display = isDone
+        ? '₱' + totalCost.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : '<span id="estimatedCostValue" style="color:#94a3b8;font-style:italic;font-size:14px;">Computing...</span>';
+
+      return `
+        <div style="margin-top:12px;padding:14px 16px;background:${bg};border-radius:8px;border-left:4px solid ${border};display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <p style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:0.5px;margin:0 0 4px;">${label}</p>
+            <p style="font-size:20px;font-weight:800;color:#1e293b;margin:0;">${display}</p>
+          </div>
+          <div style="font-size:2rem;">${icon}</div>
+        </div>`;
+    })()}`;
 
   openModal('viewModal');
+
+  // — Estimated cost for non-completed repairs: fetch suggested parts prices then sum
+  const st = (r.status || '').toLowerCase();
+  if (st !== 'completed' && r.diagnostic) {
+    try {
+      const diagParts = await fetch(REPAIRS_CONFIG.partsGetByDiagUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+        body: JSON.stringify({ diagnosis: r.diagnostic }),
+      });
+      const diagData = await diagParts.json();
+      const el = document.getElementById('estimatedCostValue');
+      if (el) {
+        if (diagData.success && diagData.parts && diagData.parts.length > 0) {
+          const estimated = diagData.parts.reduce((sum, p) => sum + (parseFloat(p.unit_price) || 0), 0);
+          if (estimated > 0) {
+            el.style.cssText = 'font-size:20px;font-weight:800;color:#1e293b;';
+            el.textContent = '₱' + estimated.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          } else {
+            el.textContent = 'No price data yet';
+          }
+        } else {
+          el.textContent = 'No parts data yet';
+        }
+      }
+    } catch (e) {
+      const el = document.getElementById('estimatedCostValue');
+      if (el) el.textContent = 'Unable to compute';
+    }
+  }
 }
 
 /* ── Edit Modal Suggested Services ───────────────────────────────────────── */

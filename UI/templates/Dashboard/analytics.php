@@ -290,6 +290,14 @@
     </div>
 </div>
 
+<?php
+// CakePHP base-aware URLs (required when the app is not at the web server root, e.g. /Rodgemson_Tech/UI/)
+$apiWeeklyByMonth = $this->Url->build('/dashboard/getWeeklyByMonth');
+$apiMonthlyByYear = $this->Url->build('/dashboard/getMonthlyByYear');
+$apiIncomeDay = $this->Url->build('/dashboard/getIncomeDay');
+$apiIncomeWeek = $this->Url->build('/dashboard/getIncomeWeek');
+$apiIncomeMonth = $this->Url->build('/dashboard/getIncomeMonth');
+?>
 <style>
 /* Grid Layout */
 .analytics-grid {
@@ -416,7 +424,7 @@ function loadReport() {
     document.getElementById('monthly-sub').textContent = label + ' — weekly breakdown';
 
     if (isWeekly) {
-        fetch(`/dashboard/getWeeklyByMonth?month=${month}&year=${year}`)
+        fetch(`<?= $apiWeeklyByMonth ?>?month=${month}&year=${year}`, { credentials: 'same-origin' })
             .then(r => r.json())
             .then(data => {
                 renderWeeklyChart('weekly-chart', data.days);
@@ -425,7 +433,7 @@ function loadReport() {
                 document.getElementById('w-pending').textContent = data.pending ?? '—';
             }).catch(console.error);
     } else {
-        fetch(`/dashboard/getMonthlyByYear?month=${month}&year=${year}`)
+        fetch(`<?= $apiMonthlyByYear ?>?month=${month}&year=${year}`, { credentials: 'same-origin' })
             .then(r => r.json())
             .then(data => {
                 renderMonthlyChart('monthly-chart', data.weeks);
@@ -507,11 +515,11 @@ function loadIncome() {
 
     let url;
     if (_incomeTab === 'day') {
-        url = '/dashboard/getIncomeDay';
+        url = <?= json_encode($apiIncomeDay) ?>;
     } else if (_incomeTab === 'week') {
-        url = '/dashboard/getIncomeWeek';
+        url = <?= json_encode($apiIncomeWeek) ?>;
     } else {
-        url = `/dashboard/getIncomeMonth?month=${month}&year=${year}`;
+        url = <?= json_encode($apiIncomeMonth) ?> + `?month=${month}&year=${year}`;
     }
 
     // Show loading state
@@ -525,7 +533,7 @@ function loadIncome() {
     if (periodEl) periodEl.textContent = 'Loading...';
     if (chartLabelEl) chartLabelEl.textContent = 'Loading...';
 
-    fetch(url)
+    fetch(url, { credentials: 'same-origin' })
         .then(r => {
             if (!r.ok) {
                 throw new Error(`HTTP ${r.status}`);

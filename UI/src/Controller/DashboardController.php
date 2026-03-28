@@ -15,40 +15,48 @@ class DashboardController extends AppController
     }
 
     public function login(): ?Response
-    {
-        $this->request->allowMethod(['get', 'post']);
+{
+    // 1. Check if the user is already authenticated
+    // This MUST be the first thing in the function
+    $session = $this->getRequest()->getSession();
+    if ($session->check('Auth.User')) {
+        return $this->redirect(['action' => 'analytics']);
+    }
 
-        if ($this->request->is('post')) {
-            $data     = $this->request->getData();
-            $username = trim((string)($data['username'] ?? ''));
-            $password = trim((string)($data['password'] ?? ''));
+    $this->request->allowMethod(['get', 'post']);
 
-            if ($username === '' || $password === '') {
-                $this->Flash->error('Username and password are required.');
-                return null;
-            }
+    if ($this->request->is('post')) {
+        $data     = $this->request->getData();
+        $username = trim((string)($data['username'] ?? ''));
+        $password = trim((string)($data['password'] ?? ''));
 
-            $usersTable = $this->fetchTable('Users');
-
-            $user = $usersTable->find()
-                ->where(['username' => $username])
-                ->first();
-
-            if ($user && password_verify($password, $user->password)) {
-                $this->getRequest()->getSession()->write('Auth.User', [
-                    'id'       => $user->id,
-                    'username' => $user->username,
-                    'role'     => $user->role,
-                ]);
-
-                return $this->redirect(['action' => 'analytics']);
-            }
-
-            $this->Flash->error('Invalid username or password.');
+        if ($username === '' || $password === '') {
+            $this->Flash->error('Username and password are required.');
+            return null;
         }
 
-        return null;
+        $usersTable = $this->fetchTable('Users');
+
+        $user = $usersTable->find()
+            ->where(['username' => $username])
+            ->first();
+
+        if ($user && password_verify($password, $user->password)) {
+            $this->getRequest()->getSession()->write('Auth.User', [
+                'id'       => $user->id,
+                'username' => $user->username,
+                'role'     => $user->role,
+            ]);
+
+            return $this->redirect(['action' => 'analytics']);
+        }
+
+        $this->Flash->error('Invalid username or password.');
     }
+
+    return null;
+}
+
 
     public function signup(): ?Response
     {
@@ -522,6 +530,58 @@ class DashboardController extends AppController
 
         return $this->redirect(['action' => 'profile']);
     }
+    public function editTechnician(): Response
+{
+    $user = $this->getRequest()->getSession()->read('Auth.User');
+    if (empty($user)) {
+        return $this->response->withType('application/json')->withStatus(401)
+            ->withStringBody(json_encode(['success' => false, 'error' => 'Unauthenticated']));
+    }
+
+    $this->request->allowMethod(['post', 'ajax']);
+
+    // Parse JSON body (same pattern as addTechnician)
+    $body     = (array)json_decode((string)$this->request->getBody(), true);
+    $techId   = (int)($body['id'] ?? 0);
+
+    if ($techId <= 0) {
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode(['success' => false, 'error' => 'Invalid technician ID.']));
+    }
+
+    $usersTable = $this->fetchTable('Users');
+    $tech       = $usersTable->find()->where(['id' => $techId])->first();
+
+    if (!$tech) {
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode(['success' => false, 'error' => 'Technician not found.']));
+    }
+
+    $patch = [
+        'full_name' => trim((string)($body['full_name'] ?? '')),
+        'email'     => trim((string)($body['email']     ?? '')),
+        'specialty' => trim((string)($body['specialty'] ?? '')),
+    ];
+
+    $newPassword = trim((string)($body['password'] ?? ''));
+    if ($newPassword !== '') {
+        if (strlen($newPassword) < 8) {
+            return $this->response->withType('application/json')
+                ->withStringBody(json_encode(['success' => false, 'error' => 'Password must be at least 8 characters.']));
+        }
+        $patch['password'] = password_hash($newPassword, PASSWORD_DEFAULT);
+    }
+
+    $tech = $usersTable->patchEntity($tech, $patch);
+
+    if ($usersTable->save($tech)) {
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode(['success' => true]));
+    }
+
+    return $this->response->withType('application/json')
+        ->withStringBody(json_encode(['success' => false, 'error' => 'Could not save changes. Please try again.']));
+}
 
     public function logout(): ?Response
     {
@@ -549,7 +609,7 @@ public function getIncomeDay()
 
     $results = $conn->execute("
         SELECT
-            HOUR(d.date_released) as hour_slot,
+            HOUR(COALESCE(d.date_released, d.modified)) as hour_slot,
             COUNT(DISTINCT d.id) as repair_count,
             COALESCE(SUM(
                 (SELECT COALESCE(SUM(s.price), 0)
@@ -562,10 +622,9 @@ public function getIncomeDay()
                  WHERE rpu.device_id = d.id AND rpu.returned = 0)
             ), 0) as total_income
         FROM devices d
-        WHERE d.status = 'Completed'
-            AND d.date_released IS NOT NULL
-            AND DATE(d.date_released) = :today
-        GROUP BY HOUR(d.date_released)
+        WHERE d.status IN ('Completed', 'Released')
+            AND DATE(COALESCE(d.date_released, d.modified)) = :today
+        GROUP BY HOUR(COALESCE(d.date_released, d.modified))
         ORDER BY hour_slot
     ", ['today' => $today])->fetchAll('assoc');
 
@@ -638,7 +697,7 @@ public function getIncomeWeek()
 
     $results = $conn->execute("
         SELECT
-            DATE(d.date_released) as date,
+            DATE(COALESCE(d.date_released, d.modified)) as date,
             COUNT(DISTINCT d.id) as repair_count,
             COALESCE(SUM(
                 (SELECT COALESCE(SUM(s.price), 0)
@@ -651,11 +710,10 @@ public function getIncomeWeek()
                  WHERE rpu.device_id = d.id AND rpu.returned = 0)
             ), 0) as total_income
         FROM devices d
-        WHERE d.status = 'Completed'
-            AND d.date_released IS NOT NULL
-            AND DATE(d.date_released) BETWEEN :start_date AND :end_date
-        GROUP BY DATE(d.date_released)
-        ORDER BY d.date_released
+        WHERE d.status IN ('Completed', 'Released')
+            AND DATE(COALESCE(d.date_released, d.modified)) BETWEEN :start_date AND :end_date
+        GROUP BY DATE(COALESCE(d.date_released, d.modified))
+        ORDER BY date
     ", ['start_date' => $startDate, 'end_date' => $endDate])->fetchAll('assoc');
 
     $dailyData    = [];
@@ -710,7 +768,7 @@ public function getIncomeMonth()
     
     $results = $conn->execute("
         SELECT 
-            DATE(d.date_released) as date,
+            DATE(COALESCE(d.date_released, d.modified)) as date,
             COUNT(DISTINCT d.id) as repair_count,
             COALESCE(SUM(
                 (SELECT COALESCE(SUM(s.price), 0) 
@@ -723,12 +781,11 @@ public function getIncomeMonth()
                  WHERE rpu.device_id = d.id AND rpu.returned = 0)
             ), 0) as total_income
         FROM devices d
-        WHERE d.status = 'Completed' 
-            AND d.date_released IS NOT NULL
-            AND MONTH(d.date_released) = :month
-            AND YEAR(d.date_released) = :year
-        GROUP BY DATE(d.date_released)
-        ORDER BY d.date_released
+        WHERE d.status IN ('Completed', 'Released')
+            AND MONTH(COALESCE(d.date_released, d.modified)) = :month
+            AND YEAR(COALESCE(d.date_released, d.modified)) = :year
+        GROUP BY DATE(COALESCE(d.date_released, d.modified))
+        ORDER BY date
     ", ['month' => $month, 'year' => $year])->fetchAll('assoc');
     
     $dailyIncome = [];
